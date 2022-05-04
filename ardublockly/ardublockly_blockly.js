@@ -21,6 +21,14 @@ Ardublockly.workspace = null;
  */
 Ardublockly.xmlTree = null;
 
+
+
+Ardublockly.updateToolbox = function(newXmlTree){
+  Ardublockly.xmlTree = Blockly.Xml.textToDom(newXmlTree);
+  Ardublockly.workspace.updateToolbox(Ardublockly.xmlTree);
+
+};
+
 /**
  * Injects Blockly into a given HTML element. Toolbox XMl has to be a string.
  * @param {!Element} blocklyEl Element to inject Blockly into.
@@ -76,6 +84,15 @@ Ardublockly.bindBlocklyEventListeners = function() {
 /** @return {!string} Generated Arduino code from the Blockly workspace. */
 Ardublockly.generateArduino = function() {
   return Blockly.Arduino.workspaceToCode(Ardublockly.workspace);
+};
+/** @return {!string} Generated Java code from the Blockly workspace. */
+Ardublockly.generateJava = function() {
+  return Blockly.Java.workspaceToCode(Ardublockly.workspace);
+};
+
+/** @return {!string} Generated Python code from the Blockly workspace. */
+Ardublockly.generatePython= function() {
+  return Blockly.Python.workspaceToCode(Ardublockly.workspace);
 };
 
 /** @return {!string} Generated XML code from the Blockly workspace. */

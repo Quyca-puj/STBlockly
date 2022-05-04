@@ -15,8 +15,7 @@ Ardublockly.init = function() {
   Ardublockly.initLanguage();
 
   // Inject Blockly into content_blocks and fetch additional blocks
-  Ardublockly.injectBlockly(document.getElementById('content_blocks'),
-                            Ardublockly.TOOLBOX_XML, '../blockly/');
+  Ardublockly.injectBlockly(document.getElementById('content_blocks'), Ardublockly.TOOLBOX_ARDUINO_XML, '../blockly/');
   Ardublockly.importExtraBlocks();
 
   Ardublockly.designJsInit();
@@ -551,6 +550,8 @@ Ardublockly.XmlTextareaToBlocks = function() {
  * @private
  */
 Ardublockly.PREV_ARDUINO_CODE_ = 'void setup() {\n\n}\n\n\nvoid loop() {\n\n}';
+Ardublockly.PREV_JAVA_CODE_ = 'public class MacroManager implements Runnable {\n@Override\n public void run() {\n }\n}';
+Ardublockly.PREV_PY_CODE_ = '';
 
 /**
  * Populate the Arduino Code and Blocks XML panels with content generated from
@@ -558,26 +559,83 @@ Ardublockly.PREV_ARDUINO_CODE_ = 'void setup() {\n\n}\n\n\nvoid loop() {\n\n}';
  */
 Ardublockly.renderContent = function() {
   // Render Arduino Code with latest change highlight and syntax highlighting
-  var arduinoCode = Ardublockly.generateArduino();
-  if (arduinoCode !== Ardublockly.PREV_ARDUINO_CODE_) {
-    var diff = JsDiff.diffWords(Ardublockly.PREV_ARDUINO_CODE_, arduinoCode);
-    var resultStringArray = [];
-    for (var i = 0; i < diff.length; i++) {
-      if (!diff[i].removed) {
-        var escapedCode = diff[i].value.replace(/</g, '&lt;')
-                                       .replace(/>/g, '&gt;');
-        if (diff[i].added) {
-          resultStringArray.push(
-              '<span class="code_highlight_new">' + escapedCode + '</span>');
-        } else {
-          resultStringArray.push(escapedCode);
+  let language = Ardublockly.selected_language;
+
+  switch (language) {
+    case "arduino":
+      var arduinoCode = Ardublockly.generateArduino();
+      if (arduinoCode !== Ardublockly.PREV_ARDUINO_CODE_) {
+        var diff = JsDiff.diffWords(Ardublockly.PREV_ARDUINO_CODE_, arduinoCode);
+        var resultStringArray = [];
+        for (var i = 0; i < diff.length; i++) {
+          if (!diff[i].removed) {
+            var escapedCode = diff[i].value.replace(/</g, '&lt;')
+                                          .replace(/>/g, '&gt;');
+            if (diff[i].added) {
+              resultStringArray.push(
+                  '<span class="code_highlight_new">' + escapedCode + '</span>');
+            } else {
+              resultStringArray.push(escapedCode);
+            }
+          }
         }
+
+        document.getElementById('content_arduino').innerHTML =
+            prettyPrintOne(resultStringArray.join(''), 'cpp', false);
+        Ardublockly.PREV_ARDUINO_CODE_ = arduinoCode;
       }
-    }
-    document.getElementById('content_arduino').innerHTML =
-        prettyPrintOne(resultStringArray.join(''), 'cpp', false);
-    Ardublockly.PREV_ARDUINO_CODE_ = arduinoCode;
+      break;
+    case "java":
+      var javaCode = Ardublockly.generateJava();
+      if (javaCode !== Ardublockly.PREV_JAVA_CODE_) {
+        var diff = JsDiff.diffWords(Ardublockly.PREV_JAVA_CODE_, javaCode);
+        var resultStringArray = [];
+        for (var i = 0; i < diff.length; i++) {
+          if (!diff[i].removed) {
+            var escapedCode = diff[i].value.replace(/</g, '&lt;')
+                                          .replace(/>/g, '&gt;');
+            if (diff[i].added) {
+              resultStringArray.push(
+                  '<span class="code_highlight_new">' + escapedCode + '</span>');
+            } else {
+              resultStringArray.push(escapedCode);
+            }
+          }
+        }
+
+        document.getElementById('content_java').innerHTML =
+            prettyPrintOne(resultStringArray.join(''), 'cpp', false);
+        Ardublockly.PREV_JAVA_CODE_ = javaCode;
+      }
+      break;
+    case "python":
+      var pyCode = Ardublockly.generatePython();
+      if (pyCode !== Ardublockly.PREV_PY_CODE_) {
+        var diff = JsDiff.diffWords(Ardublockly.PREV_PY_CODE_, pyCode);
+        var resultStringArray = [];
+        for (var i = 0; i < diff.length; i++) {
+          if (!diff[i].removed) {
+            var escapedCode = diff[i].value.replace(/</g, '&lt;')
+                                          .replace(/>/g, '&gt;');
+            if (diff[i].added) {
+              resultStringArray.push(
+                  '<span class="code_highlight_new">' + escapedCode + '</span>');
+            } else {
+              resultStringArray.push(escapedCode);
+            }
+          }
+        }
+
+        document.getElementById('content_py').innerHTML =
+            prettyPrintOne(resultStringArray.join(''), 'cpp', false);
+        Ardublockly.PREV_PY_CODE_ = pyCode;
+      }
+      break;
   }
+
+
+
+
 
   // Generate plain XML into element
   document.getElementById('content_xml').value = Ardublockly.generateXml();
@@ -761,3 +819,7 @@ Ardublockly.bindClick_ = function(el, func) {
   el.addEventListener('ontouchend', propagateOnce);
   el.addEventListener('click', propagateOnce);
 };
+
+Ardublockly.selectLanguageListener = function () {
+
+}

@@ -218,6 +218,7 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
         arg.setAttribute('name', args[t]);
         mutation.appendChild(arg);
       }
+      console.log(block);
       xmlList.push(block);
     }
   }

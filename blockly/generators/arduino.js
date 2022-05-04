@@ -33,7 +33,7 @@ Blockly.Arduino.StaticTyping = new Blockly.StaticTyping();
  */
 Blockly.Arduino.addReservedWords(
     'Blockly,' +  // In case JS is evaled in the current window.
-    'setup,loop,if,else,for,switch,case,while,do,break,continue,return,goto,' +
+    'setup,loop,processMacros,if,else,for,switch,case,while,do,break,continue,return,goto,' +
     'define,include,HIGH,LOW,INPUT,OUTPUT,INPUT_PULLUP,true,false,integer,' +
     'constants,floating,point,void,boolean,char,unsigned,byte,int,word,long,' +
     'float,double,string,String,array,static,volatile,const,sizeof,pinMode,' +
@@ -106,6 +106,8 @@ Blockly.Arduino.init = function(workspace) {
   Blockly.Arduino.setups_ = Object.create(null);
   // Create a dictionary of pins to check if their use conflicts
   Blockly.Arduino.pins_ = Object.create(null);
+  // Create a dictionary for SmartTown commands definition;
+  Blockly.Arduino.STFunctions_ = Object.create(null);
 
   if (!Blockly.Arduino.variableDB_) {
     Blockly.Arduino.variableDB_ =
@@ -134,6 +136,16 @@ Blockly.Arduino.init = function(workspace) {
 Blockly.Arduino.finish = function(code) {
   // Convert the includes, definitions, and functions dictionaries into lists
   var includes = [], definitions = [], variables = [], functions = [];
+  let STcommands = [];
+
+  for (var commandName in Blockly.Arduino.STFunctions_) {
+    let auxCommand = '   if(!msg.indexOf("'+commandName+'")){\n'+Blockly.Arduino.STFunctions_[commandName]+'   }'
+    STcommands.push(auxCommand);
+  }
+  if (STcommands.length) {
+    STcommands.push('\n');
+  }
+
   for (var name in Blockly.Arduino.includes_) {
     includes.push(Blockly.Arduino.includes_[name]);
   }
@@ -185,11 +197,28 @@ Blockly.Arduino.finish = function(code) {
   delete Blockly.Arduino.pins_;
   Blockly.Arduino.variableDB_.reset();
 
-  var allDefs = includes.join('\n') + variables.join('\n') +
-      definitions.join('\n') + functions.join('\n\n');
+  var allDefs = includes.join('\n') + definitions.join('\n') + variables.join('\n') + functions.join('\n\n');
+  let STDef = 'void processMacros(String msg, WifiClient client){\n'
+  if(STcommands.length){
+    STDef+=STcommands.join('\n');
+  }
+  STDef+='}\n\n';
+  allDefs+=STDef;
   var setup = 'void setup() {' + setups.join('\n  ') + '\n}\n\n';
   var loop = 'void loop() {\n  ' + code.replace(/\n/g, '\n  ') + '\n}';
   return allDefs + setup + loop;
+};
+
+/**
+ * Adds a SmartTown command code to the sketch.
+ * Once a include is added it will not get overwritten with new code.
+ * @param {!string} commandName Identifier for this SmartTown command code.
+ * @param {!string} code Code to be included at the very top of the sketch.
+ */
+ Blockly.Arduino.addSTCommand = function(commandName, code) {
+  if (Blockly.Arduino.STFunctions_[commandName] === undefined) {
+    Blockly.Arduino.STFunctions_[commandName] = code;
+  }
 };
 
 /**
@@ -368,7 +397,9 @@ Blockly.Arduino.scrub_ = function(block, code) {
  * @private
  */
 Blockly.Arduino.getArduinoType_ = function(typeBlockly) {
-  switch (typeBlockly.typeId) {
+  let typeid = typeBlockly.typeId ? typeBlockly.typeId:typeBlockly;
+
+  switch (typeid) {
     case Blockly.Types.SHORT_NUMBER.typeId:
       return 'char';
     case Blockly.Types.NUMBER.typeId:
@@ -395,6 +426,7 @@ Blockly.Arduino.getArduinoType_ = function(typeBlockly) {
       return 'Invalid Blockly Type';
     }
 };
+
 
 /** Used for not-yet-implemented block code generators */
 Blockly.Arduino.noGeneratorCodeInline = function() {

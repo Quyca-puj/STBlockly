@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#00878F">
+  <meta name="theme-color" content="#008f3c">
   <link rel="icon" href="img/favicon.ico">
   <title class="translatable_title">Ardublockly</title>
 
@@ -13,11 +13,12 @@
   <link rel="stylesheet" href="ardublockly.css" media="screen,projection">
 
   <!-- Ardublockly - These three files contain the compress version -->
-  <script src="../blockly/blockly_compressed.js"></script>
+  <!--script src="../blockly/blockly_compressed.js"></script>
   <script src="../blockly/blocks_compressed.js"></script>
-  <script src="../blockly/arduino_compressed.js"></script>
+  <script src="../blockly/python_compressed.js"></script>
+  <script src="../blockly/arduino_compressed.js"></script-->
   <!-- To use the uncompressed version comment out the above and comment in the ones below -->
-  <!--script src="../blockly/blockly_uncompressed.js"></script>
+  <script src="../blockly/blockly_uncompressed.js"></script>
   <script src="../blockly/blocks/logic.js"></script>
   <script src="../blockly/blocks/loops.js"></script>
   <script src="../blockly/blocks/math.js"></script>
@@ -36,6 +37,8 @@
   <script src="../blockly/blocks/arduino/time.js"></script>
   <script src="../blockly/blocks/arduino/tone.js"></script>
   <script src="../blockly/blocks/arduino/variables.js"></script>
+  <script src="../blockly/blocks/arduino/hello_world.js"></script>
+  <script src="../blockly/blocks/smartown/smart_town.js"></script>
   <script src="../blockly/generators/arduino.js"></script>
   <script src="../blockly/generators/arduino/boards.js"></script>
   <script src="../blockly/generators/arduino/io.js"></script>
@@ -52,11 +55,37 @@
   <script src="../blockly/generators/arduino/text.js"></script>
   <script src="../blockly/generators/arduino/time.js"></script>
   <script src="../blockly/generators/arduino/tone.js"></script>
-  <script src="../blockly/generators/arduino/variables.js"></script-->
+  <script src="../blockly/generators/arduino/variables.js"></script>
+  <script src="../blockly/generators/arduino/hello_world.js"></script>
+  <script src="../blockly/generators/arduino/smart_town.js"></script>
+  <script src="../blockly/generators/java.js"></script>
+  <script src="../blockly/generators/java/lists.js"></script>
+  <script src="../blockly/generators/java/logic.js"></script>
+  <script src="../blockly/generators/java/loops.js"></script>
+  <script src="../blockly/generators/java/map.js"></script>
+  <script src="../blockly/generators/java/math.js"></script>
+  <script src="../blockly/generators/java/procedures.js"></script>
+  <script src="../blockly/generators/java/text.js"></script>
+  <script src="../blockly/generators/java/time.js"></script>
+  <script src="../blockly/generators/java/variables.js"></script>
+  <script src="../blockly/generators/java/smart_town.js"></script>
+  <script src="../blockly/generators/java/colour.js"></script>
+  <script src="../blockly/generators/python.js"></script>
+  <script src="../blockly/generators/python/lists.js"></script>
+  <script src="../blockly/generators/python/logic.js"></script>
+  <script src="../blockly/generators/python/loops.js"></script>
+  <script src="../blockly/generators/python/map.js"></script>
+  <script src="../blockly/generators/python/math.js"></script>
+  <script src="../blockly/generators/python/procedures.js"></script>
+  <script src="../blockly/generators/python/text.js"></script>
+  <script src="../blockly/generators/python/time.js"></script>
+  <script src="../blockly/generators/python/variables.js"></script>
+  <script src="../blockly/generators/python/smart_town.js"></script>
+  <script src="../blockly/generators/python/colour.js"></script>
 
   <!-- Default language js files, user selection appended to head on load -->
-  <script src="../blockly/msg/js/en.js"></script>
-  <script src="msg/en.js"></script>
+  <script src="../blockly/msg/js/es.js"></script>
+  <script src="msg/es.js"></script>
 </head>
 
 <body>
@@ -65,7 +94,7 @@
     <div class="nav-wrapper container">
       <a class="show-on-large button-collapse" href="#" data-activates="slide-out" id="button-collapse"><i class="mdi-navigation-menu"></i></a>
       <a id="logo-container" class="brand-logo">
-        <span class="app_title translatable_title">Ardublockly:</span>
+        <span class="app_title translatable_title"> SmartTown:</span>
         <!-- Sketch name editable text field -->
         <span class="sketch_name_wrapper">
           <i class="mdi-image-edit sketch_name_icon"></i>
@@ -74,9 +103,19 @@
       </a>
       <!-- Horizontal Navbar links only shown on large resolutions -->
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="#" id="button_load"><span class="translatable_open">Open</span><i class="mdi-file-file-upload left"></i></a></li>
-        <li><a href="#" id="button_save"><span class="translatable_save">Save</span><i class="mdi-file-file-download left"></i></a></li>
-        <li><a href="#" id="button_delete"><span class="translatable_deleteAll">Delete All</span><i class="mdi-action-delete left"></i></a></li>
+        <li><span class="translatable_open">Escoge un lenguaje:  </span></li>
+        <li><select name="lang" id="lang">
+          <optgroup label="Nivel Bajo">
+            <option value="arduino">Arduino</option>
+          </optgroup>
+          <optgroup label="Nivel Medio">
+            <option value="java">Java</option>
+            <option value="python">Python</option>
+          </optgroup>
+        </select></li>
+        <li><a href="#" id="button_load"><span class="translatable_open">Cargar</span><i class="mdi-file-file-upload left"></i></a></li>
+        <li><a href="#" id="button_save"><span class="translatable_save">Guardar</span><i class="mdi-file-file-download left"></i></a></li>
+        <li><a href="#" id="button_delete"><span class="translatable_deleteAll">Borrar Todo</span><i class="mdi-action-delete left"></i></a></li>
       </ul>
     </div>
   </nav>
@@ -86,17 +125,17 @@
     <li class="logo"><img src="img/sidenav_header.png" alt="Ardublockly block image"></li>
     <li class="no-padding">
       <ul>
-        <li id="menu_load"><a href="#"><span class="translatable_open">Open</span><i class="mdi-file-file-upload left"></i></a></li>
-        <li id="menu_save"><a href="#"><span class="translatable_save">Save</span><i class="mdi-file-file-download left"></i></a></li>
-        <li id="menu_delete"><a href="#"><span class="translatable_deleteAll">Delete All</span><i class="mdi-action-delete left"></i></a></li>
-        <li id="menu_settings"><a href="#"><span class="translatable_settings">Settings</span><i class="mdi-action-settings left"></i></a></li>
+        <li id="menu_load"><a href="#"><span class="translatable_open">Cargar</span><i class="mdi-file-file-upload left"></i></a></li>
+        <li id="menu_save"><a href="#"><span class="translatable_save">Guardar</span><i class="mdi-file-file-download left"></i></a></li>
+        <li id="menu_delete"><a href="#"><span class="translatable_deleteAll">Borrar Todo</span><i class="mdi-action-delete left"></i></a></li>
+        <li id="menu_settings"><a href="#"><span class="translatable_settings">Configuración</span><i class="mdi-action-settings left"></i></a></li>
         <li id="menu_bug"><a href="https://github.com/carlosperate/ardublockly/wiki" target="_blank"><span class="translatable_documentation">Documentation</span><i class="mdi-action-help left"></i></a></li>
         <li id="menu_bug"><a href="http://github.com/carlosperate/ardublockly/issues" target="_blank"><span class="translatable_reportBug">Report Bug</span><i class="mdi-action-bug-report left"></i></a></li>
       </ul>
     <li class="no-padding">
       <ul class="collapsible collapsible-accordion">
         <li>
-          <div class="collapsible-header"><span class="translatable_examples">Examples</span><i class="mdi-navigation-arrow-drop-down"></i></div>
+          <div class="collapsible-header"><span class="translatable_examples">Ejemplos</span><i class="mdi-navigation-arrow-drop-down"></i></div>
           <div class="collapsible-body">
             <ul>
               <li id="menu_example_1"><a href="#!">Blink</a></li>
@@ -171,19 +210,37 @@
       </div>
       <div class="col s12 m12 l4">
         <ul class="collapsible z-depth-1" data-collapsible="accordion">
-          <li>
+          <li id="arduino_area">
             <div class="collapsible-header active">
-              <span class="collapsible_logo">{ }</span>
-              <span class="translatable_arduinoSourceCode">Arduino Source Code</span>
+              <span class="collapsible_logo">{ A }</span>
+              <span class="translatable_arduinoSourceCode">Código Arduino</span>
             </div>
             <div class="collapsible-body">
               <pre id="content_arduino" class="content content_height_transition content_arduino_large"></pre>
             </div>
           </li>
+          <li id="java_area" style="display: none;">
+            <div class="collapsible-header">
+              <span class="collapsible_logo">{ J }</span>
+              <span class="translatable_arduinoSourceCode">Código Java</span>
+            </div>
+            <div class="collapsible-body">
+              <pre id="content_java" class="content content_height_transition content_arduino_large"></pre>
+            </div>
+          </li>
+          <li id="py_area" style="display: none;">
+            <div class="collapsible-header">
+              <span class="collapsible_logo">{ P }</span>
+              <span class="translatable_arduinoSourceCode">Código Python</span>
+            </div>
+            <div class="collapsible-body">
+              <pre id="content_py" class="content content_height_transition content_arduino_large"></pre>
+            </div>
+          </li>
           <li>
             <div class="collapsible-header" id="xml_collapsible_header">
               <span class="collapsible_logo">&#60; &#62;</span>
-              <span class="translatable_blocksXml">Blocks XML</span>
+              <span class="translatable_blocksXml">Bloques XML</span>
             </div>
             <div class="collapsible-body" style="position:relative" id="xml_collapsible_body">
               <a class="btn-floating btn-large waves-effect waves-light arduino_teal z-depth-1-half" id="button_load_xml"><i class="mdi-action-extension"></i></a>
@@ -201,7 +258,7 @@
       <li>
         <div id="ide_output_collapsible_header" class="collapsible-header ide_output_header_normal">
           <i class="mdi-action-swap-vert Medium" style="font-size: 2.2rem;"></i>
-          <span class="translatable_arduinoOpMainTitle">Arduino IDE output</span>
+          <span class="translatable_arduinoOpMainTitle">Consola Arduino</span>
         </div>
         <div class="collapsible-body">
           <div id="content_ide_output" class="content"></div>
@@ -214,13 +271,13 @@
   <!-- Settings: Displayed as a Materialize Modal -->
   <div id="settings_dialog" class="modal modal-fixed-footer">
     <div class="modal-content">
-      <h4><span class="translatable_settings">Settings</span></h4>
+      <h4><span class="translatable_settings">Configuración</span></h4>
       <div class="modal_section">
-        <label><span class="translatable_compilerLocation">Compiler Location</span>:</label>
+        <label><span class="translatable_compilerLocation">Ruta del Compilador</span>:</label>
         <input type="text" id="settings_compiler_location">
       </div>
       <div class="modal_section">
-        <label><span class="translatable_sketchFolder">Sketch Folder</span>:</label>
+        <label><span class="translatable_sketchFolder">Carpeta de Guardado</span>:</label>
         <input type="text" id="settings_sketch_location">
       </div>
       <div class="modal_section">
@@ -230,24 +287,24 @@
         </select>
       </div>
       <div class="modal_section">
-        <label><span class="translatable_comPort">COM Port<span>:</label>
+        <label><span class="translatable_comPort">Puerto COM<span>:</label>
         <select name="settings_serial" id="serial_port">
-          <option value="COMX" class="translatable_comPortDefault">COM Port unknown</option>
+          <option value="COMX" class="translatable_comPortDefault">Puerto COM Desconocido</option>
         </select>
       </div>
       <div class="modal_section">
-        <label><span class="translatable_defaultIdeButton">Default IDE button</span>:</label>
+        <label><span class="translatable_defaultIdeButton">Default IDE</span>:</label>
         <select name="settings_ide" id="ide_settings">
-          <option value="verify" class="translatable_defaultIdeButtonDefault">IDE options unknown</option>
+          <option value="verify" class="translatable_defaultIdeButtonDefault"> Opciones de IDE desconocidas</option>
         </select>
       </div>
-      <div class="modal_section">
+      <div class="modal_section" hidden>
         <label><span class="translatable_language">Language</span>:</label>
         <select name="settings_language" id="language"></select>
       </div>
     </div>
     <div class="modal-footer">
-      <a href="#" class="waves-effect btn-flat modal-close"><span class="translatable_return">Return</span></a>
+      <a href="#" class="waves-effect btn-flat modal-close"><span class="translatable_return">Regresar</span></a>
     </div>
   </div>
 
@@ -255,12 +312,12 @@
   <div id="blocks_menu" class="modal modal-fixed-footer">
     <div class="modal-content">
       <div>
-        <h4><span class="translatable_addBlocksTitle">Additional Blocks</span></h4>
+        <h4><span class="translatable_addBlocksTitle">Bloques Adicionales</span></h4>
       </div>
       <div id="blocks_menu_body"></div>
     </div>
     <div class="modal-footer">
-      <a href="#" class="waves-effect btn-flat modal-close"><span class="translatable_return">Return</span></a>
+      <a href="#" class="waves-effect btn-flat modal-close"><span class="translatable_return">Regresar</span></a>
     </div>
   </div>
 
@@ -272,7 +329,7 @@
     </div>
     <div class="modal-footer">
       <a id="gen_alert_ok_link" href="#" class="waves-effect btn-flat modal-close"><span class="translatable_okay">Okay</span></a>
-      <a id="gen_alert_cancel_link" href="#" class="waves-effect btn-flat modal-close"><span class="translatable_cancel">Cancel</span></a>
+      <a id="gen_alert_cancel_link" href="#" class="waves-effect btn-flat modal-close"><span class="translatable_cancel">Cancelar</span></a>
     </div>
   </div>
 
@@ -284,7 +341,7 @@
     </div>
     <div class="modal-footer">
       <a id="gen_prompt_ok_link" href="#" class="waves-effect btn-flat modal-close"><span class="translatable_okay">Okay</span></a>
-      <a id="gen_prompt_cancel_link" href="#" class="waves-effect btn-flat modal-close"><span class="translatable_cancel">Cancel</span></a>
+      <a id="gen_prompt_cancel_link" href="#" class="waves-effect btn-flat modal-close"><span class="translatable_cancel">Cancelar</span></a>
     </div>
   </div>
 
@@ -292,13 +349,13 @@
   <div id="not_running_dialog" class="modal">
     <div class="modal-content">
       <div>
-        <h4 id="gen_alert_title"><span class="translatable_noServerTitle">Ardublockly app not running</span></h4>
+        <h4 id="gen_alert_title"><span class="translatable_noServerTitle">Aplicacion de Ardublocky sin iniciar</span></h4>
       </div>
       <div class="translatable_noServerBody">
-        <p>For all the Ardublockly features to be enabled, the Ardublockly desktop application must be running locally on your computer.</p>
-        <p>If you are using an online version you will not be able to configure the settings nor load the blocks code into an Arduino.</p>
-        <p>Installation instruction can be found in the <a href="https://github.com/carlosperate/ardublockly">Ardublockly repository</a>.</p>
-        <p>If you have Ardublockly already installed, make sure the application is running correctly.</p>
+        <p>Para que todas las funciones de Ardublockly estén habilitadas, la aplicación de escritorio Ardublockly debe ejecutarse localmente en su computadora.</p>
+        <p>Si está utilizando una versión en línea, no podrá configurar los ajustes ni cargar el código de bloques en un Arduino.</p>
+        <p>Las instrucciones de instalación se pueden encontrar en el <a href="https://github.com/carlosperate/ardublockly">repositorio de Ardublockly</a>.</p>
+        <p>Si ya tiene instalado Ardublockly, asegúrese de que la aplicación se ejecuta correctamente.</p>
       </div>
     </div>
     <div class="modal-footer">

@@ -57,6 +57,40 @@ Ardublockly.bindDesignEventListeners = function() {
       'click', function() {
         Ardublockly.contentHeightToggle();
       });
+  var languages = document.getElementById('lang');
+
+  $("#lang").on("change",function (){
+    Ardublockly.selected_language=languages.value;
+    var displayArduino = document.getElementById("arduino_area");
+    var displayJava = document.getElementById("java_area");
+    var displayPython = document.getElementById("py_area");
+
+    switch(languages.value){
+      case "arduino":
+        displayArduino.style.display="initial";
+        displayPython.style.display="none";
+        displayJava.style.display="none";
+        Ardublockly.updateToolbox(Ardublockly.TOOLBOX_ARDUINO_XML);
+      break;
+      case "java":
+        displayPython.style.display="none";
+        displayArduino.style.display="none";
+        displayJava.style.display="initial";
+        Ardublockly.updateToolbox(Ardublockly.TOOLBOX_JAVA_XML);
+      break;
+      case "python":
+        displayJava.style.display="none";
+        displayArduino.style.display="none";
+        displayPython.style.display="initial";
+        Ardublockly.updateToolbox(Ardublockly.TOOLBOX_PY_XML);
+      break;
+    }
+    Ardublockly.renderContent();
+  }
+  );
+
+
+
   // Display/hide the additional IDE buttons when mouse over/out of play button
   $('#button_ide_large').mouseenter(function() {
       Ardublockly.showExtraIdeButtons(true);
