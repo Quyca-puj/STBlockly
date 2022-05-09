@@ -12,7 +12,7 @@ var Ardublockly = Ardublockly || {};
 Ardublockly.TOOLBOX_ARDUINO_XML =
 '<xml>' +
 '  <sep></sep>' +
-'  <category id="catLogic" name="Logic">' +
+'  <category id="catLogic" name="Lógica">' +
 '    <block type="controls_if"></block>' +
 '    <block type="logic_compare"></block>' +
 '    <block type="logic_operation"></block>' +
@@ -22,7 +22,7 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    <block type="logic_ternary"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catLoops" name="Loops">' +
+'  <category id="catLoops" name="Secuencias">' +
 '    <block type="controls_repeat_ext">' +
 '      <value name="TIMES">' +
 '        <block type="math_number">' +
@@ -51,7 +51,7 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    <block type="controls_flow_statements"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catMath" name="Math">' +
+'  <category id="catMath" name="Matemáticas">' +
 '    <block type="math_number"></block>' +
 '    <block type="math_arithmetic"></block>' +
 '    <block type="math_single"></block>' +
@@ -95,7 +95,7 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    <block type="base_map"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catText" name="Text">' +
+'  <category id="catText" name="Texto">' +
 '    <block type="text"></block>' +
 '    <block type="text_join"></block>' +
 '    <block type="text_append">' +
@@ -120,7 +120,7 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    <block type="variables_set_type"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catFunctions" name="Functions" custom="PROCEDURE"></category>' +
+'  <category id="catFunctions" name="Funciones" custom="PROCEDURE"></category>' +
 '  <sep></sep>' +
 '  <category id="catInputOutput" name="Input/Output">' +
 '    <block type="io_digitalwrite">' +
@@ -154,7 +154,7 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    </block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catTime" name="Time">' +
+'  <category id="catTime" name="Tiempo">' +
 '    <block type="time_delay">' +
 '      <value name="DELAY_TIME_MILI">' +
 '        <block type="math_number">' +
@@ -186,7 +186,7 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    <block type="io_notone"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catMotors" name="Motors">' +
+'  <category id="catMotors" name="Motores">' +
 '    <block type="servo_write">' +
 '      <value name="SERVO_ANGLE">' +
 '        <block type="math_number">' +
@@ -219,7 +219,7 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    </block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catComms" name="Comms">' +
+'  <category id="catComms" name="Comunicación">' +
 '    <block type="serial_setup"></block>' +
 '    <block type="serial_print"></block>' +
 '    <block type="text_prompt_ext">' +
@@ -234,35 +234,28 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '<category name="SmartTown" colour="#a55b80">'+
 '<block type="setupsmarttown"></block>'+
 '<block type="mvt_avanzar">'+
-'  <field name="Movement">forward</field>'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
 '</block>'+
 '<block type="mvt_girar">'+
-'  <field name="Movement">left</field>'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Movement">-1</field>'+
 '</block>'+
 '<block type="mvt_avanzar_tiempo">'+
-'  <field name="Movement">forward</field>'+
+'  <field name="Movement">1</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
 '<block type="mvt_girar_tiempo">'+
-'  <field name="Movement">left</field>'+
+'  <field name="Movement">-1</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
 '<block type="mvt_stop"></block>' +
 '<block type="new_smarttown_command"></block>' +
-'<block type="hablar"></block>'+
 '</category>'+
-'  <sep></sep>' +
-'  <category id="STCommands" name="SmartTown Commands" disabled="true" hidden="true" custom="STCOMMANDS" ></category>' +
-'  <sep></sep>' +
 '</xml>';
 
 
 Ardublockly.TOOLBOX_JAVA_XML =
 '<xml>' +
 '  <sep></sep>' +
-'  <category id="catLogic" name="Logic">' +
+'  <category id="catLogic" name="Lógica">' +
 '    <block type="controls_if"></block>' +
 '    <block type="logic_compare"></block>' +
 '    <block type="logic_operation"></block>' +
@@ -272,7 +265,7 @@ Ardublockly.TOOLBOX_JAVA_XML =
 '    <block type="logic_ternary"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catLoops" name="Loops">' +
+'  <category id="catLoops" name="Secuencias">' +
 '    <block type="controls_repeat_ext">' +
 '      <value name="TIMES">' +
 '        <block type="math_number">' +
@@ -301,7 +294,7 @@ Ardublockly.TOOLBOX_JAVA_XML =
 '    <block type="controls_flow_statements"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catMath" name="Math">' +
+'  <category id="catMath" name="Matemáticas">' +
 '    <block type="math_number"></block>' +
 '    <block type="math_arithmetic"></block>' +
 '    <block type="math_single"></block>' +
@@ -345,7 +338,7 @@ Ardublockly.TOOLBOX_JAVA_XML =
 '    <block type="base_map"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catText" name="Text">' +
+'  <category id="catText" name="Texto">' +
 '    <block type="text"></block>' +
 '    <block type="text_join"></block>' +
 '    <block type="text_append">' +
@@ -370,38 +363,37 @@ Ardublockly.TOOLBOX_JAVA_XML =
 '    <block type="variables_set_type"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catFunctions" name="Functions" custom="PROCEDURE"></category>' +
+'  <category id="catFunctions" name="Funciones" custom="PROCEDURE"></category>' +
 '  <sep></sep>' +
 '<category name="SmartTown" colour="#a55b80">'+
-'<block type="setupsmarttown"></block>'+
-'<block type="mvt_avanzar">'+
+'<block type="setupsmarttown_media"></block>'+
+'<block type="mvt_avanzar_media">'+
 '  <field name="Movement">forward</field>'+
 '  <field name="Emotion">MUY_FELIZ</field>'+
 '</block>'+
-'<block type="mvt_girar">'+
+'<block type="mvt_girar_media">'+
 '  <field name="Movement">left</field>'+
 '  <field name="Emotion">MUY_FELIZ</field>'+
 '</block>'+
-'<block type="mvt_avanzar_tiempo">'+
+'<block type="mvt_avanzar_tiempo_media">'+
 '  <field name="Movement">forward</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
-'<block type="mvt_girar_tiempo">'+
+'<block type="mvt_girar_tiempo_media">'+
 '  <field name="Movement">left</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
 '<block type="mvt_stop"></block>' +
-'<block type="hablar"></block>'+
 '</category>'+
 '  <sep></sep>' +
-'  <category id="STCommands" name="SmartTown Commands" custom="STCOMMANDS"></category>' +
+'  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +
 '  <sep></sep>' +
 '</xml>';
 
 Ardublockly.TOOLBOX_PY_XML =
 '<xml>' +
 '  <sep></sep>' +
-'  <category id="catLogic" name="Logic">' +
+'  <category id="catLogic" name="Lógica">' +
 '    <block type="controls_if"></block>' +
 '    <block type="logic_compare"></block>' +
 '    <block type="logic_operation"></block>' +
@@ -411,7 +403,7 @@ Ardublockly.TOOLBOX_PY_XML =
 '    <block type="logic_ternary"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catLoops" name="Loops">' +
+'  <category id="catLoops" name="Secuencias">' +
 '    <block type="controls_repeat_ext">' +
 '      <value name="TIMES">' +
 '        <block type="math_number">' +
@@ -440,7 +432,7 @@ Ardublockly.TOOLBOX_PY_XML =
 '    <block type="controls_flow_statements"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catMath" name="Math">' +
+'  <category id="catMath" name="Matemáticas">' +
 '    <block type="math_number"></block>' +
 '    <block type="math_arithmetic"></block>' +
 '    <block type="math_single"></block>' +
@@ -484,7 +476,7 @@ Ardublockly.TOOLBOX_PY_XML =
 '    <block type="base_map"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catText" name="Text">' +
+'  <category id="catText" name="Texto">' +
 '    <block type="text"></block>' +
 '    <block type="text_join"></block>' +
 '    <block type="text_append">' +
@@ -509,23 +501,23 @@ Ardublockly.TOOLBOX_PY_XML =
 '    <block type="variables_set_type"></block>' +
 '  </category>' +
 '  <sep></sep>' +
-'  <category id="catFunctions" name="Functions" custom="PROCEDURE"></category>' +
+'  <category id="catFunctions" name="Funciones" custom="PROCEDURE"></category>' +
 '  <sep></sep>' +
 '<category name="SmartTown" colour="#a55b80">'+
-'<block type="setupsmarttown"></block>'+
-'<block type="mvt_avanzar">'+
+'<block type="setupsmarttown_media"></block>'+
+'<block type="mvt_avanzar_media">'+
 '  <field name="Movement">forward</field>'+
 '  <field name="Emotion">MUY_FELIZ</field>'+
 '</block>'+
-'<block type="mvt_girar">'+
+'<block type="mvt_girar_media">'+
 '  <field name="Movement">left</field>'+
 '  <field name="Emotion">MUY_FELIZ</field>'+
 '</block>'+
-'<block type="mvt_avanzar_tiempo">'+
+'<block type="mvt_avanzar_tiempo_media">'+
 '  <field name="Movement">forward</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
-'<block type="mvt_girar_tiempo">'+
+'<block type="mvt_girar_tiempo_media">'+
 '  <field name="Movement">left</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
@@ -533,6 +525,6 @@ Ardublockly.TOOLBOX_PY_XML =
 '<block type="hablar"></block>'+
 '</category>'+
 '  <sep></sep>' +
-'  <category id="STCommands" name="SmartTown Commands" custom="STCOMMANDS"></category>' +
+'  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +
 '  <sep></sep>' +
 '</xml>';

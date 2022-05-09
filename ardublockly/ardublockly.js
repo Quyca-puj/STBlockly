@@ -526,8 +526,9 @@ Ardublockly.sendCode = function() {
     Ardublockly.arduinoIdeOutput(dataBack);
   };
 
-  ArdublocklyServer.sendSketchToServer(
-      Ardublockly.generateArduino(), sendCodeReturn);
+  ArdublocklyServer.sendSketchToServer(Ardublockly.generateArduino(), sendCodeReturn);
+
+  STServer.sendCommands(Ardublockly.workspace);
 };
 
 /** Populate the workspace blocks with the XML written in the XML text area. */

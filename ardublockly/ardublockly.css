@@ -41,6 +41,8 @@ body {
 /*********************/
 .arduino_teal {
   background-color: #00979C;
+  transition: background-color 1s cubic-bezier(1, 1, 1, 1);
+	transition-delay: 0s;
 }
 .arduino_teal_dark {
   background-color: #006468;

@@ -41,7 +41,10 @@ Blockly.Arduino.addReservedWords(
     'noTone,shiftOut,shitIn,pulseIn,millis,micros,delay,delayMicroseconds,' +
     'min,max,abs,constrain,map,pow,sqrt,sin,cos,tan,randomSeed,random,' +
     'lowByte,highByte,bitRead,bitWrite,bitSet,bitClear,bit,attachInterrupt,' +
-    'detachInterrupt,interrupts,noInterrupts');
+    'detachInterrupt,interrupts,noInterrupts'+
+    //ST defs
+    'Robot, robot'
+    );
 
 /** Order of operation ENUMs. */
 Blockly.Arduino.ORDER_ATOMIC = 0;         // 0 "" ...
@@ -93,6 +96,8 @@ Blockly.Arduino.init = function(workspace) {
   Blockly.Arduino.includes_ = Object.create(null);
   // Create a dictionary of global definitions to be printed after variables
   Blockly.Arduino.definitions_ = Object.create(null);
+  // Create a dictionary of global definitions to be printed after variables
+  Blockly.Arduino.robotDef_ = null;
   // Create a dictionary of variables
   Blockly.Arduino.variables_ = Object.create(null);
   // Create a dictionary of functions from the code generator
@@ -194,16 +199,24 @@ Blockly.Arduino.finish = function(code) {
   delete Blockly.Arduino.userFunctions_;
   delete Blockly.Arduino.functionNames_;
   delete Blockly.Arduino.setups_;
+  delete Blockly.Arduino.STFunctions_;
   delete Blockly.Arduino.pins_;
   Blockly.Arduino.variableDB_.reset();
 
   var allDefs = includes.join('\n') + definitions.join('\n') + variables.join('\n') + functions.join('\n\n');
-  let STDef = 'void processMacros(String msg, WifiClient client){\n'
+  let STDef = 'void Robot::processCommands(String msg){\n';
   if(STcommands.length){
-    STDef+=STcommands.join('\n');
+    STDef+=STcommands.join('\n  else');
+    STDef+='  {\n     robotMovement(msg);\n   }\n';
+  }else{
+    STDef+='  robotMovement(msg);\n';
   }
   STDef+='}\n\n';
   allDefs+=STDef;
+  let robotDef = Blockly.Arduino.robotDef_;
+  if (robotDef){
+    allDefs+='\n'+robotDef+'\n';
+  }
   var setup = 'void setup() {' + setups.join('\n  ') + '\n}\n\n';
   var loop = 'void loop() {\n  ' + code.replace(/\n/g, '\n  ') + '\n}';
   return allDefs + setup + loop;
@@ -220,6 +233,11 @@ Blockly.Arduino.finish = function(code) {
     Blockly.Arduino.STFunctions_[commandName] = code;
   }
 };
+
+Blockly.Arduino.setRobotDef = function(code) {
+    Blockly.Arduino.robotDef_ = code;
+};
+
 
 /**
  * Adds a string of "include" code to be added to the sketch.

@@ -322,7 +322,6 @@ Blockly.Blocks['procedures_defnoreturn'] = {
    */
   customContextMenu: function(options) {
     // Add option to create caller.
-    console.log("Entra OOB?");
 
     var option = {enabled: true};
     var name = this.getFieldValue('NAME');
