@@ -64,25 +64,39 @@ Ardublockly.bindDesignEventListeners = function() {
     var displayArduino = document.getElementById("arduino_area");
     var displayJava = document.getElementById("java_area");
     var displayPython = document.getElementById("py_area");
+    var navBar = document.getElementById("navBar");
+    var footer = document.getElementById("ide_output_collapsible_header");
 
     switch(languages.value){
       case "arduino":
         displayArduino.style.display="initial";
         displayPython.style.display="none";
         displayJava.style.display="none";
+        navBar.style.backgroundColor= "#00979C"
+        footer.style.backgroundColor="#006468";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_ARDUINO_XML);
       break;
       case "java":
         displayPython.style.display="none";
         displayArduino.style.display="none";
         displayJava.style.display="initial";
+        navBar.style.backgroundColor= "#6c1ea1";
+        footer.style.backgroundColor="#430068";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_JAVA_XML);
+        STServer.requestCommands().then(function handle(list) {  
+          Ardublockly.commandList = JSON.parse(list);
+        });
       break;
       case "python":
         displayJava.style.display="none";
         displayArduino.style.display="none";
         displayPython.style.display="initial";
+        navBar.style.backgroundColor= "#938d2e";
+        footer.style.backgroundColor="#6a661e";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_PY_XML);
+        STServer.requestCommands().then(function handle(list) {  
+          Ardublockly.commandList= JSON.parse(list);
+        });
       break;
     }
     Ardublockly.renderContent();

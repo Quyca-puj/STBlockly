@@ -142,27 +142,28 @@ Blockly.STCommands.flyoutCategory = function(workspace) {
     xmlList[xmlList.length - 1].setAttribute('gap', 24);
   }
 
-  function populateSTCommands(STCommandList, templateName) {
-    console.log(STCommandList);
-    for (var i = 0; i < STCommandList.length; i++) {
-      var name = STCommandList[i][0];
-      var block = goog.dom.createDom('block');
-      block.setAttribute('type', templateName);
-      block.setAttribute('gap', 16);
-      var mutation = goog.dom.createDom('mutation');
-      mutation.setAttribute('name', name);
-      block.appendChild(mutation);
-      // for (var t = 0; t < args.length; t++) {
-      //   var arg = goog.dom.createDom('arg');
-      //   arg.setAttribute('name', args[t]);
-      //   mutation.appendChild(arg);
-      // }
-      xmlList.push(block);
+  function populateSTCommands(STCommandList) {
+    if(STCommandList && STCommandList.length){
+      for (var i = 0; i < STCommandList.length; i++) {
+
+        var name = STCommandList[i].name;
+        var block = goog.dom.createDom('block');
+        block.setAttribute('type', 'st_command_call');
+        block.setAttribute('gap', 16);
+        var mutation = goog.dom.createDom('mutation');
+        mutation.setAttribute('name', name);
+        block.appendChild(mutation);
+        // for (var t = 0; t < args.length; t++) {
+        //   var arg = goog.dom.createDom('arg');
+        //   arg.setAttribute('name', args[t]);
+        //   mutation.appendChild(arg);
+        // }
+        xmlList.push(block);
+  
+      }
     }
   }
-
-  var tuple = Blockly.STCommands.allSTCommands(workspace);
-  populateSTCommands(tuple[0], 'st_command_call');
+  populateSTCommands(Ardublockly.commandList);
   return xmlList;
 };
 

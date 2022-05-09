@@ -3,58 +3,53 @@
 goog.require('Blockly.Arduino');
 
 Blockly.Arduino['mvt_avanzar'] = function(block) {
-    var dropdown_movement = block.getFieldValue('Movement');
-    var dropdown_emotion = block.getFieldValue('Emotion');
-
-    var code = 'showEmotion("'+dropdown_emotion+'");\n';
-    var aux_code='robotMovement("'+dropdown_movement+'", client);\n';
-    code+=aux_code;
+    let code='robot.robotForward();\n';
     return code;
   };
 
   Blockly.Arduino['mvt_girar'] = function(block) {
-    var dropdown_movement = block.getFieldValue('Movement');
-    var dropdown_emotion = block.getFieldValue('Emotion');
-
-    var code = 'showEmotion("'+dropdown_emotion+'");\n';
-    var aux_code='robotMovement("'+dropdown_movement+'", client);\n';
-    code+=aux_code;
+    let dropdown_movement = block.getFieldValue('Movement');
+    let code='robot.robotTurn('+dropdown_movement+');\n';
+    // code+=aux_code;
     return code;
   };
 
   Blockly.Arduino['mvt_avanzar_tiempo'] = function(block) {
-    var dropdown_movement = block.getFieldValue('Movement');
-    var time = block.getFieldValue('TIME');
+    let dropdown_movement = block.getFieldValue('Movement');
+    let time = block.getFieldValue('TIME');
 
-    var aux_code='robotMovement("'+dropdown_movement+'", client);\n';
+    let code = "robot.timer = "+time+";\n";
+    let aux_code='robot.robotTimedMove('+dropdown_movement+');\n';
     code+=aux_code;
     return code;
   };
 
   Blockly.Arduino['mvt_girar_tiempo'] = function(block) {
-    var dropdown_movement = block.getFieldValue('Movement');
-    var time = block.getFieldValue('TIME');
+    let dropdown_movement = block.getFieldValue('Movement');
+    let time = block.getFieldValue('TIME');
 
-    var aux_code='robotMovement("'+dropdown_movement+'", client);\n';
+    let code = "robot.timer = "+time+";\n";
+    let aux_code='robot.robotTimedTurn('+dropdown_movement+');\n';
     code+=aux_code;
     return code;
   };
 
   Blockly.Arduino['mvt_stop'] = function(block) {
-    var code='robotMovement("stop", client);\n';
+    let code='robot.robotStopMovement();\n';
     return code;
   };
 
   Blockly.Arduino['hablar'] = function(block) {
-    var value_tosay = Blockly.Arduino.valueToCode(block, 'ToSay', Blockly.Arduino.ORDER_ATOMIC);
-    var code = 'textToSpeech('+value_tosay+');\n';
+    let value_tosay = Blockly.Arduino.valueToCode(block, 'ToSay', Blockly.Arduino.ORDER_ATOMIC);
+    let code = 'textToSpeech('+value_tosay+');\n';
     return code;
   };
 
 
   Blockly.Arduino['setupsmarttown'] = function(block) {
-    var text_wifiname = block.getFieldValue('wifiName');
-    var text_pass = block.getFieldValue('pass');
+    let text_wifiname = block.getFieldValue('wifiName');
+    let text_pass = block.getFieldValue('pass');
+    let serial = block.getFieldValue('serialNumber');
     let conf = block.getFieldValue('CONF_TYPE');
 
     let setupCode = '//'+conf+' config\n';
@@ -83,38 +78,31 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
       
     }
 
-    var includeCode='#include "nodeWifi.h"\n'+
-    '#include "motorMovementController.h"\n'+
-    '#include "FacesLed.h"\n'+
-    '#include "JointExtra.h"\n';
+    let includeCode='#include "Robot.h"\n';
+    let robotDef = 'Robot robot('+serial+',"'+text_wifiname+'","'+text_pass+'");'
 
-    var declCode='#define ssid "'+text_wifiname+'"\n'+
-    '#define password "'+text_pass+'"';
-
-    Blockly.Arduino.addDeclaration("custom",declCode);
     Blockly.Arduino.addInclude('custom',includeCode);
-    Blockly.Arduino.addSetup('custom',setupCode,false);
-
-    var code = 'WiFiClient client = wifiServer.available();\n'+
-'if(client){\n'+
+    Blockly.Arduino.setRobotDef(robotDef);
+    Blockly.Arduino.addVariable('rec_flag','bool rec_flag =false;',true);
+    let code = 'WiFiClient client = wifiServer.available();\n'+
+  'String messages="";\n'+
+  'if(client){\n'+
       ' while (client.connected()) {\n'+
-        '   String messages="";\n'+
         '   while (client.available()>0) {\n'+
           '     char c = client.read();\n'+
           '     messages.concat(c);\n'+
-          '     recieve = true;\n'+
+          '     rec_flag = true;\n'+
         '   }\n'+
-        '   if(recieve ==true){\n'+
+        '   if(rec_flag ==true){\n'+
           '     Serial.println("Message");\n'+
-          '     robotMovement(messages,client);\n'+
-          '     readCustomVariablesSensors(messages,client);\n'+
+          '     robot.processMsg(messages, client);\n'+
           '     messages="";\n'+
-          '     recieve=false;\n'+
+          '     rec_flag=false;\n'+
         '   }\n'+
         ' delay(10);\n'+
       '}\n'+
       'Serial.println("Client Disconnected");\n'+
-      'recieve=false;\n'+
+      'rec_flag=false;\n'+
       'client.stop();\n'+
       '}\n';
     return code;
@@ -123,8 +111,8 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
 
 
   Blockly.Arduino['new_smarttown_command'] = function(block) {
-    var text_name = block.getFieldValue('NAME');
-    var statements_name = Blockly.Arduino.statementToCode(block, 'COMMANDS');
+    let text_name = block.getFieldValue('NAME');
+    let statements_name = Blockly.Arduino.statementToCode(block, 'COMMANDS');
     Blockly.Arduino.addSTCommand(text_name,statements_name);
     return '';
   };

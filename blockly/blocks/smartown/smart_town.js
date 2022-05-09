@@ -3,7 +3,7 @@
 goog.require('Blockly.Blocks');
 goog.require('Blockly.Types');
 
-Blockly.Blocks['mvt_avanzar'] = {
+Blockly.Blocks['mvt_avanzar_media'] = {
     init: function() {
         this.jsonInit(
             {
@@ -18,35 +18,35 @@ Blockly.Blocks['mvt_avanzar'] = {
                     "options": [
                       [
                         "Muy Feliz",
-                        "MUY_FELIZ"
+                        "FixedConfiguredEmotion.MUY_FELIZ"
                       ],
                       [
                         "Feliz",
-                        "FELIZ"
+                        "FixedConfiguredEmotion.FELIZ"
                       ],
                       [
                         "Serio",
-                        "SERIO"
+                        "FixedConfiguredEmotion.SERIO"
                       ],
                       [
                         "Triste",
-                        "TRISTE"
+                        "FixedConfiguredEmotion.TRISTE"
                       ],
                       [
                         "Muy Triste",
-                        "MUYTRISTE"
+                        "FixedConfiguredEmotion.MUY_TRISTE"
                       ],
                       [
                         "Enfermo",
-                        "ENFERMO"
+                        "FixedConfiguredEmotion.ENFERMO"
                       ],
                       [
                         "Furioso",
-                        "FURIOSO"
+                        "FixedConfiguredEmotion.FURIOSO"
                       ],
                       [
                         "Sorprendido",
-                        "SORPRENDIDO"
+                        "FixedConfiguredEmotion.SORPRENDIDO"
                       ]
                     ]
                   }
@@ -63,7 +63,7 @@ Blockly.Blocks['mvt_avanzar'] = {
   };
 
 
-  Blockly.Blocks['mvt_girar'] = {
+  Blockly.Blocks['mvt_girar_media'] = {
     init: function() {
         this.jsonInit(
             {
@@ -92,35 +92,35 @@ Blockly.Blocks['mvt_avanzar'] = {
                     "options": [
                       [
                         "Muy Feliz",
-                        "MUY_FELIZ"
+                        "FixedConfiguredEmotion.MUY_FELIZ"
                       ],
                       [
                         "Feliz",
-                        "FELIZ"
+                        "FixedConfiguredEmotion.FELIZ"
                       ],
                       [
                         "Serio",
-                        "SERIO"
+                        "FixedConfiguredEmotion.SERIO"
                       ],
                       [
                         "Triste",
-                        "TRISTE"
+                        "FixedConfiguredEmotion.TRISTE"
                       ],
                       [
                         "Muy Triste",
-                        "MUYTRISTE"
+                        "FixedConfiguredEmotion.MUY_TRISTE"
                       ],
                       [
                         "Enfermo",
-                        "ENFERMO"
+                        "FixedConfiguredEmotion.ENFERMO"
                       ],
                       [
                         "Furioso",
-                        "FURIOSO"
+                        "FixedConfiguredEmotion.FURIOSO"
                       ],
                       [
                         "Sorprendido",
-                        "SORPRENDIDO"
+                        "FixedConfiguredEmotion.SORPRENDIDO"
                       ]
                     ]
                   }
@@ -136,7 +136,7 @@ Blockly.Blocks['mvt_avanzar'] = {
     }
   };
 
-  Blockly.Blocks['mvt_avanzar_tiempo'] = {
+  Blockly.Blocks['mvt_avanzar_tiempo_media'] = {
     init: function() {
         this.jsonInit(
             {
@@ -177,8 +177,7 @@ Blockly.Blocks['mvt_avanzar'] = {
     }
   };
 
-
-  Blockly.Blocks['mvt_girar_tiempo'] = {
+  Blockly.Blocks['mvt_girar_tiempo_media'] = {
     init: function() {
         this.jsonInit(
             {
@@ -195,6 +194,140 @@ Blockly.Blocks['mvt_avanzar'] = {
                       [
                         "Derecha",
                         "right"
+                      ]
+                    ]
+                  },
+                  {
+                    "type": "input_dummy"
+                  },
+                  {
+                    "type": "field_number",
+                    "name": "TIME",
+                    "value": 0,
+                    "min": 0
+                  }
+                ],
+                "inputsInline": true,
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 210,
+                "tooltip": "El robot gira dado un tiempo especifico",
+                "helpUrl": ""
+              }
+        );
+    }
+  };
+
+
+  Blockly.Blocks['mvt_avanzar'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "message0": "Avanzar",
+                "inputsInline": true,
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 230,
+                "tooltip": "El robot Avanza",
+                "helpUrl": ""
+              }
+        );
+    }
+  };
+
+
+  Blockly.Blocks['mvt_girar'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "message0": "Girar Direccíon %1",
+                "args0": [
+                  {
+                    "type": "field_dropdown",
+                    "name": "Movement",
+                    "options": [
+                      [
+                        "Izquierda",
+                        "-1"
+                      ],
+                      [
+                        "Derecha",
+                        "1"
+                      ]
+                    ]
+                  }
+                ],
+                "inputsInline": true,
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 230,
+                "tooltip": "El robot gira",
+                "helpUrl": ""
+              }
+        );
+    }
+  };
+
+  Blockly.Blocks['mvt_avanzar_tiempo'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "message0": "Avanzar Direccíon %1 %2 TIempo %3",
+                "args0": [
+                  {
+                    "type": "field_dropdown",
+                    "name": "Movement",
+                    "options": [
+                      [
+                        "Adelante",
+                        "1"
+                      ],
+                      [
+                        "Atrás",
+                        "-1"
+                      ]
+                    ]
+                  },
+                  {
+                    "type": "input_dummy"
+                  },
+                  {
+                    "type": "field_number",
+                    "name": "TIME",
+                    "value": 0,
+                    "min": 0
+                  }
+                ],
+                "inputsInline": true,
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 210,
+                "tooltip": "El robot avanza dado un tiempo especifico",
+                "helpUrl": ""
+              }
+        );
+    }
+  };
+
+
+
+  Blockly.Blocks['mvt_girar_tiempo'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "message0": "Girar Direccíon %1 %2 TIempo %3",
+                "args0": [
+                  {
+                    "type": "field_dropdown",
+                    "name": "Movement",
+                    "options": [
+                      [
+                        "Izquierda",
+                        "-1"
+                      ],
+                      [
+                        "Derecha",
+                        "1"
                       ]
                     ]
                   },
@@ -256,6 +389,9 @@ Blockly.Blocks['mvt_avanzar'] = {
     init: function() {
       this.appendDummyInput()
           .appendField("Setup SmartTown");
+        this.appendDummyInput()
+          .appendField("Serial Number")
+          .appendField(new Blockly.FieldNumber(115200), "serialNumber");
       this.appendDummyInput()
           .appendField("Wifi Name")
           .appendField(new Blockly.FieldTextInput("ciscosb1"), "wifiName");
@@ -273,6 +409,30 @@ Blockly.Blocks['mvt_avanzar'] = {
     }
   };
 
+
+  Blockly.Blocks['setupsmarttown_media'] = {
+    init: function() {
+      this.appendDummyInput()
+          .appendField("Setup SmartTown");
+        this.appendDummyInput()
+          .appendField("Serial Number")
+          .appendField(new Blockly.FieldNumber(115200), "serialNumber");
+      this.appendDummyInput()
+          .appendField("Wifi Name")
+          .appendField(new Blockly.FieldTextInput("ciscosb1"), "wifiName");
+      this.appendDummyInput()
+          .appendField("Password")
+          .appendField(new Blockly.FieldTextInput(""), "pass");
+      this.appendDummyInput()
+          .appendField("Configuration")
+          .appendField(new Blockly.FieldDropdown([["Quyca","Quyca"], ["SmartTown","Smarttown"]]), "CONF_TYPE");
+      this.setInputsInline(true);
+      this.setNextStatement(true, null);
+      this.setColour(59);
+   this.setTooltip("Setup SmartTown functions");
+   this.setHelpUrl("");
+    }
+  };
 
   Blockly.Blocks['new_smarttown_command'] = {
     init: function() {

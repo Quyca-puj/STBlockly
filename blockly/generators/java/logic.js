@@ -145,11 +145,11 @@ Blockly.Java['logic_null'] = function(block) {
  */
 Blockly.Java['logic_ternary'] = function(block) {
   var valueIf = Blockly.Java.valueToCode(block, 'IF',
-      Blockly.Java.ORDER_CONDITIONAL) || 'false';
+      Blockly.Java.ORDER_TERNARY) || 'false';
   var valueThen = Blockly.Java.valueToCode(block, 'THEN',
-      Blockly.Java.ORDER_CONDITIONAL) || 'null';
+      Blockly.Java.ORDER_TERNARY) || 'null';
   var valueElse = Blockly.Java.valueToCode(block, 'ELSE',
-      Blockly.Java.ORDER_CONDITIONAL) || 'null';
+      Blockly.Java.ORDER_TERNARY) || 'null';
   var code = valueIf + ' ? ' + valueThen + ' : ' + valueElse;
-  return [code, Blockly.Java.ORDER_CONDITIONAL];
+  return [code, Blockly.Java.ORDER_TERNARY];
 };
