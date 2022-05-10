@@ -93,4 +93,7 @@ Ardublockly.LOCALISED_TEXT = {
   catAudio: "Audio",
   catMotors: "Motores",
   catComms: "Comunicación",
+  verify: "Verifica si el codigo es correcto",
+  upload: "¡Sube tu codigo!",
+  codePlaceHolder: "Nombre del Proyecto",
 };

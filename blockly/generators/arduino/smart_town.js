@@ -51,6 +51,21 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
     let text_pass = block.getFieldValue('pass');
     let serial = block.getFieldValue('serialNumber');
     let conf = block.getFieldValue('CONF_TYPE');
+    let commands = Blockly.Arduino.statementToCode(block, 'COMMANDS');
+    let STcommands = [];
+
+    let STDef = 'void Robot::processCommands(String msg){\n';
+    for (let name in Blockly.Arduino.STFunctions_) {
+      STcommands.push('  if(!msg.indexOf("'+name+'")){\n'+Blockly.Arduino.STFunctions_[name]+'   } \n');
+    }
+
+    if(STcommands.length){
+      STDef+=STcommands.join(' else')
+      STDef+=' else {\n     robotMovement(msg);\n   }\n';
+    }else{
+      STDef+='  robotMovement(msg);\n';
+    }
+    STDef+='}\n\n';
 
     let setupCode = '//'+conf+' config\n';
 
@@ -80,6 +95,7 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
 
     let includeCode='#include "Robot.h"\n';
     let robotDef = 'Robot robot('+serial+',"'+text_wifiname+'","'+text_pass+'");'
+    Blockly.Arduino.addFunction("processCommands",STDef);
 
     Blockly.Arduino.addInclude('custom',includeCode);
     Blockly.Arduino.setRobotDef(robotDef);
@@ -113,6 +129,8 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
   Blockly.Arduino['new_smarttown_command'] = function(block) {
     let text_name = block.getFieldValue('NAME');
     let statements_name = Blockly.Arduino.statementToCode(block, 'COMMANDS');
+
+
     Blockly.Arduino.addSTCommand(text_name,statements_name);
     return '';
   };

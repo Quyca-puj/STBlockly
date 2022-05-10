@@ -401,8 +401,10 @@ Blockly.Blocks['mvt_avanzar_media'] = {
       this.appendDummyInput()
           .appendField("Configuration")
           .appendField(new Blockly.FieldDropdown([["Quyca","Quyca"], ["SmartTown","Smarttown"]]), "CONF_TYPE");
+      this.appendStatementInput("COMMANDS")
+      .setCheck("Command")
+      .appendField("Comandos");
       this.setInputsInline(true);
-      this.setNextStatement(true, null);
       this.setColour(59);
    this.setTooltip("Setup SmartTown functions");
    this.setHelpUrl("");
@@ -453,6 +455,8 @@ Blockly.Blocks['mvt_avanzar_media'] = {
                   "name": "COMMANDS"
                 }
               ],
+              "previousStatement": null,
+              "nextStatement": null,
               "colour": 120,
               "tooltip": "",
               "helpUrl": ""
