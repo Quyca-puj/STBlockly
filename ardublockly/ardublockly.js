@@ -132,6 +132,7 @@ Ardublockly.ideSendUpload = function() {
   Ardublockly.shortMessage(Ardublockly.getLocalStr('uploadingSketch'));
   Ardublockly.resetIdeOutputContent();
   Ardublockly.sendCode();
+  STServer.sendCommands(Ardublockly.workspace);
 };
 
 /** Sets the Ardublockly server IDE setting to verify and sends the code. */
@@ -172,9 +173,9 @@ Ardublockly.initialiseIdeButtons = function() {
   document.getElementById('button_ide_left').title =
       Ardublockly.getLocalStr('openSketch');
   document.getElementById('button_ide_middle').title =
-      Ardublockly.getLocalStr('verifySketch');
+      Ardublockly.getLocalStr('verify');
   document.getElementById('button_ide_large').title =
-      Ardublockly.getLocalStr('uploadSketch');
+      Ardublockly.getLocalStr('upload');
   ArdublocklyServer.requestIdeOptions(function(jsonObj) {
     if (jsonObj != null) {
       Ardublockly.changeIdeButtons(jsonObj.selected);
@@ -192,8 +193,9 @@ Ardublockly.changeIdeButtons = function(value) {
   var middleButton = document.getElementById('button_ide_middle');
   var leftButton = document.getElementById('button_ide_left');
   var openTitle = Ardublockly.getLocalStr('openSketch');
-  var verifyTitle = Ardublockly.getLocalStr('verifySketch');
-  var uploadTitle = Ardublockly.getLocalStr('uploadSketch');
+  var verifyTitle = Ardublockly.getLocalStr('verify');
+  var uploadTitle = Ardublockly.getLocalStr('upload');
+  
   if (value === 'upload') {
     Ardublockly.changeIdeButtonsDesign(value);
     Ardublockly.ideButtonLeftAction = Ardublockly.ideSendOpen;
@@ -528,7 +530,6 @@ Ardublockly.sendCode = function() {
 
   ArdublocklyServer.sendSketchToServer(Ardublockly.generateArduino(), sendCodeReturn);
 
-  STServer.sendCommands(Ardublockly.workspace);
 };
 
 /** Populate the workspace blocks with the XML written in the XML text area. */

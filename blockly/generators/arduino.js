@@ -141,15 +141,6 @@ Blockly.Arduino.init = function(workspace) {
 Blockly.Arduino.finish = function(code) {
   // Convert the includes, definitions, and functions dictionaries into lists
   var includes = [], definitions = [], variables = [], functions = [];
-  let STcommands = [];
-
-  for (var commandName in Blockly.Arduino.STFunctions_) {
-    let auxCommand = '   if(!msg.indexOf("'+commandName+'")){\n'+Blockly.Arduino.STFunctions_[commandName]+'   }'
-    STcommands.push(auxCommand);
-  }
-  if (STcommands.length) {
-    STcommands.push('\n');
-  }
 
   for (var name in Blockly.Arduino.includes_) {
     includes.push(Blockly.Arduino.includes_[name]);
@@ -199,20 +190,12 @@ Blockly.Arduino.finish = function(code) {
   delete Blockly.Arduino.userFunctions_;
   delete Blockly.Arduino.functionNames_;
   delete Blockly.Arduino.setups_;
-  delete Blockly.Arduino.STFunctions_;
   delete Blockly.Arduino.pins_;
   Blockly.Arduino.variableDB_.reset();
 
   var allDefs = includes.join('\n') + definitions.join('\n') + variables.join('\n') + functions.join('\n\n');
-  let STDef = 'void Robot::processCommands(String msg){\n';
-  if(STcommands.length){
-    STDef+=STcommands.join('\n  else');
-    STDef+='  {\n     robotMovement(msg);\n   }\n';
-  }else{
-    STDef+='  robotMovement(msg);\n';
-  }
-  STDef+='}\n\n';
-  allDefs+=STDef;
+
+
   let robotDef = Blockly.Arduino.robotDef_;
   if (robotDef){
     allDefs+='\n'+robotDef+'\n';

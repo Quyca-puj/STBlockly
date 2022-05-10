@@ -61,14 +61,18 @@ Ardublockly.bindDesignEventListeners = function() {
 
   $("#lang").on("change",function (){
     Ardublockly.selected_language=languages.value;
-    var displayArduino = document.getElementById("arduino_area");
-    var displayJava = document.getElementById("java_area");
-    var displayPython = document.getElementById("py_area");
-    var navBar = document.getElementById("navBar");
-    var footer = document.getElementById("ide_output_collapsible_header");
+    let displayArduino = document.getElementById("arduino_area");
+    let displayJava = document.getElementById("java_area");
+    let displayPython = document.getElementById("py_area");
+    let navBar = document.getElementById("navBar");
+    let footer = document.getElementById("ide_output_collapsible_header");
+    let buttonLeft = document.getElementById('button_ide_left');
+    let buttonMiddle = document.getElementById('button_ide_middle');
+    let buttonLarge = document.getElementById('button_ide_large');
 
     switch(languages.value){
       case "arduino":
+        buttonLeft.style.display="";
         displayArduino.style.display="initial";
         displayPython.style.display="none";
         displayJava.style.display="none";
@@ -77,6 +81,7 @@ Ardublockly.bindDesignEventListeners = function() {
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_ARDUINO_XML);
       break;
       case "java":
+        buttonLeft.style.display="none";
         displayPython.style.display="none";
         displayArduino.style.display="none";
         displayJava.style.display="initial";
@@ -88,6 +93,7 @@ Ardublockly.bindDesignEventListeners = function() {
         });
       break;
       case "python":
+        buttonLeft.style.display="none";
         displayJava.style.display="none";
         displayArduino.style.display="none";
         displayPython.style.display="initial";
@@ -453,11 +459,12 @@ Ardublockly.sketchNameSizeEffect = function() {
     $(this).attr('size', $(this).val().length);
   };
 
+  let codeName = Ardublockly.getLocalStr("codePlaceHolder");
   var correctInput = function() {
     // If nothing in the input, add default name
     if ($(this).val() == '') {
-      $(this).val('Sketch_Name');
-      $(this).attr('size', 10);
+      $(this).val(codeName);
+      $(this).attr('size', 20);
     }
     // Replace all spaces with underscores
     $(this).val($(this).val().replace(/ /g, '_'));
