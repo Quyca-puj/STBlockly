@@ -24,4 +24,6 @@ extern bool overIntersection;
 bool followLine(int speed);
 bool control(int speed);
 bool turn(int direction,int speed);
+void timedMove(int speed,  int time);
+void timedTurn(int direction,int speed, int time);
 #endif

@@ -6,12 +6,12 @@
  */
 
 /**
- * @fileoverview Utility functions for handling STCommands.
+ * @fileoverview Utility functions for handling SmartTown.
  * @author fraser@google.com (Neil Fraser)
  */
 'use strict';
 
-goog.provide('Blockly.STCommands');
+goog.provide('Blockly.SmartTown');
 
 goog.require('Blockly.Field');
 goog.require('Blockly.Names');
@@ -21,7 +21,7 @@ goog.require('Blockly.Workspace');
 /**
  * Category to separate STCommand names from variables and generated functions.
  */
-Blockly.STCommands.NAME_TYPE = 'STCOMMANDS';
+Blockly.SmartTown.NAME_TYPE = 'STCOMMANDS';
 
 /**
  * Find all user-created STCommand definitions in a workspace.
@@ -31,7 +31,7 @@ Blockly.STCommands.NAME_TYPE = 'STCOMMANDS';
  *     Each STCommand is defined by a three-element list of name, parameter
  *     list, and return value boolean.
  */
-Blockly.STCommands.allSTCommands = function(root) {
+Blockly.SmartTown.allSTCommands = function(root) {
   var blocks = root.getAllBlocks();
   let STCommandsNoReturn = [];
   for (var i = 0; i < blocks.length; i++) {
@@ -42,9 +42,40 @@ Blockly.STCommands.allSTCommands = function(root) {
       }
     }
   }
-  STCommandsNoReturn.sort(Blockly.STCommands.procTupleComparator_);
+  STCommandsNoReturn.sort(Blockly.SmartTown.procTupleComparator_);
+  console.log(STCommandsNoReturn)
   return [STCommandsNoReturn];
 };
+
+
+/**
+ * Find all user-created STCommand definitions in a workspace.
+ * @param {!Blockly.Workspace} root Root workspace.
+ * @return {!Array.<!Array.<!Array>>} Pair of arrays, the
+ *     first contains STCommands without return variables, the second with.
+ *     Each STCommand is defined by a three-element list of name, parameter
+ *     list, and return value boolean.
+ */
+ Blockly.SmartTown.allSTAL = function(root) {
+  var blocks = root.getAllBlocks();
+  let STALs = [];
+  for (var i = 0; i < blocks.length; i++) {
+    if (blocks[i].getSTALDef) {
+      var name = blocks[i].getSTALDef();
+      let stmts = Blockly.SmartTown.middleGenerator.statementToCode(blocks[i], 'COMMANDS');
+      var tuple = [name, stmts];
+      console.log(tuple);
+      if (tuple) {
+          STALs.push(tuple);
+      }
+    }
+  }
+  STALs.sort(Blockly.SmartTown.procTupleComparator_);
+  console.log(STALs)
+  return [STALs];
+};
+
+
 
 /**
  * Comparison function for case-insensitive sorting of the first element of
@@ -54,7 +85,7 @@ Blockly.STCommands.allSTCommands = function(root) {
  * @return {number} -1, 0, or 1 to signify greater than, equality, or less than.
  * @private
  */
-Blockly.STCommands.procTupleComparator_ = function(ta, tb) {
+Blockly.SmartTown.procTupleComparator_ = function(ta, tb) {
   return ta[0].toLowerCase().localeCompare(tb[0].toLowerCase());
 };
 
@@ -64,12 +95,12 @@ Blockly.STCommands.procTupleComparator_ = function(ta, tb) {
  * @param {!Blockly.Block} block Block to disambiguate.
  * @return {string} Non-colliding name.
  */
-Blockly.STCommands.findLegalName = function(name, block) {
+Blockly.SmartTown.findLegalName = function(name, block) {
   if (block.isInFlyout) {
     // Flyouts can have multiple STCommands called 'do something'.
     return name;
   }
-  while (!Blockly.STCommands.isLegalName(name, block.workspace, block)) {
+  while (!Blockly.SmartTown.isLegalName(name, block.workspace, block)) {
     // Collision with another STCommand.
     var r = name.match(/^(.*?)(\d+)$/);
     if (!r) {
@@ -90,7 +121,7 @@ Blockly.STCommands.findLegalName = function(name, block) {
  *     comparisons (one doesn't want to collide with oneself).
  * @return {boolean} True if the name is legal.
  */
-Blockly.STCommands.isLegalName = function(name, workspace, opt_exclude) {
+Blockly.SmartTown.isLegalName = function(name, workspace, opt_exclude) {
   var blocks = workspace.getAllBlocks();
   // Iterate through every block and check the name.
   for (var i = 0; i < blocks.length; i++) {
@@ -113,12 +144,12 @@ Blockly.STCommands.isLegalName = function(name, workspace, opt_exclude) {
  * @return {string} The accepted name.
  * @this {!Blockly.Field}
  */
-Blockly.STCommands.rename = function(text) {
+Blockly.SmartTown.rename = function(text) {
   // Strip leading and trailing whitespace.  Beyond this, all names are legal.
   text = text.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
 
   // Ensure two identically-named STCommands don't exist.
-  text = Blockly.STCommands.findLegalName(text, this.sourceBlock_);
+  text = Blockly.SmartTown.findLegalName(text, this.sourceBlock_);
   // Rename any callers.
   var blocks = this.sourceBlock_.workspace.getAllBlocks();
   for (var i = 0; i < blocks.length; i++) {
@@ -134,7 +165,7 @@ Blockly.STCommands.rename = function(text) {
  * @param {!Blockly.Workspace} workspace The workspace contianing STCommands.
  * @return {!Array.<!Element>} Array of XML block elements.
  */
-Blockly.STCommands.flyoutCategory = function(workspace) {
+Blockly.SmartTown.flyoutCategory = function(workspace) {
   var xmlList = [];
 
   if (xmlList.length) {
@@ -173,7 +204,7 @@ Blockly.STCommands.flyoutCategory = function(workspace) {
  * @param {!Blockly.Workspace} workspace The workspace to find callers in.
  * @return {!Array.<!Blockly.Block>} Array of caller blocks.
  */
-Blockly.STCommands.getCallers = function(name, workspace) {
+Blockly.SmartTown.getCallers = function(name, workspace) {
   var callers = [];
   var blocks = workspace.getAllBlocks();
   // Iterate through every block and check the name.
@@ -195,8 +226,8 @@ Blockly.STCommands.getCallers = function(name, workspace) {
  * @param {string} name Name of deleted STCommand definition.
  * @param {!Blockly.Workspace} workspace The workspace to delete callers from.
  */
-Blockly.STCommands.disposeCallers = function(name, workspace) {
-  var callers = Blockly.STCommands.getCallers(name, workspace);
+Blockly.SmartTown.disposeCallers = function(name, workspace) {
+  var callers = Blockly.SmartTown.getCallers(name, workspace);
   for (var i = 0; i < callers.length; i++) {
     callers[i].dispose(true, false);
   }
@@ -207,11 +238,11 @@ Blockly.STCommands.disposeCallers = function(name, workspace) {
  * callers.
  * @param {!Blockly.Block} defBlock STCommand definition block.
  */
-Blockly.STCommands.mutateCallers = function(defBlock) {
+Blockly.SmartTown.mutateCallers = function(defBlock) {
   var oldRecordUndo = Blockly.Events.recordUndo;
   var name = defBlock.getCommandDef()[0];
   var xmlElement = defBlock.mutationToDom(true);
-  var callers = Blockly.STCommands.getCallers(name, defBlock.workspace);
+  var callers = Blockly.SmartTown.getCallers(name, defBlock.workspace);
   for (var i = 0, caller; caller = callers[i]; i++) {
     var oldMutationDom = caller.mutationToDom();
     var oldMutation = oldMutationDom && Blockly.Xml.domToText(oldMutationDom);
@@ -236,7 +267,7 @@ Blockly.STCommands.mutateCallers = function(defBlock) {
  * @param {!Blockly.Workspace} workspace The workspace to search.
  * @return {Blockly.Block} The STCommand definition block, or null not found.
  */
-Blockly.STCommands.getDefinition = function(name, workspace) {
+Blockly.SmartTown.getDefinition = function(name, workspace) {
   var blocks = workspace.getAllBlocks();
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].getCommandDef) {

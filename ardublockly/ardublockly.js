@@ -129,10 +129,21 @@ Ardublockly.ideSendUpload = function() {
     Ardublockly.showExtraIdeButtons(false);
     Ardublockly.setIdeSettings(null, 'upload');
   }
-  Ardublockly.shortMessage(Ardublockly.getLocalStr('uploadingSketch'));
-  Ardublockly.resetIdeOutputContent();
-  Ardublockly.sendCode();
-  STServer.sendCommands(Ardublockly.workspace);
+  switch(Ardublockly.selected_language){
+    case "arduino":
+      Ardublockly.shortMessage(Ardublockly.getLocalStr('uploadingSketch'));
+      Ardublockly.resetIdeOutputContent();
+      Ardublockly.sendCode();
+      STServer.sendCommands(Ardublockly.workspace);
+      break;
+    case "java":
+    case "python":
+      Ardublockly.shortMessage(Ardublockly.getLocalStr('uploadingCommands'));
+      Ardublockly.resetIdeOutputContent();
+      STServer.sendActionLists(Ardublockly.workspace);
+      break;
+  }
+  
 };
 
 /** Sets the Ardublockly server IDE setting to verify and sends the code. */
@@ -195,7 +206,7 @@ Ardublockly.changeIdeButtons = function(value) {
   var openTitle = Ardublockly.getLocalStr('openSketch');
   var verifyTitle = Ardublockly.getLocalStr('verify');
   var uploadTitle = Ardublockly.getLocalStr('upload');
-  
+
   if (value === 'upload') {
     Ardublockly.changeIdeButtonsDesign(value);
     Ardublockly.ideButtonLeftAction = Ardublockly.ideSendOpen;
@@ -588,6 +599,7 @@ Ardublockly.renderContent = function() {
       }
       break;
     case "java":
+      Blockly.SmartTown.middleGenerator = Blockly.Java;
       var javaCode = Ardublockly.generateJava();
       if (javaCode !== Ardublockly.PREV_JAVA_CODE_) {
         var diff = JsDiff.diffWords(Ardublockly.PREV_JAVA_CODE_, javaCode);
@@ -611,6 +623,7 @@ Ardublockly.renderContent = function() {
       }
       break;
     case "python":
+      Blockly.SmartTown.middleGenerator = Blockly.Python;
       var pyCode = Ardublockly.generatePython();
       if (pyCode !== Ardublockly.PREV_PY_CODE_) {
         var diff = JsDiff.diffWords(Ardublockly.PREV_PY_CODE_, pyCode);

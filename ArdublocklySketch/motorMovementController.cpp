@@ -155,3 +155,13 @@ bool turn(int direction,int speed){
       return false;
     }
 }
+
+void timedMove(int speed,  int time){
+  setSpeedsMotor(speed,speed);
+    delay(time*1000);
+}
+
+void timedTurn(int direction,int speed, int time){
+    setSpeedsMotor(direction * speed,-direction* speed);
+    delay(time*1000);
+}

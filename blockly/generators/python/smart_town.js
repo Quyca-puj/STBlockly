@@ -1,69 +1,69 @@
 'use strict';
 
-goog.require('Blockly.Python');
+goog.require('Blockly.Java');
 
-Blockly.Python['mvt_avanzar'] = function(block) {
-  var dropdown_movement = block.getFieldValue('Movement');
-  var dropdown_emotion = block.getFieldValue('Emotion');
+Blockly.Java['mvt_avanzar_middle'] = function(block) {
+  let dropdown_emotion = block.getFieldValue('Emotion');
 
-  var code = 'showEmotion("'+dropdown_emotion+'");\n';
-  var aux_code='robotMovement("'+dropdown_movement+'", client);\n';
-  code+=aux_code;
+  let code='sendMessage("'+dropdown_emotion+'");\n';
   return code;
 };
 
-Blockly.Python['mvt_girar'] = function(block) {
-  var dropdown_movement = block.getFieldValue('Movement');
-  var dropdown_emotion = block.getFieldValue('Emotion');
+Blockly.Java['mvt_girar_middle'] = function(block) {
+  let dropdown_movement = block.getFieldValue('Movement');
+  let dropdown_emotion = block.getFieldValue('Emotion');
 
-  var code = 'showEmotion("'+dropdown_emotion+'");\n';
-  var aux_code='robotMovement("'+dropdown_movement+'", client);\n';
-  code+=aux_code;
+  let code='sendMessage("'+dropdown_movement+'");\n';
   return code;
 };
 
-Blockly.Python['mvt_avanzar_tiempo'] = function(block) {
-  var dropdown_movement = block.getFieldValue('Movement');
-  var time = block.getFieldValue('TIME');
+Blockly.Java['mvt_avanzar_tiempo_middle'] = function(block) {
+  let dropdown_movement = block.getFieldValue('Movement');
+  let time = block.getFieldValue('TIME');
+  let speed = block.getFieldValue('SPEED');
 
-  var aux_code='robotMovement("'+dropdown_movement+'", client);\n';
-  code+=aux_code;
+  let code='sendMessage("'+dropdown_movement+'");\n';
   return code;
 };
 
-Blockly.Python['mvt_girar_tiempo'] = function(block) {
-  var dropdown_movement = block.getFieldValue('Movement');
-  var time = block.getFieldValue('TIME');
+Blockly.Java['mvt_girar_tiempo_middle'] = function(block) {
+  let dropdown_movement = block.getFieldValue('Movement');
+  let time = block.getFieldValue('TIME');
+  let speed = block.getFieldValue('SPEED');
 
-  var aux_code='robotMovement("'+dropdown_movement+'", client);\n';
-  code+=aux_code;
+  let code='sendMessage("'+dropdown_movement+'");\n';
   return code;
 };
 
-Blockly.Python['mvt_stop'] = function(block) {
-  var code='robotMovement("stop", client);\n';
+Blockly.Java['mvt_stop'] = function(block) {
+  let code='sendMessage("stop");\n';
   return code;
 };
 
-Blockly.Python['hablar'] = function(block) {
-  var value_tosay = Blockly.Python.valueToCode(block, 'ToSay', Blockly.Python.ORDER_ATOMIC);
-  var code = 'textToSpeech('+value_tosay+');\n';
+Blockly.Java['hablar'] = function(block) {
+  let value_tosay = Blockly.Java.valueToCode(block, 'ToSay', Blockly.Java.ORDER_ATOMIC);
+  let code = 'sendMessage('+value_tosay+');\n';
   return code;
 };
 
- Blockly.Python['st_command_call'] = function(block) {
-  var funcName = Blockly.Java.variableDB_.getName(
+
+ Blockly.Java['st_command_call'] = function(block) {
+  let funcName = Blockly.Java.variableDB_.getName(
       block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
-
-  var code = 'sendCommand("' + funcName + '");\n';
+  let code = 'sendCommand("' + funcName + '");\n';
   return code;
 };
 
-  Blockly.Python['setupsmarttown'] = function(block) {
-    var text_wifiname = block.getFieldValue('wifiName');
-    var text_pass = block.getFieldValue('pass');
+
+Blockly.Java['setupsmarttown_middle'] = function(block) {
+  let commands = Blockly.Arduino.statementToCode(block, 'COMMANDS');
+
+  return '';
+};
 
 
-    var code = 'print("'+text_wifiname+'"+"'+text_pass+'")\n';
-    return code;
-  };
+Blockly.Java['new_smarttown_action_list'] = function(block) {
+  let text_name = block.getFieldValue('NAME');
+  let statements_name = Blockly.Arduino.statementToCode(block, 'COMMANDS');
+  return '';
+};

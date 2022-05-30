@@ -315,8 +315,35 @@ Blockly.Arduino.Boards.profiles.esp8266_wemos_d1 = {
               ['D4', 'D4'], ['D5', 'D5'], ['D6', 'D7'], ['D8', 'D8']]
 };
 
+
+Blockly.Arduino.Boards.profiles.esp8266_nodemcuv3 = {
+  name: 'NodeMCU v3',
+  description: 'NodeMCU v3 compatible board',
+  compilerFlag: 'esp8266:esp8266:nodemcuv2',
+  analogPins: [['A0', 'GPIO0']],
+  digitalPins: [['D0', 'GPIO0'],['D1', 'GPIO1'], ['D2', 'GPIO2'], ['D3', 'GPIO3'], ['D4', 'GPIO4'],
+  ['D5', 'GPIO5'], ['D6', 'GPIO6'], ['D7', 'GPIO7'], ['D8', 'GPIO8'], ['D9', 'GPIO9'], ['D10', 'GPIO10'], ['D11', 'GPIO11']
+  , ['D12', 'GPIO12'], ['D13', 'GPIO13'], ['D14', 'GPIO14'], ['D15', 'GPIO15'], ['D16', 'GPIO16']],
+  pwmPins:  [['D0', 'GPIO0'],['D1', 'GPIO1'], ['D2', 'GPIO2'], ['D3', 'GPIO3'], ['D4', 'GPIO4'],
+             ['D5', 'GPIO5'], ['D6', 'GPIO6'], ['D7', 'GPIO7'], ['D8', 'GPIO8'], ['D9', 'GPIO9'], ['D10', 'GPIO10'], ['D11', 'GPIO11']
+             , ['D12', 'GPIO12'], ['D13', 'GPIO13'], ['D14', 'GPIO14'], ['D15', 'GPIO15']],
+  serial: [['serial', 'Serial']],
+  serialPins: { Serial: [['RX', 'GPIO3'], ['TX', 'GPIO1']] },
+  serialSpeed: Blockly.Arduino.Boards.profiles.uno.serialSpeed,
+  spi: [['SPI', 'SPI']],
+  spiPins: { SPI: [['MOSI', 'GPIO13'], ['MISO', 'GPIO12'], ['SCK', 'GPIO14'], ['CS', 'GPIO15']] },
+  spiClockDivide: Blockly.Arduino.Boards.profiles.uno.spiClockDivide,
+  i2c: [['I2C', 'Wire']],
+  i2cPins: { Wire: [['SDA', 'GPIO4'], ['SCL', 'GPIO5']] },
+  i2cSpeed: Blockly.Arduino.Boards.profiles.uno.i2cSpeed,
+  builtinLed: [['BUILTIN_1', 'GPIO2']],
+  interrupt: [['D0', 'GPIO0'],['D1', 'GPIO1'], ['D2', 'GPIO2'], ['D3', 'GPIO3'], ['D4', 'GPIO4'],
+  ['D5', 'GPIO5'], ['D6', 'GPIO6'], ['D7', 'GPIO7'], ['D8', 'GPIO8'], ['D9', 'GPIO9'], ['D10', 'GPIO10'], ['D11', 'GPIO11']
+  , ['D12', 'GPIO12'], ['D13', 'GPIO13'], ['D14', 'GPIO14'], ['D15', 'GPIO15']]
+};
+
 /** Set default profile to Arduino standard-compatible board */
-Blockly.Arduino.Boards.selected = Blockly.Arduino.Boards.profiles.uno;
+Blockly.Arduino.Boards.selected = Blockly.Arduino.Boards.profiles.esp8266_nodemcuv3;
 
 /**
  * Changes the Arduino board profile selected, which trigger a refresh of the

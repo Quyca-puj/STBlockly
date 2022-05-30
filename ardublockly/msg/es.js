@@ -32,10 +32,31 @@ Ardublockly.LOCALISED_TEXT = {
   arduinoOpVerifiedTitle: "Sketch verificado exitosamente",
   arduinoOpOpenedTitle: "Sketch abierto en el IDE",
   arduinoOpOpenedBody: "El sketch debería estar cargado en el IDE de Arduino.",
-  arduinoOpErrorUpVerTitle: "Fallo en la construcción o subida",
-  arduinoOpErrorSketchTitle: "Sketch no encontrado",
-  arduinoOpErrorFlagTitle: "Argumento invalido en la linea de comandos",
-  arduinoOpErrorFlagPrefTitle: "Preferencia pasada a la bandera 'get-pref' no existe",
+  arduinoOpErrorTitle: "Ha habido un error",
+  arduinoOpErrorIdContext_0: "Sin error.",
+  arduinoOpErrorIdContext_1: "Fallo en la construcción o subida",
+  arduinoOpErrorIdContext_2: "Sketch no encontrado",
+  arduinoOpErrorIdContext_3: "Argumento invalido en la linea de comandos",
+  arduinoOpErrorIdContext_4: "Preferencia pasada a la bandera 'get-pref' no existe",
+  arduinoOpErrorIdContext_5: "Not Clear, but Arduino IDE sometimes errors with this.",
+  arduinoOpErrorIdContext_50: "Unexpected error code from Arduino IDE",
+  arduinoOpErrorIdContext_51: "Could not create sketch file",
+  arduinoOpErrorIdContext_52: "Invalid path to internally created sketch file",
+  arduinoOpErrorIdContext_53: "Unable to find Arduino IDE<br>" +
+                              "The compiler directory has not been set correctly.<br>" +
+                              "Please ensure the path is correct in the Settings.",
+  arduinoOpErrorIdContext_54: "What should we do with the Sketch?<br>" +
+                              "The launch IDE option has not been set.<br>" +
+                              "Please select an IDE option in the Settings.",
+  arduinoOpErrorIdContext_55: "Serial Port unavailable<br>" +
+                              "The Serial Port is not accessible.<br>" +
+                              "Please check if the Arduino is correctly connected to the PC and select the Serial Port in the Settings.",
+  arduinoOpErrorIdContext_56: "Unknown Arduino Board<br>" +
+                              "The Arduino Board has not been set.<br>" +
+                              "Please select the appropriate Arduino Board from the settings.",
+  arduinoOpErrorIdContext_52: "Unexpected server error.",
+  arduinoOpErrorIdContext_64: "Unable to parse sent JSON.",
+  arduinoOpErrorUnknown: "Unexpected error",
   arduinoOpErrorIdeDirTitle: "Incapaz de encontrar el Arduino IDE",
   arduinoOpErrorIdeDirBody: "El directorio del compilador no ha sido configurado.<br>" +
                             "Por favor configuralo en las Opciones.",
@@ -96,4 +117,5 @@ Ardublockly.LOCALISED_TEXT = {
   verify: "Verifica si el codigo es correcto",
   upload: "¡Sube tu codigo!",
   codePlaceHolder: "Nombre del Proyecto",
+  uploadingCommands: "Subiendo al Servidor de SmartTown",
 };

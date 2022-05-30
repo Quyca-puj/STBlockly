@@ -1,6 +1,16 @@
 #include "Robot.h"
 
-Robot::Robot(int serial, String ssid, String password) {
+Robot::Robot() {
+  
+  speeds=50;
+  movementRobot=0;
+  emotion="";
+  movementCurrentState = false;
+  currentMillis = 0;
+  timeFlag = false;
+}
+
+void Robot::setupRobot(int serial, String ssid, String password){
   Serial.begin(serial);
   delay(1000);
   WifiConnection(ssid, password);
@@ -8,18 +18,29 @@ Robot::Robot(int serial, String ssid, String password) {
   setupSensors();
   setupFaces();
   JointSetup();
-  currentMillis = 0;
-  timeFlag = false;
 }
 
 
 void Robot::processMsg(String msg, WiFiClient client) {
   command = "";
+  emotion="";
   processMsgString(msg);
+  shouldAnswer = true;
+  Serial.println("processMsg entered");
+  Serial.println("Speed");
+  Serial.println(speeds);
+  Serial.println("timer");
+  Serial.println(timer);
+  Serial.println("emotion");
+  Serial.println(emotion);
   if (command.length() > 0) {
     readCustomVariablesSensors(msg, client);
     processCommands(command);
-    client.println(arguments[currentArgs-1]);
+    if(shouldAnswer){
+      Serial.println(arguments[currentArgs-1]);
+      client.println(arguments[currentArgs-1]);
+    }
+
   }
 }
 
@@ -39,56 +60,63 @@ void Robot::calibration() {
   setSpeedsMotor(0, 0); // Finalizacion de la calibración
 }
 
-void Robot::robotMovement(String msg) {
+void Robot::robotBasicCommands(String msg) {
 
+Serial.println(msg);
   if (msg.equals("forward")) {
+    Serial.println("forward entered");
     robotForward();
   } else if (msg.equals("right")) {
+    Serial.println("right entered");
     robotTurn(1);
   } else if (msg.equals("left")) {
+    Serial.println("left entered");
     robotTurn(-1);
   } else if (msg.equals("stop")) {
+    Serial.println("stop entered");
     robotStopMovement();
   } else if (msg.equals("t_reverse")) {
+    Serial.println("t_reverse entered");
     robotTimedMove(-1);
     delay(1500);
   } else if (msg.equals("t_forward")) {
+    Serial.println("t_forward entered");
     robotTimedMove(1);
     delay(1500);
   } else if (msg.equals("t_left")) {
+    Serial.println("t_left entered");
     robotTimedTurn(-1);
     delay(1500);
   } else if (msg.equals("t_right")) {
+    Serial.println("t_right entered");
     robotTimedTurn(1);
+    delay(1500);
+  }else if (msg.equals(EMOTION_STR)) {
+    Serial.println("emotions entered");
+    shouldAnswer = false;
+    readFaces(emotion);
     delay(1500);
   }
 
 }
 
 void Robot::robotForward(){
-    while (!followLine(speeds)) {
-      delay(50);
+    if (followLine(speeds)) {
+      setSpeedsMotor(0,0);
     }
 }
 void Robot::robotTurn(int dir){
-    while (!turn(dir, speeds)) {
-      delay(50);
+    if (!turn(dir, speeds)) {
+      setSpeedsMotor(0,0);
     }
 }
 void Robot::robotTimedMove(int dir){
-  timeFlag=true;
-  currentMillis = millis();
-  
+  timedMove(dir*speeds, timer);
+  setSpeedsMotor(0,0);
 }
 void Robot::robotTimedTurn(int dir){
-  timeFlag=true;
-  currentMillis = millis();
-  while(timeFlag){
-        if (currentMillis - prevMillis >= timer) {
-         //previousOnBoardLedMillis += onBoardLedInterval;
-
-    }
-  }
+  timedTurn(dir,speeds, timer);
+  setSpeedsMotor(0,0);
   
 }
 
@@ -190,39 +218,23 @@ void Robot::readCustomVariablesSensors(String msg, WiFiClient client) {
 }
 
 void Robot::JointServoMsg(String msg, WiFiClient client) {
-  String messageint = "";
-  bool digit = false;
-  int positionJoint;
-  int periodJoint;
-  if (!msg.indexOf("EXTRAJOINTSTATIC")) {
-    for (char single : msg) {
-      if (isDigit(single)) {
-        digit = true;
-        messageint.concat(single);
-      }
+    String messageint="";
+    bool digit=false;
+    int positionJoint;
+    int periodJoint;
+    if(!msg.indexOf("static")){
+       for (char single : msg){
+          if(isDigit(single)){
+            digit=true;
+            messageint.concat(single);
+          }
+        }
+        if(digit=true){
+          positionJoint= messageint.toInt();  
+          JointStatic(positionJoint);
+          messageint = "";
+        }
     }
-    if (digit = true) {
-      positionJoint = messageint.toInt();
-      client.println("DynamicMotor");
-      JointStatic(positionJoint);
-      messageint = "";
-    }
-  }
-  if (!msg.indexOf("EXTRAJOINTDYNAMIC")) {
-    for (char single : msg) {
-      if (isDigit(single)) {
-        digit = true;
-        messageint.concat(single);
-      }
-    }
-    if (digit = true) {
-      periodJoint = messageint.toInt();
-      timetransition = millis();
-      client.println("DynamicMotor");
-      JointDynamic(periodJoint);
-      messageint = "";
-    }
-  }
 }
 void Robot::processMsgString(String msg) {
   String messageintSpeed = "";
@@ -248,19 +260,29 @@ void Robot::processMsgString(String msg) {
     }
 
   }
-
+  currentArgs=tabs;
   if(currentArgs>1){
-    speeds = arguments[0].toInt();
+    if(command.equals(EMOTION_STR)){
+      emotion = arguments[0];
+    }else{
+      speeds = arguments[0].toInt();
       if(currentArgs>2){
         timer = arguments[1].toInt();
       }
+    }
   }
-  currentArgs=tabs-1;
+  
+Serial.println("args entered");
+    for (int i = 0; i < currentArgs; i ++) {
+      Serial.println(arguments[i]);
+  }
 }
 
 
 void Robot::readFaces(String msg) {
-      if(!msg.indexOf("happy")) {
+  Serial.println("readFaces entered");
+  Serial.println(msg);
+      if(msg.equals("happy")) {
           int myarray[NUMPIXELS] ={0};
           int indexarray[16] ={13, 14, 17, 18, 19, 21, 22, 25, 33, 41, 42, 43, 45, 46, 53, 54};
           int color[3] = {255,255,0};
@@ -278,7 +300,7 @@ void Robot::readFaces(String msg) {
           Serial.println("happy");
         }
 
-        if(!msg.indexOf("sad")) {
+        if(msg.equals("sad")) {
           int myarray[NUMPIXELS] ={0};
           int indexarray[16] ={13, 14, 17, 18, 19, 21, 22, 27, 35, 41, 42, 43, 45, 46, 53, 54};
           int color[3] = {0,0,255};
@@ -295,7 +317,7 @@ void Robot::readFaces(String msg) {
           facesDraw(myarray,color,50);
           Serial.println("sad");
         }
-        if(!msg.indexOf("angry")) {
+        if(msg.equals("angry")) {
           int myarray[NUMPIXELS] ={0};
           int indexarray[12] ={6, 9, 14, 18, 21, 26, 34, 42, 45, 49, 54, 62};
           int color[3] = {255,0,0};
@@ -313,7 +335,7 @@ void Robot::readFaces(String msg) {
           Serial.println("angry");
         }
 
-        if(!msg.indexOf("neutral")) {
+        if(msg.equals("neutral")) {
           int myarray[NUMPIXELS] ={0};
           int indexarray[12] ={13, 14, 18, 21, 22, 26, 34, 42, 45, 46, 53, 54};
           int color[3] = {0,255,0};

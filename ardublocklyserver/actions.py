@@ -120,6 +120,7 @@ def load_arduino_cli(sketch_path):
             exit_code = 0
         else:
             # Launch the Arduino CLI in a subprocess and capture output data
+            print(cli_command)
             process = subprocess.Popen(
                 cli_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                 shell=False)
