@@ -366,24 +366,25 @@ Ardublockly.TOOLBOX_JAVA_XML =
 '  <category id="catFunctions" name="Funciones" custom="PROCEDURE"></category>' +
 '  <sep></sep>' +
 '<category name="SmartTown" colour="#a55b80">'+
-'<block type="setupsmarttown_media"></block>'+
-'<block type="mvt_avanzar_media">'+
+'<block type="setupsmarttown_middle"></block>'+
+'<block type="mvt_avanzar_middle">'+
 '  <field name="Movement">forward</field>'+
 '  <field name="Emotion">MUY_FELIZ</field>'+
 '</block>'+
-'<block type="mvt_girar_media">'+
+'<block type="mvt_girar_middle">'+
 '  <field name="Movement">left</field>'+
 '  <field name="Emotion">MUY_FELIZ</field>'+
 '</block>'+
-'<block type="mvt_avanzar_tiempo_media">'+
+'<block type="mvt_avanzar_tiempo_middle">'+
 '  <field name="Movement">forward</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
-'<block type="mvt_girar_tiempo_media">'+
+'<block type="mvt_girar_tiempo_middle">'+
 '  <field name="Movement">left</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
 '<block type="mvt_stop"></block>' +
+'<block type="new_smarttown_action_list"></block>' +
 '</category>'+
 '  <sep></sep>' +
 '  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +
@@ -504,25 +505,68 @@ Ardublockly.TOOLBOX_PY_XML =
 '  <category id="catFunctions" name="Funciones" custom="PROCEDURE"></category>' +
 '  <sep></sep>' +
 '<category name="SmartTown" colour="#a55b80">'+
-'<block type="setupsmarttown_media"></block>'+
-'<block type="mvt_avanzar_media">'+
+'<block type="setupsmarttown_middle"></block>'+
+'<block type="mvt_avanzar_middle">'+
 '  <field name="Movement">forward</field>'+
 '  <field name="Emotion">MUY_FELIZ</field>'+
 '</block>'+
-'<block type="mvt_girar_media">'+
+'<block type="mvt_girar_middle">'+
 '  <field name="Movement">left</field>'+
 '  <field name="Emotion">MUY_FELIZ</field>'+
 '</block>'+
-'<block type="mvt_avanzar_tiempo_media">'+
+'<block type="mvt_avanzar_tiempo_middle">'+
 '  <field name="Movement">forward</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
-'<block type="mvt_girar_tiempo_media">'+
+'<block type="mvt_girar_tiempo_middle">'+
 '  <field name="Movement">left</field>'+
 '  <field name="TIME">1</field>'+
 '</block>'+
 '<block type="mvt_stop"></block>' +
 '<block type="hablar"></block>'+
+'</category>'+
+'  <sep></sep>' +
+'  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +
+'  <sep></sep>' +
+'</xml>';
+
+
+Ardublockly.TOOLBOX_MID_XML =
+'<xml>' +
+'  <sep></sep>' +
+'  <category id="catLoops" name="Secuencias">' +
+'    <block type="controls_repeat_ext">' +
+'      <value name="TIMES">' +
+'        <block type="math_number">' +
+'          <field name="NUM">10</field>' +
+'        </block>' +
+'      </value>' +
+'    </block>' +
+'  </category>' +
+'  <sep></sep>' +
+'<category name="SmartTown" colour="#a55b80">'+
+'<block type="setupsmarttown_middle"></block>'+
+'<block type="mvt_avanzar_middle">'+
+'  <field name="Emotion">MUY_FELIZ</field>'+
+'</block>'+
+'<block type="mvt_girar_middle">'+
+'  <field name="Movement">left</field>'+
+'  <field name="Emotion">MUY_FELIZ</field>'+
+'</block>'+
+'<block type="mvt_avanzar_tiempo_middle">'+
+'  <field name="Movement">forward</field>'+
+'  <field name="TIME">1</field>'+
+'  <field name="SPEED">1</field>'+
+'</block>'+
+'<block type="mvt_girar_tiempo_middle">'+
+'  <field name="Movement">left</field>'+
+'  <field name="TIME">1</field>'+
+'  <field name="SPEED">1</field>'+
+'</block>'+
+'<block type="mvt_stop_middle">'+
+'  <field name="Emotion">MUY_FELIZ</field>'+
+'</block>' +
+'<block type="new_smarttown_action_list"></block>' +
 '</category>'+
 '  <sep></sep>' +
 '  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +

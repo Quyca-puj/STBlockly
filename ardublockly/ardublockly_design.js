@@ -60,21 +60,25 @@ Ardublockly.bindDesignEventListeners = function() {
   var languages = document.getElementById('lang');
 
   $("#lang").on("change",function (){
-    Ardublockly.selected_language=languages.value;
     let displayArduino = document.getElementById("arduino_area");
     let displayJava = document.getElementById("java_area");
     let displayPython = document.getElementById("py_area");
+    let displayMid = document.getElementById("mid_area");
     let navBar = document.getElementById("navBar");
     let footer = document.getElementById("ide_output_collapsible_header");
     let buttonLeft = document.getElementById('button_ide_left');
     let buttonMiddle = document.getElementById('button_ide_middle');
     let buttonLarge = document.getElementById('button_ide_large');
+    Ardublockly.saveSessionStorageBlocksbyLanguage(Ardublockly.selected_language);
+    Ardublockly.selected_language=languages.value;
+    Ardublockly.discardAllBlocks(true);
 
     switch(languages.value){
       case "arduino":
         buttonLeft.style.display="";
         displayArduino.style.display="initial";
         displayPython.style.display="none";
+        displayMid.style.display="none";
         displayJava.style.display="none";
         navBar.style.backgroundColor= "#00979C"
         footer.style.backgroundColor="#006468";
@@ -83,6 +87,7 @@ Ardublockly.bindDesignEventListeners = function() {
       case "java":
         buttonLeft.style.display="none";
         displayPython.style.display="none";
+        displayMid.style.display="none";
         displayArduino.style.display="none";
         displayJava.style.display="initial";
         navBar.style.backgroundColor= "#6c1ea1";
@@ -95,6 +100,7 @@ Ardublockly.bindDesignEventListeners = function() {
       case "python":
         buttonLeft.style.display="none";
         displayJava.style.display="none";
+        displayMid.style.display="none";
         displayArduino.style.display="none";
         displayPython.style.display="initial";
         navBar.style.backgroundColor= "#938d2e";
@@ -104,7 +110,22 @@ Ardublockly.bindDesignEventListeners = function() {
           Ardublockly.commandList= JSON.parse(list);
         });
       break;
+      case "middle":
+        buttonLeft.style.display="none";
+        displayJava.style.display="none";
+        displayPython.style.display="none";
+        displayArduino.style.display="none";
+        displayMid.style.display="initial";
+        navBar.style.backgroundColor= "#853a2a";
+        footer.style.backgroundColor="#824a3e";
+        Ardublockly.updateToolbox(Ardublockly.TOOLBOX_MID_XML);
+        STServer.requestCommands().then(function handle(list) {  
+          Ardublockly.commandList= JSON.parse(list);
+        });
+      break;
     }
+    
+    Ardublockly.loadSessionStorageBlocksByLanguage(Ardublockly.selected_language);
     Ardublockly.renderContent();
   }
   );

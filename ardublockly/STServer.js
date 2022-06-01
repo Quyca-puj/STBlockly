@@ -114,7 +114,7 @@ STServer.createRequest = function() {
 
 
  STServer.sendCommands = function(workspace) {
-  let STCommandList = Blockly.STCommands.allSTCommands(workspace)[0];
+  let STCommandList = Blockly.SmartTown.allSTCommands(workspace)[0];
   for (let i = 0; i < STCommandList.length; i++) {
     let comName = STCommandList[i][0];
     let jsonObj = {id:-1, name:comName};
@@ -127,3 +127,15 @@ STServer.sendCommand = function(json) {
   STServer.postJson('http://127.0.0.1:8080/command/new', json);
 };
 
+STServer.sendActionList = function(json) {
+  console.log(json);
+  STServer.postJson('http://127.0.0.1:8080/actionList/new', json);
+};
+
+
+ STServer.sendActionLists = function(workspace) {
+  let STActionLists = Blockly.SmartTown.allSTAL(workspace);
+  for (let i = 0; i < STActionLists.length; i++) {
+    STServer.sendActionList(STActionLists[i]);
+  }
+};

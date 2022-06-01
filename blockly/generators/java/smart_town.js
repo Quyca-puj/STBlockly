@@ -2,7 +2,14 @@
 
 goog.require('Blockly.Java');
 
-Blockly.Java['mvt_avanzar_media'] = function(block) {
+Blockly.Java['mvt_avanzar_middle'] = function(block) {
+  let dropdown_emotion = block.getFieldValue('Emotion');
+
+  let code='sendMessage("'+dropdown_emotion+'");\n';
+  return code;
+};
+
+Blockly.Java['mvt_girar_middle'] = function(block) {
   let dropdown_movement = block.getFieldValue('Movement');
   let dropdown_emotion = block.getFieldValue('Emotion');
 
@@ -10,31 +17,25 @@ Blockly.Java['mvt_avanzar_media'] = function(block) {
   return code;
 };
 
-Blockly.Java['mvt_girar_media'] = function(block) {
-  let dropdown_movement = block.getFieldValue('Movement');
-  let dropdown_emotion = block.getFieldValue('Emotion');
-
-  let code='sendMessage("'+dropdown_movement+'");\n';
-  return code;
-};
-
-Blockly.Java['mvt_avanzar_tiempo_media'] = function(block) {
+Blockly.Java['mvt_avanzar_tiempo_middle'] = function(block) {
   let dropdown_movement = block.getFieldValue('Movement');
   let time = block.getFieldValue('TIME');
+  let speed = block.getFieldValue('SPEED');
 
   let code='sendMessage("'+dropdown_movement+'");\n';
   return code;
 };
 
-Blockly.Java['mvt_girar_tiempo_media'] = function(block) {
+Blockly.Java['mvt_girar_tiempo_middle'] = function(block) {
   let dropdown_movement = block.getFieldValue('Movement');
   let time = block.getFieldValue('TIME');
+  let speed = block.getFieldValue('SPEED');
 
   let code='sendMessage("'+dropdown_movement+'");\n';
   return code;
 };
 
-Blockly.Java['mvt_stop_media'] = function(block) {
+Blockly.Java['mvt_stop'] = function(block) {
   let code='sendMessage("stop");\n';
   return code;
 };
@@ -53,8 +54,16 @@ Blockly.Java['hablar'] = function(block) {
   return code;
 };
 
-Blockly.Java['mvt_stop'] = function(block) {
-  let code = 'sendCommand("stop");\n';
-  return code;
+
+Blockly.Java['setupsmarttown_middle'] = function(block) {
+  let commands = Blockly.Java.statementToCode(block, 'COMMANDS');
+
+  return '';
 };
 
+
+Blockly.Java['new_smarttown_action_list'] = function(block) {
+  let text_name = block.getFieldValue('NAME');
+  let statements_name = Blockly.Java.statementToCode(block, 'COMMANDS');
+  return '';
+};
