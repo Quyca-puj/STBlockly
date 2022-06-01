@@ -128,21 +128,14 @@ STServer.sendCommand = function(json) {
 };
 
 STServer.sendActionList = function(json) {
+  console.log(json);
   STServer.postJson('http://127.0.0.1:8080/actionList/new', json);
 };
 
 
-STServer.requestActionList = async function() {
-  return await STServer.getJson('http://127.0.0.1:8080/actionList/all');
-};
-
-
-
  STServer.sendActionLists = function(workspace) {
-  let STActionLists = Blockly.SmartTown.allSTAL(workspace)[0];
+  let STActionLists = Blockly.SmartTown.allSTAL(workspace);
   for (let i = 0; i < STActionLists.length; i++) {
-    let AlName = STActionLists[i][0];
-    let jsonObj = {id:-1, name:AlName};
-    STServer.sendActionList(jsonObj);
+    STServer.sendActionList(STActionLists[i]);
   }
 };

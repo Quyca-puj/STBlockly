@@ -59,6 +59,18 @@
   <script src="../blockly/generators/arduino/variables.js"></script>
   <script src="../blockly/generators/arduino/hello_world.js"></script>
   <script src="../blockly/generators/arduino/smart_town.js"></script>
+  <script src="../blockly/generators/smartmiddle.js"></script>
+  <script src="../blockly/generators/SmartMiddle/lists.js"></script>
+  <script src="../blockly/generators/SmartMiddle/logic.js"></script>
+  <script src="../blockly/generators/SmartMiddle/loops.js"></script>
+  <script src="../blockly/generators/SmartMiddle/map.js"></script>
+  <script src="../blockly/generators/SmartMiddle/math.js"></script>
+  <script src="../blockly/generators/SmartMiddle/procedures.js"></script>
+  <script src="../blockly/generators/SmartMiddle/text.js"></script>
+  <script src="../blockly/generators/SmartMiddle/time.js"></script>
+  <script src="../blockly/generators/SmartMiddle/variables.js"></script>
+  <script src="../blockly/generators/SmartMiddle/smart_town.js"></script>
+  <script src="../blockly/generators/SmartMiddle/colour.js"></script>
   <script src="../blockly/generators/java.js"></script>
   <script src="../blockly/generators/java/lists.js"></script>
   <script src="../blockly/generators/java/logic.js"></script>
@@ -110,8 +122,9 @@
             <option value="arduino">Arduino</option>
           </optgroup>
           <optgroup label="Nivel Medio">
-            <option value="java">Java</option>
-            <option value="python">Python</option>
+            <!--option value="java">Java</option>
+            <option value="python">Python</option-->
+            <option value="middle">Lista de Secuencia</option-->
           </optgroup>
         </select></li>
         <li><a href="#" id="button_load"><span class="translatable_open">Cargar</span><i class="mdi-file-file-upload left"></i></a></li>
@@ -235,6 +248,15 @@
             </div>
             <div class="collapsible-body">
               <pre id="content_py" class="content content_height_transition content_arduino_large"></pre>
+            </div>
+          </li>
+          <li id="mid_area" style="display: none;">
+            <div class="collapsible-header">
+              <span class="collapsible_logo">{ L }</span>
+              <span class="translatable_arduinoSourceCode">Lista de Acciones</span>
+            </div>
+            <div class="collapsible-body">
+              <pre id="content_mid" class="content content_height_transition content_arduino_large"></pre>
             </div>
           </li>
           <li>

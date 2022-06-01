@@ -95,6 +95,11 @@ Ardublockly.generatePython= function() {
   return Blockly.Python.workspaceToCode(Ardublockly.workspace);
 };
 
+/** @return {!string} Generated Python code from the Blockly workspace. */
+Ardublockly.generateMiddle= function() {
+  return Blockly.SmartMiddle.workspaceToCode(Ardublockly.workspace);
+};
+
 /** @return {!string} Generated XML code from the Blockly workspace. */
 Ardublockly.generateXml = function() {
   var xmlDom = Blockly.Xml.workspaceToDom(Ardublockly.workspace);
@@ -177,6 +182,32 @@ Ardublockly.saveSessionStorageBlocks = function() {
   }
 };
 
+Ardublockly.saveSessionStorageBlocksbyLanguage = function(lang) {
+  if (window.sessionStorage && lang) {
+    var xml = Blockly.Xml.workspaceToDom(Ardublockly.workspace);
+    var text = Blockly.Xml.domToText(xml);
+    window.sessionStorage[lang]=text;
+  }
+};
+
+/** Load blocks saved on session storage and deletes them from storage. */
+Ardublockly.loadSessionStorageBlocksByLanguage = function(lang) {
+  if(window.sessionStorage && lang){
+    try {
+      var loadOnce = window.sessionStorage[lang];
+    } catch (e) {
+      // Firefox sometimes throws a SecurityError when accessing sessionStorage.
+      // Restarting Firefox fixes this, so it looks like a bug.
+      var loadOnce = null;
+    }
+    if (loadOnce) {
+      delete window.sessionStorage[lang];
+      var xml = Blockly.Xml.textToDom(loadOnce);
+      Blockly.Xml.domToWorkspace(xml, Ardublockly.workspace);
+    }
+  }
+};
+
 /** Load blocks saved on session storage and deletes them from storage. */
 Ardublockly.loadSessionStorageBlocks = function() {
   try {
@@ -194,9 +225,9 @@ Ardublockly.loadSessionStorageBlocks = function() {
 };
 
 /** Discard all blocks from the workspace. */
-Ardublockly.discardAllBlocks = function() {
+Ardublockly.discardAllBlocks = function(alert) {
   var blockCount = Ardublockly.workspace.getAllBlocks().length;
-  if (blockCount == 1) {
+  if (blockCount == 1 || alert) {
     Ardublockly.workspace.clear();
     Ardublockly.renderContent();
   } else if (blockCount > 1) {

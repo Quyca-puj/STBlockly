@@ -50,7 +50,7 @@ Ardublockly.bindActionFunctions = function() {
     $('.button-collapse').sideNav('hide');
   });
   Ardublockly.bindClick_('menu_delete', function() {
-    Ardublockly.discardAllBlocks();
+    Ardublockly.discardAllBlocks(false);
     $('.button-collapse').sideNav('hide');
   });
   Ardublockly.bindClick_('menu_settings', function() {
@@ -138,6 +138,7 @@ Ardublockly.ideSendUpload = function() {
       break;
     case "java":
     case "python":
+    case "middle":
       Ardublockly.shortMessage(Ardublockly.getLocalStr('uploadingCommands'));
       Ardublockly.resetIdeOutputContent();
       STServer.sendActionLists(Ardublockly.workspace);
@@ -565,6 +566,7 @@ Ardublockly.XmlTextareaToBlocks = function() {
 Ardublockly.PREV_ARDUINO_CODE_ = 'void setup() {\n\n}\n\n\nvoid loop() {\n\n}';
 Ardublockly.PREV_JAVA_CODE_ = 'public class MacroManager implements Runnable {\n@Override\n public void run() {\n }\n}';
 Ardublockly.PREV_PY_CODE_ = '';
+Ardublockly.PREV_MIDDLE_CODE_ = '';
 
 /**
  * Populate the Arduino Code and Blocks XML panels with content generated from
@@ -646,6 +648,29 @@ Ardublockly.renderContent = function() {
         Ardublockly.PREV_PY_CODE_ = pyCode;
       }
       break;
+      case "middle":
+        var pyCode = Ardublockly.generateMiddle();
+        if (pyCode !== Ardublockly.PREV_MIDDLE_CODE_) {
+          var diff = JsDiff.diffWords(Ardublockly.PREV_MIDDLE_CODE_, pyCode);
+          var resultStringArray = [];
+          for (var i = 0; i < diff.length; i++) {
+            if (!diff[i].removed) {
+              var escapedCode = diff[i].value.replace(/</g, '&lt;')
+                                            .replace(/>/g, '&gt;');
+              if (diff[i].added) {
+                resultStringArray.push(
+                    '<span class="code_highlight_new">' + escapedCode + '</span>');
+              } else {
+                resultStringArray.push(escapedCode);
+              }
+            }
+          }
+  
+          document.getElementById('content_mid').innerHTML =
+              prettyPrintOne(resultStringArray.join(''), 'cpp', false);
+          Ardublockly.PREV_MIDDLE_CODE_ = pyCode;
+        }
+        break;
   }
 
 
