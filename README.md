@@ -91,7 +91,7 @@ Blockly original source is Copyright of Google Inc. [https://developers.google.c
 
 
 ## License
-Copyright (c) 2016 carlosperate https://github.com/carlosperate/
+Copyright (c) 2021 IQBots
 
 Unless stated otherwise, the source code of this projects is
 licensed under the Apache License, Version 2.0 (the "License");
