@@ -2,12 +2,18 @@ package com.smartown.server.services;
 
 import java.util.List;
 
-import com.smartown.server.model.STCommand;
+import com.smartown.server.model.STBaseAction;
 
-public interface ISTCommandService {
+public interface ISTBaseActionService {
 	
-	List<STCommand> getAllCommands();
+	List<STBaseAction> getAllBaseActions();
 	
-	STCommand createCommand(STCommand command);
+	List<STBaseAction> getAllCustomBaseActions();
+	
+	List<STBaseAction> getAllFixedBaseActions();
+	
+	STBaseAction createBaseAction(STBaseAction command);
+	
+	STBaseAction getBaseActionFromName(String name);
 
 }

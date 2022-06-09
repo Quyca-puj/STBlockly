@@ -24,21 +24,28 @@ void Robot::setupRobot(int serial, String ssid, String password){
 void Robot::processMsg(String msg, WiFiClient client) {
   command = "";
   emotion="";
+  Serial.println(msg);
+  Serial.println("processMsg entered");
   processMsgString(msg);
   shouldAnswer = true;
-  Serial.println("processMsg entered");
+  
   Serial.println("Speed");
   Serial.println(speeds);
   Serial.println("timer");
   Serial.println(timer);
   Serial.println("emotion");
   Serial.println(emotion);
+  Serial.println("toReturn");
+  Serial.println(arguments[currentArgs-1]);
+ 
   if (command.length() > 0) {
     readCustomVariablesSensors(msg, client);
     processCommands(command);
     if(shouldAnswer){
+      Serial.println("Answering");
       Serial.println(arguments[currentArgs-1]);
       client.println(arguments[currentArgs-1]);
+      Serial.println("Answered");
     }
 
   }
@@ -58,6 +65,7 @@ void Robot::calibration() {
     delay(20);
   }
   setSpeedsMotor(0, 0); // Finalizacion de la calibración
+  Serial.println("calibration end");
 }
 
 void Robot::robotBasicCommands(String msg) {
@@ -186,18 +194,9 @@ void Robot::readCustomVariablesMotors(String msg, WiFiClient client) {
 
 void Robot::readCustomVariablesSensors(String msg, WiFiClient client) {
   if (!msg.indexOf("calibration")) {
-    String messageintID = "";
-    int tabs{0};
-    for (char index : msg) {
-      if (isSpace(index)) {
-        tabs++;
-      }
-      if (tabs == 1) {
-        messageintID.concat(index);
-      }
-    }
+    Serial.println("calibration entered");
     calibration();
-    client.println(messageintID);
+    client.println(arguments[currentArgs-1]);
   }
   if (msg.equals("sensorReadFrontL")) {
     ReadValues();
@@ -272,6 +271,7 @@ void Robot::processMsgString(String msg) {
     }
   }
   
+Serial.println(currentArgs);
 Serial.println("args entered");
     for (int i = 0; i < currentArgs; i ++) {
       Serial.println(arguments[i]);

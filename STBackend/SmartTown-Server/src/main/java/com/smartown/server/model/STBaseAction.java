@@ -8,13 +8,17 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "commands")
-public class STCommand {
+@Table(name = "base_actions")
+public class STBaseAction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	@Basic
 	private String name;
+	@Basic
+	private boolean custom;
+	@Basic
+	private boolean usesArgs;
 	public long getId() {
 		return id;
 	}
@@ -26,6 +30,20 @@ public class STCommand {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public boolean isCustom() {
+		return custom;
+	}
+	public void setCustom(boolean custom) {
+		this.custom = custom;
+	}
+	
+	public boolean isUsesArgs() {
+		return usesArgs;
+	}
+	public void setUsesArgs(boolean usesArgs) {
+		this.usesArgs = usesArgs;
 	}
 	@Override
 	public String toString() {

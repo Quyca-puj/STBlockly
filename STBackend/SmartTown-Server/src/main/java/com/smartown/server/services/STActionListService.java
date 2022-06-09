@@ -1,14 +1,14 @@
 package com.smartown.server.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.smartown.server.model.STActionList;
-import com.smartown.server.model.STCommand;
+import com.smartown.server.model.dto.STActionListDTO;
 import com.smartown.server.model.repository.STActionListRepository;
-import com.smartown.server.model.repository.STCommandRepository;
 
 
 @Service
@@ -30,7 +30,24 @@ public class STActionListService implements ISTActionListService{
 
 	@Override
 	public STActionList createActionList(STActionList aList) {
-		return repository.save(aList);
+		STActionList list = repository.save(aList);
+		if(list.getActionList()==null) {
+			list.setActionList(new ArrayList<>());
+		}
+		return list;
+	}
+	
+	
+	public STActionList createFromDTO(STActionListDTO in) {
+		STActionList list = new STActionList();
+		list.setName(in.getName());
+		return list;
+	}
+
+	@Override
+	public STActionList updateActionList(STActionList newAList) {
+		
+		return repository.save(newAList);
 	}
 
 }

@@ -11,29 +11,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.smartown.server.model.STCommand;
-import com.smartown.server.model.dto.STCommandDTO;
-import com.smartown.server.services.ISTCommandService;
+import com.smartown.server.model.STBaseAction;
+import com.smartown.server.model.dto.STBaseActionDTO;
+import com.smartown.server.services.ISTBaseActionService;
 
 @RestController
 @RequestMapping("command")
-public class STCommandController {
+public class STCBaseActionController {
 
 	
 	@Autowired
-	private ISTCommandService commandService;
+	private ISTBaseActionService commandService;
 	
 	
 	@GetMapping("/all")
-	List<STCommandDTO> getAllCommands(){
-		List<STCommandDTO> retList = new ArrayList<>();
-		List<STCommand> commands = commandService.getAllCommands();
+	List<STBaseActionDTO> getAllCommands(){
+		List<STBaseActionDTO> retList = new ArrayList<>();
+		List<STBaseAction> commands = commandService.getAllBaseActions();
 		ModelMapper mapper=new ModelMapper();
 		if(commands!=null) {
 			commands.forEach(command->{
-				retList.add(mapper.map(command, STCommandDTO.class));
+				retList.add(mapper.map(command, STBaseActionDTO.class));
 			});
-			
 		}
 
 		return retList;
@@ -42,11 +41,11 @@ public class STCommandController {
 	
 	
 	@PostMapping("/new")
-	STCommandDTO createNewCommand(@RequestBody STCommand command){
+	STBaseActionDTO createNewCommand(@RequestBody STBaseAction command){
 		
-		STCommand savedCommand = commandService.createCommand(command);
+		STBaseAction savedCommand = commandService.createBaseAction(command);
 		ModelMapper mapper=new ModelMapper();
-		STCommandDTO sendCommand = mapper.map(savedCommand, STCommandDTO.class);
+		STBaseActionDTO sendCommand = mapper.map(savedCommand, STBaseActionDTO.class);
 		return sendCommand;
 	}
 	

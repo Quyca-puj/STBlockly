@@ -1,7 +1,7 @@
 package com.smartown.server.model.dto;
 
 
-public class STCommandDTO {
+public class STBaseActionDTO {
 
 	private String name;
 	

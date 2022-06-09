@@ -32,7 +32,7 @@ Blockly.SmartTown.NAME_TYPE = 'STCOMMANDS';
  *     list, and return value boolean.
  */
 Blockly.SmartTown.allSTCommands = function(root) {
-  var blocks = root.getAllBlocks();
+  let blocks = root.getAllBlocks();
   let STCommandsNoReturn = [];
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].getCommandDef) {
@@ -57,22 +57,28 @@ Blockly.SmartTown.allSTCommands = function(root) {
  *     list, and return value boolean.
  */
  Blockly.SmartTown.allSTAL = function(root) {
-  var blocks = root.getAllBlocks();
+  let blocks = root.getAllBlocks();
   let STALs = [];
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].getSTALDef) {
       var name = blocks[i].getSTALDef();
-      let stmts = Blockly.SmartTown.middleGenerator.statementToCode(blocks[i], 'COMMANDS');
-      var tuple = [name, stmts];
-      console.log(tuple);
-      if (tuple) {
-          STALs.push(tuple);
+      let stmts = Blockly.SmartMiddle.statementToCode(blocks[i], 'COMMANDS');
+      let acts = [], aux = stmts.split("\n ");
+      for(let a in aux){
+        acts.push(JSON.parse(aux[a]));
+      }
+      let actionList ={
+        name: name,
+        actions:acts
+      };
+      if (actionList) {
+          STALs.push(actionList);
       }
     }
   }
-  STALs.sort(Blockly.SmartTown.procTupleComparator_);
+  STALs.sort(Blockly.SmartTown.procALComparator_);
   console.log(STALs)
-  return [STALs];
+  return STALs;
 };
 
 
@@ -87,6 +93,19 @@ Blockly.SmartTown.allSTCommands = function(root) {
  */
 Blockly.SmartTown.procTupleComparator_ = function(ta, tb) {
   return ta[0].toLowerCase().localeCompare(tb[0].toLowerCase());
+};
+
+
+/**
+ * Comparison function for case-insensitive sorting of the first element of
+ * a tuple.
+ * @param {!Array} ta First tuple.
+ * @param {!Array} tb Second tuple.
+ * @return {number} -1, 0, or 1 to signify greater than, equality, or less than.
+ * @private
+ */
+ Blockly.SmartTown.procALComparator_ = function(ta, tb) {
+  return ta.name.toLowerCase().localeCompare(tb.name.toLowerCase());
 };
 
 /**

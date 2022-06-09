@@ -191,7 +191,7 @@ var getEditMenuData = function() {
                 accelerator: 'Delete',
                 click: function() {
                     BrowserWindow.getFocusedWindow().webContents
-                        .executeJavaScript('Ardublockly.discardAllBlocks()');
+                        .executeJavaScript('Ardublockly.discardAllBlocks(false)');
                 }
             }
         ]

@@ -281,7 +281,7 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
     },
 
     getSTALDef: function(){
-      return [this.getFieldValue('NAME')];
+      return this.getFieldValue('NAME');
     },
   /**
    * Add custom menu options to this block's context menu.
@@ -321,4 +321,65 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
       }
     }
   }
+  };
+
+
+  Blockly.Blocks['mvt_stop_middle'] = {
+    init: function() {
+        this.jsonInit(
+            {
+              "message0": " Parar Robot Emocion %1 %2",
+              "args0": [
+                {
+                  "type": "input_dummy"
+                },
+                {
+                  "type": "field_dropdown",
+                  "name": "Emotion",
+                  "options": [
+                    [
+                      "Muy Feliz",
+                      "MUY_FELIZ"
+                    ],
+                    [
+                      "Feliz",
+                      "FELIZ"
+                    ],
+                    [
+                      "Serio",
+                      "SERIO"
+                    ],
+                    [
+                      "Triste",
+                      "TRISTE"
+                    ],
+                    [
+                      "Muy Triste",
+                      "MUY_TRISTE"
+                    ],
+                    [
+                      "Enfermo",
+                      "ENFERMO"
+                    ],
+                    [
+                      "Furioso",
+                      "FURIOSO"
+                    ],
+                    [
+                      "Sorprendido",
+                      "SORPRENDIDO"
+                    ]
+                  ]
+                }
+              ],
+              "inputsInline": true,
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 0,
+                "tooltip": "El robot gira dado un tiempo especifico",
+                "helpUrl": ""
+            }
+            
+        );
+    }
   };

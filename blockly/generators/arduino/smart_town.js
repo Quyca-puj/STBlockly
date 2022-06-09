@@ -28,7 +28,7 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
     let dropdown_movement = block.getFieldValue('Movement');
     let time = block.getFieldValue('TIME');
 
-    let code = 'timer = "+time+";\n';
+    let code = 'timer = '+time+';\n';
     let aux_code='robotTimedTurn('+dropdown_movement+');\n';
     code+=aux_code;
     return code;

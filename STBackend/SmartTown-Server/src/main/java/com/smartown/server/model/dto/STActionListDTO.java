@@ -13,17 +13,26 @@ import javax.persistence.JoinColumn;
 
 
 public class STActionListDTO {
-	private List<String> actionList;
+	private String name;
+	private List<ActionDTO> actions;
 	
-	public List<String> getActionList() {
-		return actionList;
+	public String getName() {
+		return name;
 	}
-	public void setActionList(List<String> actionList) {
-		this.actionList = actionList;
+	public void setName(String name) {
+		this.name = name;
+	}
+	public List<ActionDTO> getActions() {
+		return actions;
+	}
+	public void setActions(List<ActionDTO> actions) {
+		this.actions = actions;
 	}
 	@Override
 	public String toString() {
-		return "STActionList [actionList=" + actionList + "]";
+		return "STActionListInDTO [name=" + name + ", actions=" + actions.size() + "]";
 	}
+	
+
 
 }
