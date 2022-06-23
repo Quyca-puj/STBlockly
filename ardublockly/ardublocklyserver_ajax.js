@@ -29,6 +29,17 @@ ArdublocklyServer.putJson = function(url, json, callback) {
 };
 
 /**
+ * Sends JSON data to the ArduBlocklyServer.
+ * @param {!string} url Requestor URL.
+ * @param {!string} json JSON string.
+ * @param {!function} callback Request callback function.
+ */
+ ArdublocklyServer.postJson = async function(url, json) {
+  return await ArdublocklyServer.sendRequestCustom(url, 'POST', 'application/json', json);
+};
+
+
+/**
  * Sends a request to the Ardubloockly Server that returns a JSON response.
  * @param {!string} url Requestor URL.
  * @param {!string} method HTTP method.
@@ -37,7 +48,7 @@ ArdublocklyServer.putJson = function(url, json, callback) {
  * @param {!function} cb Request callback function, takes a single input for a
  *     parsed JSON object.
  */
-ArdublocklyServer.sendRequest = function(
+ArdublocklyServer.sendRequest = async function(
     url, method, contentType, jsonObjSend, cb) {
   var request = ArdublocklyServer.createRequest();
 
@@ -71,6 +82,37 @@ ArdublocklyServer.sendRequest = function(
     cb(null);
     throw e;
   }
+};
+
+
+ArdublocklyServer.sendRequestCustom = async function(
+  url, method, contentType, jsonObjSend) {
+
+      var request = STServer.createRequest();
+
+      try {
+        request.open(method, url, false);
+        request.setRequestHeader('Content-type', contentType);
+        request.send(JSON.stringify(jsonObjSend));
+
+        if (request.readyState == 4) {
+          if (request.status == 200) {
+            var jsonObjReceived = null;
+            try {
+              jsonObjReceived = JSON.parse(request.responseText);
+            } catch(e) {
+              console.error('Incorrectly formatted JSON data from ' + url);
+              throw e;
+            }
+          }
+        }
+
+      } catch (e) {
+        throw e;
+      }
+
+      return await jsonObjReceived;
+
 };
 
 /** @return {XMLHttpRequest} An XML HTTP Request multi-browser compatible. */
@@ -340,3 +382,77 @@ ArdublocklyServer.sendSketchToServer = function(code, callback) {
   ArdublocklyServer.sendRequest(
       '/code', 'POST', 'application/json', {"sketch_code": code}, callback);
 };
+
+
+/**
+ * Sends the Arduino code to the ArdublocklyServer to be processed as defined
+ * by the settings.
+ * @param {!string} code Arduino code in a single string format.
+ * @param {!function} callback Callback function for the server request, must
+ *     have one argument to receive the JSON response.
+ */
+ ArdublocklyServer.sendSTSketchToServer = function(code, robotSpec,callback) {
+  ArdublocklyServer.sendRequest(
+      '/code', 'POST', 'application/json', {"sketch_code": code,"robot_spec":robotSpec}, callback);
+};
+
+
+ArdublocklyServer.startExecution = function (commandObj, workspace){
+  ArdublocklyServer.ack =0 ;
+  ArdublocklyServer.actionPos =0 ;
+  ArdublocklyServer.alPos =0 ;
+  ArdublocklyServer.pause = false;
+  ArdublocklyServer.commandList = commandObj.list;
+  let ip = commandObj.ip;
+  ArdublocklyServer.sendCommand(workspace, ip);
+}
+
+ArdublocklyServer.sendCommand = function(workspace, ip){
+  if(!ArdublocklyServer.pause){
+    let ret = ArdublocklyServer.sendCommandToRobot(ip);
+    ArdublocklyServer.sendToRobot(ret.json,ret.id, workspace).then(function handle(list) {  
+      SmartTown.sendCommand(workspace);
+    });
+  }
+}
+
+ArdublocklyServer.sendCommandToRobot= function (ip){
+  let json;
+  let command = ArdublocklyServer.commandList[ArdublocklyServer.actionPos];
+  if(ArdublocklyServer.isList){
+    command=command.actions[ArdublocklyServer.alPos];
+  }
+  switch(command.type){
+    case SmartTownUtils.BASE_COMMAND:
+        json = {ip:ip,msg:command.command +" "+ ArdublocklyServer.ack, ack:ArdublocklyServer.ack};
+      break;
+    case SmartTownUtils.EMOTION_COMMAND:
+      json = {ip:ip,msg:command.command +" "+ ArdublocklyServer.ack,emomsg:command.emotion, ack:ArdublocklyServer.ack};
+    break;
+    case SmartTownUtils.ACTIONLIST_COMMAND:
+      json = ArdublocklyServer.sendCommandToRobot(ip);
+      ArdublocklyServer.isList = true;
+  }
+
+  if(ArdublocklyServer.isList){
+    ArdublocklyServer.alPos++;
+    if(ArdublocklyServer.alPos>=ArdublocklyServer.commandList[ArdublocklyServer.actionPos].actions.length){
+      ArdublocklyServer.isList=false;
+      ArdublocklyServer.alPos=0;
+    }
+  }
+
+  if(!ArdublocklyServer.isList)
+  {
+    ArdublocklyServer.actionPos++;
+  }
+  ArdublocklyServer.ack++ ;
+  return {json:json, id:command.id};
+}
+
+ArdublocklyServer.sendToRobot = async function(json, id, workspace) {
+  SmartTown.highlightBlock(id, workspace);
+  console.log("sending "+ json);
+  return await ArdublocklyServer.postJson('/robot/send', {action:json});
+};
+

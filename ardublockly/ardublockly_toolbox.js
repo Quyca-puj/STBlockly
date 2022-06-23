@@ -572,3 +572,50 @@ Ardublockly.TOOLBOX_MID_XML =
 '  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +
 '  <sep></sep>' +
 '</xml>';
+
+
+
+Ardublockly.TOOLBOX_EXEC_XML =
+'<xml>' +
+'  <sep></sep>' +
+'  <category id="catLoops" name="Secuencias">' +
+'    <block type="controls_repeat_ext">' +
+'      <value name="TIMES">' +
+'        <block type="math_number">' +
+'          <field name="NUM">10</field>' +
+'        </block>' +
+'      </value>' +
+'    </block>' +
+'  </category>' +
+'  <sep></sep>' +
+'<category name="SmartTown" colour="#a55b80">'+
+'<block type="setupsmarttown_exec"></block>'+
+'<block type="mvt_avanzar_exec">'+
+'  <field name="Emotion">MUY_FELIZ</field>'+
+'</block>'+
+'<block type="mvt_girar_exec">'+
+'  <field name="Movement">left</field>'+
+'  <field name="Emotion">MUY_FELIZ</field>'+
+'</block>'+
+'<block type="mvt_avanzar_tiempo_exec">'+
+'  <field name="Movement">t_forward</field>'+
+'  <field name="TIME">1</field>'+
+'  <field name="SPEED">1</field>'+
+'</block>'+
+'<block type="mvt_girar_tiempo_exec">'+
+'  <field name="Movement">t_left</field>'+
+'  <field name="TIME">1</field>'+
+'  <field name="SPEED">1</field>'+
+'</block>'+
+'<block type="mvt_stop_exec">'+
+'  <field name="Emotion">MUY_FELIZ</field>'+
+'</block>' +
+'<block type="new_smarttown_action_list"></block>' +
+'</category>'+
+'  <sep></sep>' +
+'  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +
+'  <sep></sep>' +
+'  <sep></sep>' +
+'  <category id="STAL" name="Lista de Acciones SmartTown " custom="STACTIONLISTS"></category>' +
+'  <sep></sep>' +
+'</xml>';

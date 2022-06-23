@@ -21,8 +21,6 @@ Ardublockly.workspace = null;
  */
 Ardublockly.xmlTree = null;
 
-
-
 Ardublockly.updateToolbox = function(newXmlTree){
   Ardublockly.xmlTree = Blockly.Xml.textToDom(newXmlTree);
   Ardublockly.workspace.updateToolbox(Ardublockly.xmlTree);
@@ -98,6 +96,10 @@ Ardublockly.generatePython= function() {
 /** @return {!string} Generated Python code from the Blockly workspace. */
 Ardublockly.generateMiddle= function() {
   return Blockly.SmartMiddle.workspaceToCode(Ardublockly.workspace);
+};
+
+Ardublockly.generateExec= function() {
+  return Blockly.STExecution.workspaceToCode(Ardublockly.workspace);
 };
 
 /** @return {!string} Generated XML code from the Blockly workspace. */
@@ -371,4 +373,10 @@ Ardublockly.ajaxRequest = function() {
     }
   }
   return request;
+};
+
+
+Ardublockly.execCommandsToList = function(){
+  let commandList = Blockly.STExecution.getCommandDict();
+  return commandList;
 };

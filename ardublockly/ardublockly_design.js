@@ -64,6 +64,7 @@ Ardublockly.bindDesignEventListeners = function() {
     let displayJava = document.getElementById("java_area");
     let displayPython = document.getElementById("py_area");
     let displayMid = document.getElementById("mid_area");
+    let displayXML = document.getElementById("xml_area");
     let navBar = document.getElementById("navBar");
     let footer = document.getElementById("ide_output_collapsible_header");
     let buttonLeft = document.getElementById('button_ide_left');
@@ -80,6 +81,7 @@ Ardublockly.bindDesignEventListeners = function() {
         displayPython.style.display="none";
         displayMid.style.display="none";
         displayJava.style.display="none";
+        displayXML.style.display="initial";
         navBar.style.backgroundColor= "#00979C"
         footer.style.backgroundColor="#006468";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_ARDUINO_XML);
@@ -89,12 +91,13 @@ Ardublockly.bindDesignEventListeners = function() {
         displayPython.style.display="none";
         displayMid.style.display="none";
         displayArduino.style.display="none";
+        displayXML.style.display="initial";
         displayJava.style.display="initial";
         navBar.style.backgroundColor= "#6c1ea1";
         footer.style.backgroundColor="#430068";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_JAVA_XML);
         STServer.requestCommands().then(function handle(list) {  
-          Ardublockly.commandList = JSON.parse(list);
+          SmartTown.setCommandList(JSON.parse(list));
         });
       break;
       case "python":
@@ -102,12 +105,13 @@ Ardublockly.bindDesignEventListeners = function() {
         displayJava.style.display="none";
         displayMid.style.display="none";
         displayArduino.style.display="none";
+        displayXML.style.display="initial";
         displayPython.style.display="initial";
         navBar.style.backgroundColor= "#938d2e";
         footer.style.backgroundColor="#6a661e";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_PY_XML);
         STServer.requestCommands().then(function handle(list) {  
-          Ardublockly.commandList= JSON.parse(list);
+          SmartTown.setCommandList(JSON.parse(list));
         });
       break;
       case "middle":
@@ -115,14 +119,32 @@ Ardublockly.bindDesignEventListeners = function() {
         displayJava.style.display="none";
         displayPython.style.display="none";
         displayArduino.style.display="none";
+        displayXML.style.display="none";
         displayMid.style.display="initial";
         navBar.style.backgroundColor= "#853a2a";
         footer.style.backgroundColor="#824a3e";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_MID_XML);
         STServer.requestCommands().then(function handle(list) {  
-          Ardublockly.commandList= JSON.parse(list);
+          SmartTown.setCommandList(JSON.parse(list));
         });
       break;
+      case "exec":
+        buttonLeft.style.display="none";
+        displayJava.style.display="none";
+        displayPython.style.display="none";
+        displayArduino.style.display="none";
+        displayXML.style.display="none";
+        displayMid.style.display="none";
+        navBar.style.backgroundColor= "#999950";
+        footer.style.backgroundColor="#7a7a40";
+        Ardublockly.updateToolbox(Ardublockly.TOOLBOX_EXEC_XML);
+        STServer.requestCommands().then(function handle(list) {  
+          SmartTown.setCommandList(JSON.parse(list));
+        });
+        STServer.requestActionLists().then(function handle(list) {  
+          SmartTown.setALList(JSON.parse(list));
+        });
+        break;
     }
     
     Ardublockly.loadSessionStorageBlocksByLanguage(Ardublockly.selected_language);

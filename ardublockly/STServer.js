@@ -108,12 +108,15 @@ STServer.createRequest = function() {
  *     have one argument to receive the JSON response.
  */
  STServer.requestCommands = async function() {
-  return await STServer.getJson('http://127.0.0.1:8080/command/all');
+  return await STServer.getJson('http://127.0.0.1:8080/command/custom');
 };
 
 
+STServer.requestActionLists = async function() {
+  return await STServer.getJson('http://127.0.0.1:8080/actionList/all');
+};
 
- STServer.sendCommands = function(workspace) {
+STServer.sendCommands = function(workspace) {
   let STCommandList = Blockly.SmartTown.allSTCommands(workspace)[0];
   for (let i = 0; i < STCommandList.length; i++) {
     let comName = STCommandList[i][0];
@@ -128,7 +131,6 @@ STServer.sendCommand = function(json) {
 };
 
 STServer.sendActionList = function(json) {
-  console.log(json);
   STServer.postJson('http://127.0.0.1:8080/actionList/new', json);
 };
 

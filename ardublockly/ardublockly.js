@@ -136,6 +136,11 @@ Ardublockly.ideSendUpload = function() {
       Ardublockly.sendCode();
       STServer.sendCommands(Ardublockly.workspace);
       break;
+    case "exec":
+      Ardublockly.shortMessage(Ardublockly.getLocalStr('executeCommands'));
+      Ardublockly.resetIdeOutputContent();
+      Ardublockly.startExecution();
+      break;
     case "java":
     case "python":
     case "middle":
@@ -147,6 +152,11 @@ Ardublockly.ideSendUpload = function() {
   
 };
 
+Ardublockly.startExecution = function(){
+  Ardublockly.generateExec(Ardublockly.workspace);
+  let commandObj = Ardublockly.execCommandsToList();
+  ArdublocklyServer.startExecution(commandObj, Ardublockly.workspace);
+}
 /** Sets the Ardublockly server IDE setting to verify and sends the code. */
 Ardublockly.ideSendVerify = function() {
   // Check if this is the currently selected option before edit sever setting
@@ -527,7 +537,7 @@ Ardublockly.setIdeSettings = function(e, preset) {
  */
 Ardublockly.sendCode = function() {
   Ardublockly.largeIdeButtonSpinner(true);
-
+  
   /**
    * Receives the IDE data back to be displayed and stops spinner.
    * @param {element} jsonResponse JSON data coming back from the server.
@@ -540,7 +550,7 @@ Ardublockly.sendCode = function() {
     Ardublockly.arduinoIdeOutput(dataBack);
   };
 
-  ArdublocklyServer.sendSketchToServer(Ardublockly.generateArduino(), sendCodeReturn);
+  ArdublocklyServer.sendSTSketchToServer(Ardublockly.generateArduino(), SmartTown.getSTRobotSketch(), sendCodeReturn);
 
 };
 
@@ -601,7 +611,7 @@ Ardublockly.renderContent = function() {
       }
       break;
     case "java":
-      Blockly.SmartTown.middleGenerator = Blockly.Java;
+      SmartTown.setMiddleGenerator(Blockly.Java);
       var javaCode = Ardublockly.generateJava();
       if (javaCode !== Ardublockly.PREV_JAVA_CODE_) {
         var diff = JsDiff.diffWords(Ardublockly.PREV_JAVA_CODE_, javaCode);
@@ -625,7 +635,7 @@ Ardublockly.renderContent = function() {
       }
       break;
     case "python":
-      Blockly.SmartTown.middleGenerator = Blockly.Python;
+      SmartTown.setMiddleGenerator(Blockly.Python);
       var pyCode = Ardublockly.generatePython();
       if (pyCode !== Ardublockly.PREV_PY_CODE_) {
         var diff = JsDiff.diffWords(Ardublockly.PREV_PY_CODE_, pyCode);
@@ -678,7 +688,9 @@ Ardublockly.renderContent = function() {
 
 
   // Generate plain XML into element
-  document.getElementById('content_xml').value = Ardublockly.generateXml();
+  if(language !=="exec"){
+    document.getElementById('content_xml').value = Ardublockly.generateXml();
+  }
 };
 
 /**
