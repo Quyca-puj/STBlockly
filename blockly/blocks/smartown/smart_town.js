@@ -179,6 +179,9 @@ goog.require('Blockly.Types');
       this.appendDummyInput()
           .appendField("Wifi Name")
           .appendField(new Blockly.FieldTextInput("ciscosb1"), "wifiName");
+          this.appendDummyInput()
+          .appendField("Alias")
+          .appendField(new Blockly.FieldTextInput(""), "alias");
       this.appendDummyInput()
           .appendField("Password")
           .appendField(new Blockly.FieldTextInput(""), "pass");

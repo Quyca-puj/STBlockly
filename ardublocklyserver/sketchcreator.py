@@ -10,7 +10,7 @@ import codecs
 import os
 # local-packages imports
 import six
-
+import shutil
 
 # Default blinky sketch
 default_sketch_code = """int led = 13;
@@ -24,10 +24,46 @@ void loop() {
   delay(1000);
 }
 """
+default_robot_sketch_code="""\n};
+#endif
+"""
 
 # Default sketch name
 default_sketch_name = 'ArdublocklySketch'
+# Robot template name
+robot_template_name = 'Robot.template'
+# Robot sketch name
+robot_sketch_name = 'Robot.h'
 
+
+
+def complete_robot_sketch(sketch_dir, sketch_name=robot_sketch_name,
+                  sketch_code=""):
+    """Complete Robot sketch file in the given directory.
+
+    :param sketch_dir: Location for the sketch.
+    :param sketch_name: Optional name for the sketch.
+    :param sketch_code: Optional unicode string with the code for the sketch.
+    :return: Unicode string with full path to the sketch file
+    """
+    sketch_code+=default_robot_sketch_code
+    # Check the code first, to not create sketch file if invalid
+    if not isinstance(sketch_code, six.string_types) or \
+            not isinstance(sketch_name, six.string_types):
+        print('The sketch name or code given is not a valid string !!!')
+        return None
+    #locate template sketch path
+    temp_sketch_path = build_cust_sketch_path(sketch_dir, robot_template_name)
+    # Create the sketch path
+    sketch_path = build_cust_sketch_path(sketch_dir, sketch_name)
+    #copy template
+    shutil.copy2(temp_sketch_path,sketch_path)
+    try:
+
+        with codecs.open(sketch_path, 'a+', encoding='utf-8') as sketch_f:
+            sketch_f.write(sketch_code)
+    except Exception as e:
+        print('Error: %s\nRobot sketch could not be created !!!' % e)
 
 def create_sketch(sketch_dir, sketch_name=default_sketch_name,
                   sketch_code=default_sketch_code):
@@ -77,6 +113,29 @@ def build_sketch_path(sketch_dir, sketch_name):
             if not os.path.exists(sketch_path):
                 os.makedirs(sketch_path)
             sketch_path = os.path.join(sketch_path, sketch_name + '.ino')
+    else:
+        print('The sketch directory "%s" does not exists !!!' % sketch_dir)
+    return sketch_path
+
+def build_cust_sketch_path(sketch_dir, sketch_name):
+    """Create the Arduino Sketch folder required for a valid Sketch.
+
+    If a valid directory is provided, it creates the Arduino sketch folder
+    (if it does not exists already) and returns a string pointing to the
+    sketch file path.
+    :return: unicode string with full path to the sketch file.
+             Return None indicates an error has occurred.
+    """
+    sketch_path = None
+    if os.path.isdir(sketch_dir):
+        try:
+            sketch_path = os.path.join(sketch_dir, default_sketch_name)
+        except (TypeError, AttributeError) as e:
+            print('Error: %s\nSketch Name could not be processed.' % e)
+        else:
+            if not os.path.exists(sketch_path):
+                os.makedirs(sketch_path)
+            sketch_path = os.path.join(sketch_path, sketch_name)
     else:
         print('The sketch directory "%s" does not exists !!!' % sketch_dir)
     return sketch_path

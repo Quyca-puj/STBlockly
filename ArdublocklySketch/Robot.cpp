@@ -1,19 +1,36 @@
 #include "Robot.h"
 
+
 Robot::Robot() {
-  
-  speeds=50;
-  movementRobot=0;
-  emotion="";
+  // Inicializacion de las variables de control
+  timeElapsed = 0;
+  speeds = 50;
+  movementRobot = 0;
+  timer = 0;
+  emotion = "";
   movementCurrentState = false;
-  currentMillis = 0;
-  timeFlag = false;
+  isTimedAction = false;
+  motorInactive = true;
+  inAction = false;
+  reverseActive = false;
+  forwardActive = false;
+  rightActive = false;
+  leftActive = false;
 }
 
-void Robot::setupRobot(int serial, String ssid, String password){
+void Robot::setupRobot(int serial, String givenAlias, String ssid, String password) {
+  //Inicio del Serial, conexion a wifi e inicializacion de motores.
   Serial.begin(serial);
-  delay(1000);
   WifiConnection(ssid, password);
+  ip = WiFi.localIP().toString();
+  Serial.print("Version ");
+  Serial.println(VERSION);
+  Serial.print("IP: ");
+  Serial.println(ip);
+  Serial.print("Alias ");
+  Serial.println(givenAlias);
+  delay(4000);
+  alias = givenAlias;
   setupmotor();
   setupSensors();
   setupFaces();
@@ -21,34 +38,46 @@ void Robot::setupRobot(int serial, String ssid, String password){
 }
 
 
-void Robot::processMsg(String msg, WiFiClient client) {
-  command = "";
-  emotion="";
-  Serial.println(msg);
-  Serial.println("processMsg entered");
-  processMsgString(msg);
-  shouldAnswer = true;
-  
-  Serial.println("Speed");
-  Serial.println(speeds);
-  Serial.println("timer");
-  Serial.println(timer);
-  Serial.println("emotion");
-  Serial.println(emotion);
-  Serial.println("toReturn");
-  Serial.println(arguments[currentArgs-1]);
- 
-  if (command.length() > 0) {
-    readCustomVariablesSensors(msg, client);
-    processCommands(command);
-    if(shouldAnswer){
-      Serial.println("Answering");
-      Serial.println(arguments[currentArgs-1]);
-      client.println(arguments[currentArgs-1]);
-      Serial.println("Answered");
+void Robot::processMsg(String msg, bool checkStatus , WiFiClient client) {
+  bool answer = false;
+  if (!checkStatus) { // If- revisa si hay comando nuevo por procesar (checkStatus = false)
+    command = "";
+    emotion = "";
+    STprint(msg);
+    STprint("processMsg entered");
+    processMsgString(msg);
+    shouldAnswer = true;
+    STprint("Speed");
+    STprint(speeds);
+    STprint("timer");
+    STprint(timer);
+    STprint("emotion");
+    STprint(emotion);
+    STprint("toReturn");
+    STprint(arguments[currentArgs - 1]);
+  }// end if
+  //procesar comandos y revision de comandos en ejecucion
+  answer = processCommands(command, checkStatus);
+  if (shouldAnswer && answer) {
+    STprint("Answering");
+    //si hay ack pendiente de los motores principales y hay respuesta, responder con ese ack.
+    if (lastMotorAck > -1) {
+      STprint(lastMotorAck);
+      client.println(lastMotorAck);
+      lastMotorAck = -1;
+      motorInactive = true;
+      isTimedAction = false;
+      timer = 0;
+    } else {
+      STprint(arguments[currentArgs - 1]);
+      client.println(arguments[currentArgs - 1]);
     }
 
+    STprint("Answered");
   }
+  command = ""; //vaciar comando
+  // determinar si hay acciones en ejecucion.
+
 }
 
 void Robot::calibration() {
@@ -65,71 +94,110 @@ void Robot::calibration() {
     delay(20);
   }
   setSpeedsMotor(0, 0); // Finalizacion de la calibración
-  Serial.println("calibration end");
+  STprint("calibration end");
 }
 
-void Robot::robotBasicCommands(String msg) {
-
-Serial.println(msg);
-  if (msg.equals("forward")) {
-    Serial.println("forward entered");
-    robotForward();
-  } else if (msg.equals("right")) {
-    Serial.println("right entered");
-    robotTurn(1);
-  } else if (msg.equals("left")) {
-    Serial.println("left entered");
-    robotTurn(-1);
-  } else if (msg.equals("stop")) {
-    Serial.println("stop entered");
-    robotStopMovement();
-  } else if (msg.equals("t_reverse")) {
-    Serial.println("t_reverse entered");
-    robotTimedMove(-1);
-    delay(1500);
-  } else if (msg.equals("t_forward")) {
-    Serial.println("t_forward entered");
-    robotTimedMove(1);
-    delay(1500);
-  } else if (msg.equals("t_left")) {
-    Serial.println("t_left entered");
-    robotTimedTurn(-1);
-    delay(1500);
-  } else if (msg.equals("t_right")) {
-    Serial.println("t_right entered");
-    robotTimedTurn(1);
-    delay(1500);
-  }else if (msg.equals(EMOTION_STR)) {
-    Serial.println("emotions entered");
-    shouldAnswer = false;
-    readFaces(emotion);
-    delay(1500);
+bool Robot::robotBasicCommands(String msg, bool checkStatus) {
+  bool toRet = false; // variable a retornar. True si se finaliza al menos un comando.
+  if (msg.equals("calibration")) { // if para calibracion
+    STprint("calibration entered");
+    calibration();
+    toRet = true;
+  } else {
+    // if else de las funciones relacionadas al motor principal. Se maneja con else if porque solo puede haber una accion en el motor activa.
+    if ((msg.equals("forward") && motorInactive) || (forwardActive && !isTimedAction && checkStatus)) { // en general se revisa si llego el comando y el motor esta inactivo
+      //o si el movimiento hacia adelante esta activo, la accion es temporal o no y se esta revisando el estado.
+      STprint("forward entered");
+      isTimedAction = false;
+      toRet = robotForward();
+      forwardActive = !toRet;
+    }else if ((msg.equals("right") && motorInactive) || (rightActive && !isTimedAction && checkStatus)) {
+      STprint("right entered");
+      isTimedAction = false;
+      toRet = robotTurn(1);
+      rightActive = !toRet;
+    }else if ((msg.equals("left") && motorInactive) || (leftActive && !isTimedAction && checkStatus)) {
+      STprint("left entered");
+      isTimedAction = false;
+      toRet = robotTurn(-1);
+      leftActive = !toRet;
+    }else if ((msg.equals("t_reverse") && motorInactive) || (reverseActive && isTimedAction && checkStatus)) {
+      isTimedAction = true;
+      STprint("t_reverse entered");
+      toRet = robotTimedMove(-1);
+      reverseActive = !toRet;
+    }else if ((msg.equals("t_forward") && motorInactive) || (forwardActive && isTimedAction && checkStatus)) {
+      isTimedAction = true;
+      STprint("t_forward entered");
+      toRet = robotTimedMove(1);
+      forwardActive = !toRet;
+    }else if ((msg.equals("t_left") && motorInactive) || (leftActive && isTimedAction && checkStatus)) {
+      isTimedAction = true;
+      STprint("t_left entered");
+      toRet = robotTimedTurn(-1);
+      leftActive = !toRet;
+    }else if ((msg.equals("t_right") && motorInactive) || (rightActive && isTimedAction && checkStatus)) {
+      isTimedAction = true;
+      STprint("t_right entered");
+      toRet = robotTimedTurn(1);
+      rightActive = !toRet;
+    }else if ((msg.equals("forever_forward") && motorInactive)) {
+      isTimedAction = false;
+      STprint("forever_forward entered");
+      robotForeverMove(1);
+    }else if ((msg.equals("forever_reverse") && motorInactive)) {
+      isTimedAction = false;
+      STprint("forever_reverse entered");
+      robotForeverMove(-1);
+    }
+    // determinar si el motor esta activo
+    motorInactive = !(rightActive || leftActive || forwardActive || reverseActive);
+    
+    if (msg.equals("stop")) {
+      STprint("stop entered");
+      isTimedAction = false;
+      toRet = robotStopMovement();
+      forwardActive = !toRet;
+      rightActive = !toRet;
+      leftActive = !toRet;
+      reverseActive = !toRet;
+    }
+    
+    if (msg.equals(EMOTION_STR)) {
+      STprint("emotions entered");
+      shouldAnswer = false;
+      readFaces(emotion);
+    }
   }
-
+  return toRet;
 }
 
-void Robot::robotForward(){
-    if (followLine(speeds)) {
-      setSpeedsMotor(0,0);
-    }
-}
-void Robot::robotTurn(int dir){
-    if (!turn(dir, speeds)) {
-      setSpeedsMotor(0,0);
-    }
-}
-void Robot::robotTimedMove(int dir){
-  timedMove(dir*speeds, timer);
-  setSpeedsMotor(0,0);
-}
-void Robot::robotTimedTurn(int dir){
-  timedTurn(dir,speeds, timer);
-  setSpeedsMotor(0,0);
-  
+void Robot::robotForeverMove(int dir) {
+  STprint("robotFor Command");
+  foreverForward(speeds *dir);
 }
 
-void Robot::robotStopMovement(){
+bool Robot::robotForward() {
+  STprint("robotForward Command");
+  return followLine(speeds);
+}
+bool Robot::robotTurn(int dir) {
+  STprint("robotTurn Command");
+  return !turn(dir, speeds);
+}
+bool Robot::robotTimedMove(int dir) {
+  STprint("robotTimedMove Command");
+  return timedMove(dir * speeds, timer * 1000, &timeElapsed);
+}
+bool Robot::robotTimedTurn(int dir) {
+  STprint("robotTimedTurn Command");
+  return timedTurn(dir, speeds, timer * 1000, &timeElapsed);
+}
+
+bool Robot::robotStopMovement() {
+  STprint("robotStopMovement Command");
   setSpeedsMotor(0, 0);
+  return true;
 }
 
 void Robot::readCustomVariablesMotors(String msg, WiFiClient client) {
@@ -194,9 +262,9 @@ void Robot::readCustomVariablesMotors(String msg, WiFiClient client) {
 
 void Robot::readCustomVariablesSensors(String msg, WiFiClient client) {
   if (!msg.indexOf("calibration")) {
-    Serial.println("calibration entered");
+    STprint("calibration entered");
     calibration();
-    client.println(arguments[currentArgs-1]);
+    client.println(arguments[currentArgs - 1]);
   }
   if (msg.equals("sensorReadFrontL")) {
     ReadValues();
@@ -217,139 +285,137 @@ void Robot::readCustomVariablesSensors(String msg, WiFiClient client) {
 }
 
 void Robot::JointServoMsg(String msg, WiFiClient client) {
-    String messageint="";
-    bool digit=false;
-    int positionJoint;
-    int periodJoint;
-    if(!msg.indexOf("static")){
-       for (char single : msg){
-          if(isDigit(single)){
-            digit=true;
-            messageint.concat(single);
-          }
-        }
-        if(digit=true){
-          positionJoint= messageint.toInt();  
-          JointStatic(positionJoint);
-          messageint = "";
-        }
+  String messageint = "";
+  bool digit = false;
+  int positionJoint;
+  int periodJoint;
+  if (!msg.indexOf("static")) {
+    for (char single : msg) {
+      if (isDigit(single)) {
+        digit = true;
+        messageint.concat(single);
+      }
     }
+    if (digit = true) {
+      positionJoint = messageint.toInt();
+      JointStatic(positionJoint);
+      messageint = "";
+    }
+  }
 }
 void Robot::processMsgString(String msg) {
   String messageintSpeed = "";
   String messageintID = "";
   int tabs{0};
-  currentArgs=0;
-  for (int i = 0; i < MAX_ARGS; i ++) {
-    arguments[i]="";
+  currentArgs = 0;
+  for (int i = 0; i < MAX_ARGS; i ++) { //inicilziacion del arreglo de parametros
+    arguments[i] = "";
   }
 
-  for (char index : msg) {
-    if (isSpace(index)) {
+  for (char index : msg) { // recorrer la cadena
+    if (isSpace(index)) { //separar por espacios
       tabs++;
     } else {
       switch (tabs) {
-        case 0:
+        case 0: //caso 0 es el id, no se guarda
+          break;
+        case 1: //caso 1 es el comando
           command.concat(index);
           break;
-        default:
-          arguments[tabs-1].concat(index);
+        default: // del 1 en adelante son parametros
+          arguments[tabs - 2].concat(index);
           break;
       }
     }
 
   }
-  currentArgs=tabs;
-  if(currentArgs>1){
-    if(command.equals(EMOTION_STR)){
+  currentArgs = tabs - 1;
+  if (currentArgs > 1) {
+    if (command.equals(EMOTION_STR)) { //segun el comando se toman los params necesarios
       emotion = arguments[0];
-    }else{
+    } else {
+      lastMotorAck = arguments[currentArgs - 1].toInt();
       speeds = arguments[0].toInt();
-      if(currentArgs>2){
+      if (currentArgs > 2) {
         timer = arguments[1].toInt();
       }
     }
   }
-  
-Serial.println(currentArgs);
-Serial.println("args entered");
-    for (int i = 0; i < currentArgs; i ++) {
-      Serial.println(arguments[i]);
+
+  STprint(currentArgs);
+  STprint("args entered");
+  for (int i = 0; i < currentArgs; i ++) {
+    STprint(arguments[i]);
   }
 }
 
 
 void Robot::readFaces(String msg) {
-  Serial.println("readFaces entered");
-  Serial.println(msg);
-      if(msg.equals("happy")) {
-          int myarray[NUMPIXELS] ={0};
-          int indexarray[16] ={13, 14, 17, 18, 19, 21, 22, 25, 33, 41, 42, 43, 45, 46, 53, 54};
-          int color[3] = {255,255,0};
-          int contador=0;
-          for(int i=0; i<NUMPIXELS; i++) {       
-                  if (i== indexarray[contador]) {
-                        myarray[i] =1;
-                        contador++;
-                        if(contador > 15) {
-                          contador=15;
-                        }
-                  }
-           }
-          facesDraw(myarray,color,50);
-          Serial.println("happy");
+  STprint("readFaces entered");
+  STprint(msg);
+  if (msg.equals("happy")) {
+    int myarray[NUMPIXELS] = {0};
+    int indexarray[16] = {13, 14, 17, 18, 19, 21, 22, 25, 33, 41, 42, 43, 45, 46, 53, 54};
+    int color[3] = {255, 255, 0};
+    int contador = 0;
+    for (int i = 0; i < NUMPIXELS; i++) {
+      if (i == indexarray[contador]) {
+        myarray[i] = 1;
+        contador++;
+        if (contador > 15) {
+          contador = 15;
         }
-
-        if(msg.equals("sad")) {
-          int myarray[NUMPIXELS] ={0};
-          int indexarray[16] ={13, 14, 17, 18, 19, 21, 22, 27, 35, 41, 42, 43, 45, 46, 53, 54};
-          int color[3] = {0,0,255};
-          int contador=0;
-          for(int i=0; i<NUMPIXELS; i++) {       
-                  if (i== indexarray[contador]) {
-                        myarray[i] =1;
-                        contador++;
-                        if(contador > 15) {
-                          contador=15;
-                        }
-                  }
-           }
-          facesDraw(myarray,color,50);
-          Serial.println("sad");
+      }
+    }
+    facesDraw(myarray, color, 50);
+    STprint("happy");
+  }else if (msg.equals("sad")) {
+    int myarray[NUMPIXELS] = {0};
+    int indexarray[16] = {13, 14, 17, 18, 19, 21, 22, 27, 35, 41, 42, 43, 45, 46, 53, 54};
+    int color[3] = {0, 0, 255};
+    int contador = 0;
+    for (int i = 0; i < NUMPIXELS; i++) {
+      if (i == indexarray[contador]) {
+        myarray[i] = 1;
+        contador++;
+        if (contador > 15) {
+          contador = 15;
         }
-        if(msg.equals("angry")) {
-          int myarray[NUMPIXELS] ={0};
-          int indexarray[12] ={6, 9, 14, 18, 21, 26, 34, 42, 45, 49, 54, 62};
-          int color[3] = {255,0,0};
-          int contador=0;
-          for(int i=0; i<NUMPIXELS; i++) {       
-                  if (i== indexarray[contador]) {
-                        myarray[i] =1;
-                        contador++;
-                        if(contador > 11) {
-                          contador=11;
-                        }
-                  }
-           }
-          facesDraw(myarray,color,50);
-          Serial.println("angry");
+      }
+    }
+    facesDraw(myarray, color, 50);
+    STprint("sad");
+  }else if (msg.equals("angry")) {
+    int myarray[NUMPIXELS] = {0};
+    int indexarray[12] = {6, 9, 14, 18, 21, 26, 34, 42, 45, 49, 54, 62};
+    int color[3] = {255, 0, 0};
+    int contador = 0;
+    for (int i = 0; i < NUMPIXELS; i++) {
+      if (i == indexarray[contador]) {
+        myarray[i] = 1;
+        contador++;
+        if (contador > 11) {
+          contador = 11;
         }
-
-        if(msg.equals("neutral")) {
-          int myarray[NUMPIXELS] ={0};
-          int indexarray[12] ={13, 14, 18, 21, 22, 26, 34, 42, 45, 46, 53, 54};
-          int color[3] = {0,255,0};
-          int contador=0;
-          for(int i=0; i<NUMPIXELS; i++) {       
-                  if (i== indexarray[contador]) {
-                        myarray[i] =1;
-                        contador++;
-                        if(contador > 11) {
-                          contador=11;
-                        }
-                  }
-           }
-          facesDraw(myarray,color,50);
-          Serial.println("neutral");
+      }
+    }
+    facesDraw(myarray, color, 50);
+    STprint("angry");
+  }else if (msg.equals("neutral")) {
+    int myarray[NUMPIXELS] = {0};
+    int indexarray[12] = {13, 14, 18, 21, 22, 26, 34, 42, 45, 46, 53, 54};
+    int color[3] = {0, 255, 0};
+    int contador = 0;
+    for (int i = 0; i < NUMPIXELS; i++) {
+      if (i == indexarray[contador]) {
+        myarray[i] = 1;
+        contador++;
+        if (contador > 11) {
+          contador = 11;
         }
+      }
+    }
+    facesDraw(myarray, color, 50);
+    STprint("neutral");
   }
+}

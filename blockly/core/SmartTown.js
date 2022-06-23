@@ -21,7 +21,8 @@ goog.require('Blockly.Workspace');
 /**
  * Category to separate STCommand names from variables and generated functions.
  */
-Blockly.SmartTown.NAME_TYPE = 'STCOMMANDS';
+Blockly.SmartTown.COMMANDS_TYPE = 'STCOMMANDS';
+Blockly.SmartTown.ACTIONLIST_TYPE = 'STACTIONLISTS';
 
 /**
  * Find all user-created STCommand definitions in a workspace.
@@ -43,8 +44,21 @@ Blockly.SmartTown.allSTCommands = function(root) {
     }
   }
   STCommandsNoReturn.sort(Blockly.SmartTown.procTupleComparator_);
-  console.log(STCommandsNoReturn)
   return [STCommandsNoReturn];
+};
+
+Blockly.SmartTown.generateCommandRobotSketch = function(root) {
+  let blocks = root.getAllBlocks();
+  let STCommandsNoReturn = [];
+  for (var i = 0; i < blocks.length; i++) {
+    if (blocks[i].getCommandDef) {
+      var tuple = blocks[i].getCommandDef();
+      if (tuple) {
+          STCommandsNoReturn.push("bool "+tuple+"();");
+      }
+    }
+  }
+  return STCommandsNoReturn;
 };
 
 
@@ -77,7 +91,6 @@ Blockly.SmartTown.allSTCommands = function(root) {
     }
   }
   STALs.sort(Blockly.SmartTown.procALComparator_);
-  console.log(STALs)
   return STALs;
 };
 
@@ -184,7 +197,7 @@ Blockly.SmartTown.rename = function(text) {
  * @param {!Blockly.Workspace} workspace The workspace contianing STCommands.
  * @return {!Array.<!Element>} Array of XML block elements.
  */
-Blockly.SmartTown.flyoutCategory = function(workspace) {
+Blockly.SmartTown.flyoutCommandCategory = function(workspace) {
   var xmlList = [];
 
   if (xmlList.length) {
@@ -203,17 +216,45 @@ Blockly.SmartTown.flyoutCategory = function(workspace) {
         var mutation = goog.dom.createDom('mutation');
         mutation.setAttribute('name', name);
         block.appendChild(mutation);
-        // for (var t = 0; t < args.length; t++) {
-        //   var arg = goog.dom.createDom('arg');
-        //   arg.setAttribute('name', args[t]);
-        //   mutation.appendChild(arg);
-        // }
         xmlList.push(block);
   
       }
     }
   }
-  populateSTCommands(Ardublockly.commandList);
+  populateSTCommands(SmartTown.CommandList);
+  return xmlList;
+};
+
+/**
+ * Construct the blocks required by the flyout for the STCommand category.
+ * @param {!Blockly.Workspace} workspace The workspace contianing STCommands.
+ * @return {!Array.<!Element>} Array of XML block elements.
+ */
+ Blockly.SmartTown.flyoutALCategory = function(workspace) {
+  var xmlList = [];
+
+  if (xmlList.length) {
+    // Add slightly larger gap between system blocks and user calls.
+    xmlList[xmlList.length - 1].setAttribute('gap', 24);
+  }
+
+  function populateSTAL(STALList) {
+    if(STALList && STALList.length){
+      for (var i = 0; i < STALList.length; i++) {
+
+        var name = STALList[i].name;
+        var block = goog.dom.createDom('block');
+        block.setAttribute('type', 'st_actionList_call');
+        block.setAttribute('gap', 16);
+        var mutation = goog.dom.createDom('mutation');
+        mutation.setAttribute('name', name);
+        block.appendChild(mutation);
+        xmlList.push(block);
+  
+      }
+    }
+  }
+  populateSTAL(SmartTown.ALList);
   return xmlList;
 };
 

@@ -32,6 +32,27 @@ def arduino_ide_send_code(code_str):
     return load_arduino_cli(sketch_path)
 
 
+#
+# Sketch loading to Arduino functions
+#
+def send_robot_code(code_str):
+    """Complete robot sketch from a code string.
+
+    :param code_str: String of robot Sketch code
+    """
+    complete_robot_sketch(code_str)
+
+
+def complete_robot_sketch(sketch_code):
+    """Complete robot code in location given by Settings.
+
+    :param sketch_code: Code for completion.
+    :return: Sketch location. None if there was a problem.
+    """
+    settings = ServerCompilerSettings()
+    return sketchcreator.complete_robot_sketch(sketch_dir=settings.sketch_dir,
+                                       sketch_code=sketch_code)
+
 def create_sketch_from_string(sketch_code):
     """Create an Arduino Sketch in location and name given by Settings.
 

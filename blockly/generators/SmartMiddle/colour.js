@@ -4,22 +4,22 @@
  */
 
 /**
- * @fileoverview Generating SmartMiddle code for colour blocks.
+ * @fileoverview Generating STExecution code for colour blocks.
  *
- * TODO: These blocks do not really serve a purpose for SmartMiddle code.
+ * TODO: These blocks do not really serve a purpose for STExecution code.
  */
 
 'use strict';
 
-goog.provide('Blockly.SmartMiddle.colour');
+goog.provide('Blockly.STExecution.colour');
 
-goog.require('Blockly.SmartMiddle');
+goog.require('Blockly.STExecution');
 
 
-Blockly.SmartMiddle['colour_picker'] = Blockly.SmartMiddle.noGeneratorCodeInline;
+Blockly.STExecution['colour_picker'] = Blockly.STExecution.noGeneratorCodeInline;
 
-Blockly.SmartMiddle['colour_random'] = Blockly.SmartMiddle.noGeneratorCodeInline;
+Blockly.STExecution['colour_random'] = Blockly.STExecution.noGeneratorCodeInline;
 
-Blockly.SmartMiddle['colour_rgb'] = Blockly.SmartMiddle.noGeneratorCodeInline;
+Blockly.STExecution['colour_rgb'] = Blockly.STExecution.noGeneratorCodeInline;
 
-Blockly.SmartMiddle['colour_blend'] = Blockly.SmartMiddle.noGeneratorCodeInline;
+Blockly.STExecution['colour_blend'] = Blockly.STExecution.noGeneratorCodeInline;

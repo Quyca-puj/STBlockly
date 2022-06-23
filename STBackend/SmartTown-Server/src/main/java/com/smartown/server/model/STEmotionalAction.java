@@ -13,6 +13,11 @@ public class STEmotionalAction extends STInstanceAction{
 	@Basic
 	private String emotion;
 
+	
+	public STEmotionalAction() {
+		
+	}
+	
 	public STEmotionalAction(ActionDTO actionDto, STBaseAction baseAction) {
 		super(baseAction);
 		emotion=actionDto.getEmotion();

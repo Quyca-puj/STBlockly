@@ -41,7 +41,11 @@ public class STActionListController {
 		if(aLists!=null) {
 			aLists.forEach(command->{
 				STActionListDTO aux = mapper.map(command, STActionListDTO.class);
+				if(aux.getActions()==null) {
+					aux.setActions(new ArrayList<>());
+				}
 				command.getActionList().forEach(action->{
+					System.out.println("Action: "+action);
 					ActionDTO act = instanceService.createActionfromInstance(action);
 					aux.getActions().add(act);
 				});

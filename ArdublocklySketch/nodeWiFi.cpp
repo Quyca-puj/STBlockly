@@ -19,8 +19,4 @@ void WifiConnection(String ssid, String password){
   Serial.println(WiFi.localIP());
  
   wifiServer.begin();
- /* while (!client.connect(host, port)) {
-    Serial.println("connection failed");
-    delay(5000);
-  }*/
 }

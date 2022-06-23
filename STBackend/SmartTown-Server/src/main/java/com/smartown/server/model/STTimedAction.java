@@ -16,6 +16,10 @@ public class STTimedAction extends STInstanceAction{
 	@Basic
 	private float time;
 
+	public STTimedAction() {
+		
+	}
+	
 	public STTimedAction(ActionDTO actionDto, STBaseAction baseAction) {
 		super(baseAction);
 		speed=actionDto.getSpeed();

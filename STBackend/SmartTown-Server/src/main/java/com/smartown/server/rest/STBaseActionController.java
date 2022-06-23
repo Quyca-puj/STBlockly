@@ -17,7 +17,7 @@ import com.smartown.server.services.ISTBaseActionService;
 
 @RestController
 @RequestMapping("command")
-public class STCBaseActionController {
+public class STBaseActionController {
 
 	
 	@Autowired
@@ -38,6 +38,19 @@ public class STCBaseActionController {
 		return retList;
 	}
 	
+	@GetMapping("/custom")
+	List<STBaseActionDTO> getCustomCommands(){
+		List<STBaseActionDTO> retList = new ArrayList<>();
+		List<STBaseAction> commands = commandService.getAllCustomBaseActions();
+		ModelMapper mapper=new ModelMapper();
+		if(commands!=null) {
+			commands.forEach(command->{
+				retList.add(mapper.map(command, STBaseActionDTO.class));
+			});
+		}
+
+		return retList;
+	}
 	
 	
 	@PostMapping("/new")
