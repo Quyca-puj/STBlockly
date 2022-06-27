@@ -11,6 +11,9 @@ var ArdublocklyServer = {};
 ArdublocklyServer.NO_RESPONSE_ACK = -1;
 ArdublocklyServer.pause = false;
 
+ArdublocklyServer.setPause = function(value){
+  ArdublocklyServer.pause = value;
+}
 /**
  * Reads JSON data from the server and forwards formatted JavaScript object.
  * @param {!string} url Location for the JSON data.
@@ -414,7 +417,6 @@ ArdublocklyServer.startExecution = function (commandObj, workspace){
 }
 
 ArdublocklyServer.sendCommand = function(workspace, ip){
-  console.log(ArdublocklyServer.actionPos);
   if(!ArdublocklyServer.pause && ArdublocklyServer.commandList.length>ArdublocklyServer.actionPos){
     let ret = ArdublocklyServer.sendCommandToRobot(ip, false);
     ArdublocklyServer.sendToRobot(ret.json,ret.id, workspace).then(function handle(list) {  

@@ -153,9 +153,14 @@ Ardublockly.ideSendUpload = function() {
 };
 
 Ardublockly.startExecution = function(){
+  ArdublocklyServer.setPause(false);
   Ardublockly.generateExec(Ardublockly.workspace);
   let commandObj = Ardublockly.execCommandsToList();
-  ArdublocklyServer.startExecution(commandObj, Ardublockly.workspace);
+  if(){
+    ArdublocklyServer.startExecution(commandObj, Ardublockly.workspace);
+  }else{
+    
+  }
 }
 /** Sets the Ardublockly server IDE setting to verify and sends the code. */
 Ardublockly.ideSendVerify = function() {
@@ -163,10 +168,20 @@ Ardublockly.ideSendVerify = function() {
   if (Ardublockly.ideButtonLargeAction !== Ardublockly.ideSendVerify) {
     Ardublockly.showExtraIdeButtons(false);
     Ardublockly.setIdeSettings(null, 'verify');
+
+    switch(Ardublockly.selected_language){
+      case "arduino":
+        Ardublockly.shortMessage(Ardublockly.getLocalStr('verifyingSketch'));
+        Ardublockly.resetIdeOutputContent();
+        Ardublockly.sendCode();
+        break;
+      case "exec":
+        Ardublockly.shortMessage(Ardublockly.getLocalStr('pauseCommands'));
+        Ardublockly.resetIdeOutputContent();
+        ArdublocklyServer.setPause(true);
+        break;
+    }
   }
-  Ardublockly.shortMessage(Ardublockly.getLocalStr('verifyingSketch'));
-  Ardublockly.resetIdeOutputContent();
-  Ardublockly.sendCode();
 };
 
 /** Sets the Ardublockly server IDE setting to open and sends the code. */
@@ -217,7 +232,8 @@ Ardublockly.changeIdeButtons = function(value) {
   var openTitle = Ardublockly.getLocalStr('openSketch');
   var verifyTitle = Ardublockly.getLocalStr('verify');
   var uploadTitle = Ardublockly.getLocalStr('upload');
-
+  switch (Ardublockly.selected_language) {
+    case "arduino":
   if (value === 'upload') {
     Ardublockly.changeIdeButtonsDesign(value);
     Ardublockly.ideButtonLeftAction = Ardublockly.ideSendOpen;
@@ -242,6 +258,23 @@ Ardublockly.changeIdeButtons = function(value) {
     leftButton.title = verifyTitle;
     middleButton.title = uploadTitle;
     largeButton.title = openTitle;
+  }
+  break;
+  case "exec":
+    if (value === 'upload') {
+      Ardublockly.changeIdeButtonsDesign(value);
+      Ardublockly.ideButtonMiddleAction = Ardublockly.ideSendVerify;
+      Ardublockly.ideButtonLargeAction = Ardublockly.ideSendUpload;
+      middleButton.title = Ardublockly.getLocalStr('pauseCommands');;
+      largeButton.title = Ardublockly.getLocalStr('executeCommands');;
+    } else if (value === 'verify') {
+      Ardublockly.changeIdeButtonsDesign(value);
+      Ardublockly.ideButtonMiddleAction = Ardublockly.ideSendUpload;
+      Ardublockly.ideButtonLargeAction = Ardublockly.ideSendVerify;
+      middleButton.title = Ardublockly.getLocalStr('executeCommands');;
+      largeButton.title = Ardublockly.getLocalStr('pauseCommands');;
+    }
+    break;
   }
 };
 

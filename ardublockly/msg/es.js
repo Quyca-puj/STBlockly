@@ -118,5 +118,6 @@ Ardublockly.LOCALISED_TEXT = {
   upload: "¡Sube tu codigo!",
   codePlaceHolder: "Nombre del Proyecto",
   uploadingCommands: "Subiendo al Servidor de SmartTown",
-  executeCommands: "¿Ejecuta tu creación!",
+  executeCommands: "¡Ejecuta tu creación!",
+  pauseCommands: "¡Pausa la Ejecución!",
 };
