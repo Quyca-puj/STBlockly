@@ -374,11 +374,19 @@ Blockly.STExecution.blockToSTActions = function(command, alias, id){
       retAction.command = msg.join(" ");
       if (stmt.emotion) {
         emoMsg.push(alias);
-        emoMsg.push("emotion");
+        emoMsg.push("emotions");
         emoMsg.push(stmt.emotion);
         retAction.emotion = emoMsg.join(" ");
         retAction.type = SmartTownUtils.EMOTION_COMMAND;
 
+      }
+    }else{
+      if (stmt.emotion){
+        emoMsg.push(alias);
+        emoMsg.push("emotions");
+        emoMsg.push(stmt.emotion);
+        retAction.emotion = emoMsg.join(" ");
+        retAction.type = SmartTownUtils.JUST_EMOTION_COMMAND;
       }
     }
 
@@ -391,7 +399,6 @@ Blockly.STExecution.blockToSTActions = function(command, alias, id){
       }
       retAction.actions=commandList;
     }
-
     return retAction;
 };
 

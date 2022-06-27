@@ -13,10 +13,6 @@
    return Blockly.SmartTown.generateCommandRobotSketch(root);    
  };
 
- SmartTown.highlightBlock =function (id, root) {
-  root.highlightBlock(null);
-  root.highlightBlock(id);
-};
 
 SmartTown.setCommandList =function (list) {
   SmartTown.CommandList = list;
@@ -36,7 +32,7 @@ SmartTown.convertToSendable = function (alList){
       let act = actionsAr[j];
       let action = {action:act.action};
       if(act.time !== null && act.speed !== null){
-        action.params = act.time+" "+act.speed;
+        action.params = act.speed+" "+act.time;
       }
       if(act.emotion!==null){
         action.emotion = act.emotion;

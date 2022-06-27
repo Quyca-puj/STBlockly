@@ -11,14 +11,14 @@ from __future__ import unicode_literals, absolute_import, print_function
 def send_code_to_robot(robot_action, socket_mgmt):
     """
     """
+    ret = True
     ip = robot_action['ip']
-    print(robot_action, "yes0")
     if "emomsg" in robot_action:
-        print("yes1")
+        print(robot_action['emomsg'], "emotionText")
         socket_mgmt.send_msg(ip,robot_action['emomsg'])
-        print("yes2")
-    print("yes3")
-    return socket_mgmt.send_msg(ip,robot_action['msg'],robot_action['ack'])
+    if "msg" in robot_action:
+        ret = socket_mgmt.send_msg(ip,robot_action['msg'],robot_action['ack'])
+    return ret
 
 
 

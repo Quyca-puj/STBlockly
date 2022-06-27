@@ -8,6 +8,8 @@
 
 /** Create a name space for the application. */
 var ArdublocklyServer = {};
+ArdublocklyServer.NO_RESPONSE_ACK = -1;
+ArdublocklyServer.pause = false;
 
 /**
  * Reads JSON data from the server and forwards formatted JavaScript object.
@@ -87,32 +89,35 @@ ArdublocklyServer.sendRequest = async function(
 
 ArdublocklyServer.sendRequestCustom = async function(
   url, method, contentType, jsonObjSend) {
+    return new Promise(function (resolve, reject){
+      var request = ArdublocklyServer.createRequest();
 
-      var request = STServer.createRequest();
-
-      try {
-        request.open(method, url, false);
-        request.setRequestHeader('Content-type', contentType);
-        request.send(JSON.stringify(jsonObjSend));
-
+      // The data received is JSON, so it needs to be converted into the right
+      // format to be displayed in the page.
+      var onReady = function() {
         if (request.readyState == 4) {
           if (request.status == 200) {
-            var jsonObjReceived = null;
             try {
-              jsonObjReceived = JSON.parse(request.responseText);
+              resolve(request.response);
             } catch(e) {
               console.error('Incorrectly formatted JSON data from ' + url);
               throw e;
             }
+          } else {
+            reject(request.status)
           }
         }
-
+      };
+    
+      try {
+        request.open(method, url, true);
+        request.setRequestHeader('Content-type', contentType);
+        request.onreadystatechange = onReady;
+        request.send(JSON.stringify(jsonObjSend));
       } catch (e) {
         throw e;
       }
-
-      return await jsonObjReceived;
-
+    });
 };
 
 /** @return {XMLHttpRequest} An XML HTTP Request multi-browser compatible. */
@@ -404,55 +409,68 @@ ArdublocklyServer.startExecution = function (commandObj, workspace){
   ArdublocklyServer.pause = false;
   ArdublocklyServer.commandList = commandObj.list;
   let ip = commandObj.ip;
+  ArdublocklyUtils.traceOn(true,workspace);
   ArdublocklyServer.sendCommand(workspace, ip);
 }
 
 ArdublocklyServer.sendCommand = function(workspace, ip){
-  if(!ArdublocklyServer.pause){
-    let ret = ArdublocklyServer.sendCommandToRobot(ip);
+  console.log(ArdublocklyServer.actionPos);
+  if(!ArdublocklyServer.pause && ArdublocklyServer.commandList.length>ArdublocklyServer.actionPos){
+    let ret = ArdublocklyServer.sendCommandToRobot(ip, false);
     ArdublocklyServer.sendToRobot(ret.json,ret.id, workspace).then(function handle(list) {  
-      SmartTown.sendCommand(workspace);
+      ArdublocklyServer.sendCommand(workspace, ip);
     });
   }
 }
+ArdublocklyServer.getCommand = function(isList){
+  let command;
+  if(isList){
+      command=ArdublocklyServer.commandList[ArdublocklyServer.actionPos].actions[ArdublocklyServer.alPos];
+      ArdublocklyServer.alPos++;
+      if(ArdublocklyServer.alPos>=ArdublocklyServer.commandList[ArdublocklyServer.actionPos].actions.length){
+        ArdublocklyServer.actionPos++;
+        ArdublocklyServer.alPos=0;
+      }
+    }else{
+      command = ArdublocklyServer.commandList[ArdublocklyServer.actionPos];
+    }
 
-ArdublocklyServer.sendCommandToRobot= function (ip){
+  return command;
+};
+
+ArdublocklyServer.sendCommandToRobot= function (ip, isList){
   let json;
-  let command = ArdublocklyServer.commandList[ArdublocklyServer.actionPos];
-  if(ArdublocklyServer.isList){
-    command=command.actions[ArdublocklyServer.alPos];
-  }
+  let command= ArdublocklyServer.getCommand(isList);
+
   switch(command.type){
     case SmartTownUtils.BASE_COMMAND:
         json = {ip:ip,msg:command.command +" "+ ArdublocklyServer.ack, ack:ArdublocklyServer.ack};
+        json={json:json, id: command.id};
+        ArdublocklyServer.ack++ ;
       break;
     case SmartTownUtils.EMOTION_COMMAND:
-      json = {ip:ip,msg:command.command +" "+ ArdublocklyServer.ack,emomsg:command.emotion, ack:ArdublocklyServer.ack};
-    break;
+      json = {ip:ip,msg:command.command +" "+ ArdublocklyServer.ack,emomsg:command.emotion+" "+ ArdublocklyServer.NO_RESPONSE_ACK, ack:ArdublocklyServer.ack};
+      json={json:json, id: command.id};
+      ArdublocklyServer.ack++ ;
+      break;
+      case SmartTownUtils.JUST_EMOTION_COMMAND:
+        json = {ip:ip,emomsg:command.emotion+" "+ ArdublocklyServer.NO_RESPONSE_ACK};
+        json={json:json, id: command.id};
+        break;
     case SmartTownUtils.ACTIONLIST_COMMAND:
-      json = ArdublocklyServer.sendCommandToRobot(ip);
-      ArdublocklyServer.isList = true;
+      isList=true;
+      json = ArdublocklyServer.sendCommandToRobot(ip, true);
+      break;
   }
-
-  if(ArdublocklyServer.isList){
-    ArdublocklyServer.alPos++;
-    if(ArdublocklyServer.alPos>=ArdublocklyServer.commandList[ArdublocklyServer.actionPos].actions.length){
-      ArdublocklyServer.isList=false;
-      ArdublocklyServer.alPos=0;
-    }
-  }
-
-  if(!ArdublocklyServer.isList)
-  {
+  if(!isList){
     ArdublocklyServer.actionPos++;
   }
-  ArdublocklyServer.ack++ ;
-  return {json:json, id:command.id};
+
+  return json;
 }
 
 ArdublocklyServer.sendToRobot = async function(json, id, workspace) {
-  SmartTown.highlightBlock(id, workspace);
-  console.log("sending "+ json);
+  ArdublocklyUtils.highlightBlock(id, workspace);
   return await ArdublocklyServer.postJson('/robot/send', {action:json});
 };
 

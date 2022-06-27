@@ -21,7 +21,7 @@ Blockly.STExecution['mvt_avanzar_tiempo_exec'] = function(block) {
   let dropdown_movement = block.getFieldValue('Movement');
   let time = block.getFieldValue('TIME');
   let speed = block.getFieldValue('SPEED');
-  let code={action:dropdown_movement, params:time  + " "+speed};
+  let code={action:dropdown_movement, params:speed + " "+time  };
   return code;
 };
 
@@ -29,13 +29,19 @@ Blockly.STExecution['mvt_girar_tiempo_exec'] = function(block) {
   let dropdown_movement = block.getFieldValue('Movement');
   let time = block.getFieldValue('TIME');
   let speed = block.getFieldValue('SPEED');
-  let code={action:dropdown_movement, params:time  + " "+speed};
+  let code={action:dropdown_movement, params:speed + " "+time  };
   return code;
 };
 
 Blockly.STExecution['mvt_stop_exec'] = function(block) {
   let dropdown_emotion = block.getFieldValue('Emotion');
   let code={action:'stop', emotion:dropdown_emotion};
+  return code;
+};
+
+Blockly.STExecution['change_emotion_exec'] = function(block) {
+  let dropdown_emotion = block.getFieldValue('Emotion');
+  let code={emotion:dropdown_emotion};
   return code;
 };
 

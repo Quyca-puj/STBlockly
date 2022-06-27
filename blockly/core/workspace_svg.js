@@ -443,6 +443,9 @@ Blockly.WorkspaceSvg.prototype.highlightBlock = function(id) {
   // trip the monitor for detecting user activity.
   this.traceOn(false);
   // Select the current block.
+  console.log("HL ");
+  console.log(id);
+  console.log(block);
   if (block) {
     block.select();
   } else if (Blockly.selected) {

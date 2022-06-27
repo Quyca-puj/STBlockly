@@ -18,35 +18,35 @@ Blockly.Blocks['mvt_avanzar_exec'] = {
                     "options": [
                       [
                         "Muy Feliz",
-                        "MUY_FELIZ"
+                        "happy"
                       ],
                       [
                         "Feliz",
-                        "FELIZ"
+                        "happy"
                       ],
                       [
                         "Serio",
-                        "SERIO"
+                        "neutral"
                       ],
                       [
                         "Triste",
-                        "TRISTE"
+                        "sad"
                       ],
                       [
                         "Muy Triste",
-                        "MUY_TRISTE"
+                        "sad"
                       ],
                       [
                         "Enfermo",
-                        "ENFERMO"
+                        "neutral"
                       ],
                       [
                         "Furioso",
-                        "FURIOSO"
+                        "angry"
                       ],
                       [
                         "Sorprendido",
-                        "SORPRENDIDO"
+                        "angry"
                       ]
                     ]
                   }
@@ -92,35 +92,35 @@ Blockly.Blocks['mvt_avanzar_exec'] = {
                     "options": [
                       [
                         "Muy Feliz",
-                        "MUY_FELIZ"
+                        "happy"
                       ],
                       [
                         "Feliz",
-                        "FELIZ"
+                        "happy"
                       ],
                       [
                         "Serio",
-                        "SERIO"
+                        "neutral"
                       ],
                       [
                         "Triste",
-                        "TRISTE"
+                        "sad"
                       ],
                       [
                         "Muy Triste",
-                        "MUY_TRISTE"
+                        "sad"
                       ],
                       [
                         "Enfermo",
-                        "ENFERMO"
+                        "neutral"
                       ],
                       [
                         "Furioso",
-                        "FURIOSO"
+                        "angry"
                       ],
                       [
                         "Sorprendido",
-                        "SORPRENDIDO"
+                        "angry"
                       ]
                     ]
                   }
@@ -272,35 +272,96 @@ Blockly.Blocks['mvt_avanzar_exec'] = {
                   "options": [
                     [
                       "Muy Feliz",
-                      "MUY_FELIZ"
+                      "happy"
                     ],
                     [
                       "Feliz",
-                      "FELIZ"
+                      "happy"
                     ],
                     [
                       "Serio",
-                      "SERIO"
+                      "neutral"
                     ],
                     [
                       "Triste",
-                      "TRISTE"
+                      "sad"
                     ],
                     [
                       "Muy Triste",
-                      "MUY_TRISTE"
+                      "sad"
                     ],
                     [
                       "Enfermo",
-                      "ENFERMO"
+                      "neutral"
                     ],
                     [
                       "Furioso",
-                      "FURIOSO"
+                      "angry"
                     ],
                     [
                       "Sorprendido",
-                      "SORPRENDIDO"
+                      "angry"
+                    ]
+                  ]
+                }
+              ],
+              "inputsInline": true,
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 0,
+                "tooltip": "El robot gira dado un tiempo especifico",
+                "helpUrl": ""
+            }
+            
+        );
+    }
+  };
+
+
+  Blockly.Blocks['change_emotion_exec'] = {
+    init: function() {
+        this.jsonInit(
+            {
+              "message0": " Cambiar Emocion Emocion %1 %2",
+              "args0": [
+                {
+                  "type": "input_dummy"
+                },
+                {
+                  "type": "field_dropdown",
+                  "name": "Emotion",
+                  "options": [
+                    [
+                      "Muy Feliz",
+                      "happy"
+                    ],
+                    [
+                      "Feliz",
+                      "happy"
+                    ],
+                    [
+                      "Serio",
+                      "neutral"
+                    ],
+                    [
+                      "Triste",
+                      "sad"
+                    ],
+                    [
+                      "Muy Triste",
+                      "sad"
+                    ],
+                    [
+                      "Enfermo",
+                      "neutral"
+                    ],
+                    [
+                      "Furioso",
+                      "angry"
+                    ],
+                    [
+                      "Sorprendido",
+                      "neutral"
                     ]
                   ]
                 }

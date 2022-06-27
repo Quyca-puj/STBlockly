@@ -10,7 +10,6 @@ class RobotSocketManager:
 
     def send_msg(self, conex_details, msg, ack= None):
         response = True
-        print("get_connection1")
         s= self.get_connection(conex_details)
         print("MIRAR2", msg)
         s.send(msg.encode('UTF-8'))
@@ -19,5 +18,6 @@ class RobotSocketManager:
             print(ret, ack, int(ret) == int(ack))
             response = int(ret) == int(ack)
         s.close()
+        print("MIRAR3", response)
         return response
 

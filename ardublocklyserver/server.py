@@ -389,18 +389,21 @@ def handler_robot_code():
 
     std_out, err_out = '', ''
     exit_code = 52
+    success = False
     response_dict = {'response_type': 'ide_output',
                      'response_state': 'full_response'}
     
     try:
         action_to_exec = request.json['action']
+        print(request, "yes")
+
     except (TypeError, ValueError, KeyError) as e:
         exit_code = 64
         err_out = 'Unable to parse sent JSON.'
         print('Error: Unable to parse sent JSON:\n%s' % str(e))
     else:
         try:
-              success = \
+            success = \
                 robotactions.send_code_to_robot(action_to_exec, socket_mgmt)
         except Exception as e:
             exit_code = 52

@@ -7,9 +7,13 @@
  'use strict';
 
  /** Create a namespace for the application. */
- var SmartTownUtils = SmartTownUtils || {};
+ var ArdublocklyUtils = ArdublocklyUtils || {};
 
- SmartTownUtils.EMOTION_COMMAND= "emotionalAction";
- SmartTownUtils.JUST_EMOTION_COMMAND= "justEmotionalAction";
- SmartTownUtils.BASE_COMMAND= "baseAction";
- SmartTownUtils.ACTIONLIST_COMMAND= "actionList";
+
+ ArdublocklyUtils.traceOn= function(value, root){
+    root.traceOn(value)
+   }
+  
+   ArdublocklyUtils.highlightBlock =function (id, root) {
+    root.highlightBlock(id);
+  };

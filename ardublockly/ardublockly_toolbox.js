@@ -607,8 +607,11 @@ Ardublockly.TOOLBOX_EXEC_XML =
 '  <field name="TIME">1</field>'+
 '  <field name="SPEED">1</field>'+
 '</block>'+
+'<block type="change_emotion_exec">'+
+'  <field name="Emotion">angry</field>'+
+'</block>' +
 '<block type="mvt_stop_exec">'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">angry</field>'+
 '</block>' +
 '<block type="new_smarttown_action_list"></block>' +
 '</category>'+
