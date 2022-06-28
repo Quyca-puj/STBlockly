@@ -50,13 +50,13 @@ Blockly.Blocks['controls_repeat_ext'] = {
           "check": Blockly.Types.NUMBER.checkList
         }
       ],
-      "previousStatement": null,
+      "previousStatement": "COMMAND",
       "nextStatement": null,
       "colour": Blockly.Blocks.loops.HUE,
       "tooltip": Blockly.Msg.CONTROLS_REPEAT_TOOLTIP,
       "helpUrl": Blockly.Msg.CONTROLS_REPEAT_HELPURL
     });
-    this.appendStatementInput('DO')
+    this.appendStatementInput('DO').setCheck("COMMAND")
         .appendField(Blockly.Msg.CONTROLS_REPEAT_INPUT_DO);
   }
 };
@@ -78,7 +78,7 @@ Blockly.Blocks['controls_repeat'] = {
           "text": "10"
         }
       ],
-      "previousStatement": null,
+      "previousStatement": "COMMAND",
       "nextStatement": null,
       "colour": Blockly.Blocks.loops.HUE,
       "tooltip": Blockly.Msg.CONTROLS_REPEAT_TOOLTIP,

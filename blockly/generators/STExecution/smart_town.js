@@ -4,16 +4,20 @@ goog.require('Blockly.STExecution');
 
 Blockly.STExecution['mvt_avanzar_exec'] = function(block) {
   let dropdown_emotion = block.getFieldValue('Emotion');
-  let paramStr = Blockly.STExecution.setEmotionalParams(dropdown_emotion);
-  let code={action:"forward", emotion:dropdown_emotion, params:paramStr};
+  let code={action:"forward", emotion:dropdown_emotion};
+  let paramStr = Blockly.STExecution.setEmotionalParams(SmartTownUtils.ACTION_PARAMS[code.action], dropdown_emotion);
+  code.params=paramStr
+  console.log(code);
   return code;
 };
 
 Blockly.STExecution['mvt_girar_exec'] = function(block) {
   let dropdown_movement = block.getFieldValue('Movement');
   let dropdown_emotion = block.getFieldValue('Emotion');
-  let paramStr = Blockly.STExecution.setEmotionalParams(dropdown_emotion);
-  let code={action:dropdown_movement, emotion:dropdown_emotion, params:paramStr};
+  let code={action:dropdown_movement, emotion:dropdown_emotion}
+  let paramStr = Blockly.STExecution.setEmotionalParams(SmartTownUtils.ACTION_PARAMS[code.action], dropdown_emotion);
+  code.params=paramStr;
+  console.log(code);
   return code;
 };
 
@@ -63,8 +67,31 @@ Blockly.STExecution['st_actionList_call'] = function(block) {
 Blockly.STExecution['setupsmarttown_exec'] = function(block) {
   let alias = block.getFieldValue('ALIAS');
   let ip = block.getFieldValue('ip');
-  //bloque de configuracion
+  let emo_conf = Blockly.STExecution.statementToCode(block, 'EMOCONFIG');
+  let act_conf = Blockly.STExecution.statementToCode(block, 'ACTCONFIG');
   let blockList = Blockly.STExecution.statementToList(block, 'COMMANDS', alias);
   Blockly.STExecution.addCommandToDict(alias,{ip:ip,list:blockList});
   return '';
+};
+
+Blockly.STExecution['config_emotions'] = function(block) {
+  let MF = block.getFieldValue('MF');
+  let F = block.getFieldValue('F');
+  let S = block.getFieldValue('S');
+  let T = block.getFieldValue('T');  
+  let MT = block.getFieldValue('MT');
+  let E = block.getFieldValue('E');
+  let FU = block.getFieldValue('FU');
+  let SO = block.getFieldValue('SO');
+  let code={very_happy:MF, happy:F,neutral:S, sad:T,very_sad:MT,sick:E,angry:FU,surprised:SO};
+  Blockly.STExecution.setEmoConfig(code);
+  return null;
+};
+
+Blockly.STExecution['config_actions'] = function(block) {
+  let speed_min = block.getFieldValue('SPEED_MIN');
+  let speed_max = block.getFieldValue('SPEED_MAX');
+  let code={speed:{MIN:speed_min, MAX:speed_max}};
+  Blockly.STExecution.setActConfig(code);
+  return null;
 };

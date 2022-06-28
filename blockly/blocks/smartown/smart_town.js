@@ -281,7 +281,7 @@ goog.require('Blockly.Types');
     init: function() {
       this.appendDummyInput('TOPROW')
           .appendField(this.id, 'NAME');
-      this.setPreviousStatement(true);
+      this.setPreviousStatement(true,"COMMAND");
       this.setNextStatement(true);
       this.setColour(120);
       // Tooltip is set in renameCommand.

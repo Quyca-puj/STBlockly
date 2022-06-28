@@ -38,7 +38,7 @@ Ardublockly.bindActionFunctions = function() {
   // Navigation buttons
   Ardublockly.bindClick_('button_load', Ardublockly.loadUserXmlFile);
   Ardublockly.bindClick_('button_save', Ardublockly.saveXmlFile);
-  Ardublockly.bindClick_('button_delete', Ardublockly.discardAllBlocks);
+ // Ardublockly.bindClick_('button_delete', Ardublockly.discardAllBlocks);
 
   // Side menu buttons, they also close the side menu
   Ardublockly.bindClick_('menu_load', function() {
@@ -151,17 +151,23 @@ Ardublockly.ideSendUpload = function() {
   }
   
 };
+Ardublockly.errorHandler = function(response){
+  Ardublockly.largeIdeButtonSpinner(false);
+  if (response === null) return Ardublockly.openNotConnectedModal();
+  Ardublockly.arduinoIdeOutput(response);
+};
 
 Ardublockly.startExecution = function(){
   ArdublocklyServer.setPause(false);
+  Ardublockly.largeIdeButtonSpinner(true);
   Ardublockly.generateExec(Ardublockly.workspace);
   let commandObj = Ardublockly.execCommandsToList();
-  if(){
-    ArdublocklyServer.startExecution(commandObj, Ardublockly.workspace);
+  if(commandObj){
+    ArdublocklyServer.startExecution(commandObj, Ardublockly.workspace, Ardublockly.errorHandler);
   }else{
-    
+    Ardublockly.materialAlert(Ardublockly.getLocalStr('notSetExecAlertTitle'),Ardublockly.getLocalStr('notSetExecAlertBody'),false);
   }
-}
+};
 /** Sets the Ardublockly server IDE setting to verify and sends the code. */
 Ardublockly.ideSendVerify = function() {
   // Check if this is the currently selected option before edit sever setting
@@ -178,6 +184,7 @@ Ardublockly.ideSendVerify = function() {
       case "exec":
         Ardublockly.shortMessage(Ardublockly.getLocalStr('pauseCommands'));
         Ardublockly.resetIdeOutputContent();
+        Ardublockly.largeIdeButtonSpinner(false)
         ArdublocklyServer.setPause(true);
         break;
     }

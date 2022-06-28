@@ -43,6 +43,8 @@
   <script src="../blockly/blocks/smartown/smart_town_exec.js"></script>
   <script src="../blockly/generators/stexecution.js"></script>
   <script src="../blockly/generators/STExecution/smart_town.js"></script>
+  <script src="../blockly/generators/STExecution/loops.js"></script>
+  <script src="../blockly/generators/STExecution/math.js"></script>
   <script src="../blockly/generators/arduino.js"></script>
   <script src="../blockly/generators/arduino/boards.js"></script>
   <script src="../blockly/generators/arduino/io.js"></script>
@@ -112,7 +114,7 @@
         </select></li>
         <li><a href="#" id="button_load"><span class="translatable_open">Cargar</span><i class="mdi-file-file-upload left"></i></a></li>
         <li><a href="#" id="button_save"><span class="translatable_save">Guardar</span><i class="mdi-file-file-download left"></i></a></li>
-        <li><a href="#" id="button_delete"><span class="translatable_deleteAll">Borrar Todo</span><i class="mdi-action-delete left"></i></a></li>
+        <!--li><a href="#" id="button_delete"><span class="translatable_deleteAll">Borrar Todo</span><i class="mdi-action-delete left"></i></a></li-->
       </ul>
     </div>
   </nav>
@@ -263,7 +265,7 @@
       <li>
         <div id="ide_output_collapsible_header" class="collapsible-header ide_output_header_normal">
           <i class="mdi-action-swap-vert Medium" style="font-size: 2.2rem;"></i>
-          <span class="translatable_arduinoOpMainTitle">Consola Arduino</span>
+          <span class="translatable_arduinoOpMainTitle">Consola</span>
         </div>
         <div class="collapsible-body">
           <div id="content_ide_output" class="content"></div>

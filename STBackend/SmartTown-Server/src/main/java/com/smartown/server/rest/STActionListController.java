@@ -40,13 +40,14 @@ public class STActionListController {
 		ModelMapper mapper=new ModelMapper();
 		if(aLists!=null) {
 			aLists.forEach(command->{
+				
 				STActionListDTO aux = mapper.map(command, STActionListDTO.class);
-				if(aux.getActions()==null) {
-					aux.setActions(new ArrayList<>());
-				}
+				aux.setActions(new ArrayList<>());
+				System.out.println("Size: "+aux.getActions().size());
 				command.getActionList().forEach(action->{
-					System.out.println("Action: "+action);
+					System.out.println("Action: "+action.toString());
 					ActionDTO act = instanceService.createActionfromInstance(action);
+					System.out.println("ActionDTO: "+act.toString());
 					aux.getActions().add(act);
 				});
 				retList.add(aux);
@@ -61,7 +62,6 @@ public class STActionListController {
 	
 	@PostMapping("/new")
 	STActionListDTO createNewActionList(@RequestBody STActionListDTO aList){
-		System.out.println(aList);
 		STActionList savedAList =  aListService.createFromDTO(aList);
 		final STActionList newAList= aListService.createActionList(savedAList);
 		aList.getActions().forEach(action->{

@@ -405,7 +405,7 @@ ArdublocklyServer.sendSketchToServer = function(code, callback) {
 };
 
 
-ArdublocklyServer.startExecution = function (commandObj, workspace){
+ArdublocklyServer.startExecution = function (commandObj, workspace ,errorHandler){
   ArdublocklyServer.ack =0 ;
   ArdublocklyServer.actionPos =0 ;
   ArdublocklyServer.alPos =0 ;
@@ -413,16 +413,27 @@ ArdublocklyServer.startExecution = function (commandObj, workspace){
   ArdublocklyServer.commandList = commandObj.list;
   let ip = commandObj.ip;
   ArdublocklyUtils.traceOn(true,workspace);
-  ArdublocklyServer.sendCommand(workspace, ip);
+  ArdublocklyServer.sendCommand(workspace, ip, errorHandler);
 }
 
-ArdublocklyServer.sendCommand = function(workspace, ip){
-  if(!ArdublocklyServer.pause && ArdublocklyServer.commandList.length>ArdublocklyServer.actionPos){
-    let ret = ArdublocklyServer.sendCommandToRobot(ip, false);
-    ArdublocklyServer.sendToRobot(ret.json,ret.id, workspace).then(function handle(list) {  
-      ArdublocklyServer.sendCommand(workspace, ip);
-    });
-  }
+ArdublocklyServer.sendCommand = function(workspace, ip, errorHandler){
+  if(!ArdublocklyServer.pause){
+    if(ArdublocklyServer.commandList.length>ArdublocklyServer.actionPos){
+      let ret = ArdublocklyServer.sendCommandToRobot(ip, false);
+      ArdublocklyServer.sendToRobot(ret.json,ret.id, workspace).then(function handle(response) {  
+        let jsonObj = JSON.parse(response);
+        if(jsonObj.success){
+          ArdublocklyServer.sendCommand(workspace, ip, errorHandler);
+        }else{
+          let dataBack = ArdublocklyServer.jsonToIdeModal(jsonObj);
+          errorHandler(dataBack);
+        }
+      });
+    }else{
+      Ardublockly.largeIdeButtonSpinner(false);
+    }
+  } 
+
 }
 ArdublocklyServer.getCommand = function(isList){
   let command;

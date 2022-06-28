@@ -15,40 +15,7 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
                   {
                     "type": "field_dropdown",
                     "name": "Emotion",
-                    "options": [
-                      [
-                        "Muy Feliz",
-                        "MUY_FELIZ"
-                      ],
-                      [
-                        "Feliz",
-                        "FELIZ"
-                      ],
-                      [
-                        "Serio",
-                        "SERIO"
-                      ],
-                      [
-                        "Triste",
-                        "TRISTE"
-                      ],
-                      [
-                        "Muy Triste",
-                        "MUY_TRISTE"
-                      ],
-                      [
-                        "Enfermo",
-                        "ENFERMO"
-                      ],
-                      [
-                        "Furioso",
-                        "FURIOSO"
-                      ],
-                      [
-                        "Sorprendido",
-                        "SORPRENDIDO"
-                      ]
-                    ]
+                    "options":  SmartTownUtils.EMOTION_OPTIONS
                   }
                 ],
                 "inputsInline": true,
@@ -89,40 +56,7 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
                   {
                     "type": "field_dropdown",
                     "name": "Emotion",
-                    "options": [
-                      [
-                        "Muy Feliz",
-                        "MUY_FELIZ"
-                      ],
-                      [
-                        "Feliz",
-                        "FELIZ"
-                      ],
-                      [
-                        "Serio",
-                        "SERIO"
-                      ],
-                      [
-                        "Triste",
-                        "TRISTE"
-                      ],
-                      [
-                        "Muy Triste",
-                        "MUY_TRISTE"
-                      ],
-                      [
-                        "Enfermo",
-                        "ENFERMO"
-                      ],
-                      [
-                        "Furioso",
-                        "FURIOSO"
-                      ],
-                      [
-                        "Sorprendido",
-                        "SORPRENDIDO"
-                      ]
-                    ]
+                    "options":  SmartTownUtils.EMOTION_OPTIONS
                   }
                 ],
                 "inputsInline": true,
@@ -244,7 +178,6 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
       .setCheck("Command")
       .appendField("Comandos");
       this.setInputsInline(true);
-      this.setNextStatement(true, null);
       this.setColour(59);
    this.setTooltip("Setup SmartTown functions");
    this.setHelpUrl("");
@@ -332,7 +265,7 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
     init: function() {
       this.appendDummyInput('TOPROW')
           .appendField(this.id, 'NAME');
-      this.setPreviousStatement(true);
+      this.setPreviousStatement(true,"ALCOMMAND");
       this.setNextStatement(true);
       this.setColour(140);
       // Tooltip is set in renameCommand.
@@ -491,40 +424,7 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
                 {
                   "type": "field_dropdown",
                   "name": "Emotion",
-                  "options": [
-                    [
-                      "Muy Feliz",
-                      "MUY_FELIZ"
-                    ],
-                    [
-                      "Feliz",
-                      "FELIZ"
-                    ],
-                    [
-                      "Serio",
-                      "SERIO"
-                    ],
-                    [
-                      "Triste",
-                      "TRISTE"
-                    ],
-                    [
-                      "Muy Triste",
-                      "MUY_TRISTE"
-                    ],
-                    [
-                      "Enfermo",
-                      "ENFERMO"
-                    ],
-                    [
-                      "Furioso",
-                      "FURIOSO"
-                    ],
-                    [
-                      "Sorprendido",
-                      "SORPRENDIDO"
-                    ]
-                  ]
+                  "options":  SmartTownUtils.EMOTION_OPTIONS
                 }
               ],
               "inputsInline": true,

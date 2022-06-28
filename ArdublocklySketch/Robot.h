@@ -58,6 +58,7 @@ class Robot{
   void JointServoMsg(String msg,WiFiClient client); 
   void readFaces(String msg, WiFiClient); 
   bool processCommands(String msg, bool checkStatus);
- 
+ bool intento2();
+bool intento1();
 };
 #endif

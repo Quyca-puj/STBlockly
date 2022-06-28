@@ -403,18 +403,23 @@ def handler_robot_code():
         print('Error: Unable to parse sent JSON:\n%s' % str(e))
     else:
         try:
-            success = \
+            success, ide_mode, std_out, err_out, exit_code = \
                 robotactions.send_code_to_robot(action_to_exec, socket_mgmt)
         except Exception as e:
             exit_code = 52
             err_out += 'Unexpected server error.'
             print('Error: Exception in arduino_ide_send_code:\n%s' % str(e))
 
-    response_dict.update({'success': success})
+    response_dict.update({'success': success,
+                          'ide_mode': ide_mode,
+                          'ide_data': {
+                              'std_output': std_out,
+                              'err_output': err_out,
+                              'exit_code': exit_code}})
     if not success:
         response_dict.update({
             'errors': [{
-                'id': "fail"
+                'id': exit_code
             }]
         })
     set_header_no_cache()

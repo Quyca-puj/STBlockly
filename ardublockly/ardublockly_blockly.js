@@ -202,11 +202,16 @@ Ardublockly.loadSessionStorageBlocksByLanguage = function(lang) {
       // Restarting Firefox fixes this, so it looks like a bug.
       var loadOnce = null;
     }
-    if (loadOnce) {
+    let xml;
+    if (loadOnce && loadOnce.localeCompare(ArdublocklyUtils.EMPTY_WORKSPACE) != 0) {
       delete window.sessionStorage[lang];
-      var xml = Blockly.Xml.textToDom(loadOnce);
-      Blockly.Xml.domToWorkspace(xml, Ardublockly.workspace);
+      xml = Blockly.Xml.textToDom(loadOnce);
+
     }
+    else{
+      xml = Blockly.Xml.textToDom(ArdublocklyUtils.DEFAULT_WORKSPACE[lang]);
+    }
+    Blockly.Xml.domToWorkspace(xml, Ardublockly.workspace);
   }
 };
 

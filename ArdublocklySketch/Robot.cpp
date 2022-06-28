@@ -353,10 +353,26 @@ void Robot::processMsgString(String msg) {
 void Robot::readFaces(String msg) {
   STprint("readFaces entered");
   STprint(msg);
-  if (msg.equals("happy")) {
+  if (msg.equals("very_happy")) {
     int myarray[NUMPIXELS] = {0};
     int indexarray[16] = {13, 14, 17, 18, 19, 21, 22, 25, 33, 41, 42, 43, 45, 46, 53, 54};
     int color[3] = {255, 255, 0};
+    int contador = 0;
+    for (int i = 0; i < NUMPIXELS; i++) {
+      if (i == indexarray[contador]) {
+        myarray[i] = 1;
+        contador++;
+        if (contador > 15) {
+          contador = 15;
+        }
+      }
+    }
+    facesDraw(myarray, color, 70);
+    STprint("very_happy");
+  }else if (msg.equals("happy")) {
+    int myarray[NUMPIXELS] = {0};
+    int indexarray[16] = {13, 14, 17, 18, 19, 21, 22, 25, 33, 41, 42, 43, 45, 46, 53, 54};
+    int color[3] = {255,255,102};
     int contador = 0;
     for (int i = 0; i < NUMPIXELS; i++) {
       if (i == indexarray[contador]) {
@@ -372,7 +388,7 @@ void Robot::readFaces(String msg) {
   }else if (msg.equals("sad")) {
     int myarray[NUMPIXELS] = {0};
     int indexarray[16] = {13, 14, 17, 18, 19, 21, 22, 27, 35, 41, 42, 43, 45, 46, 53, 54};
-    int color[3] = {0, 0, 255};
+    int color[3] = {0, 0, 200};
     int contador = 0;
     for (int i = 0; i < NUMPIXELS; i++) {
       if (i == indexarray[contador]) {
@@ -385,6 +401,22 @@ void Robot::readFaces(String msg) {
     }
     facesDraw(myarray, color, 50);
     STprint("sad");
+  }else if (msg.equals("very_sad")) {
+    int myarray[NUMPIXELS] = {0};
+    int indexarray[16] = {13, 14, 17, 18, 19, 21, 22, 27, 35, 41, 42, 43, 45, 46, 53, 54};
+    int color[3] = {0, 0, 255};
+    int contador = 0;
+    for (int i = 0; i < NUMPIXELS; i++) {
+      if (i == indexarray[contador]) {
+        myarray[i] = 1;
+        contador++;
+        if (contador > 15) {
+          contador = 15;
+        }
+      }
+    }
+    facesDraw(myarray, color, 40);
+    STprint("very_sad");
   }else if (msg.equals("angry")) {
     int myarray[NUMPIXELS] = {0};
     int indexarray[12] = {6, 9, 14, 18, 21, 26, 34, 42, 45, 49, 54, 62};
@@ -399,7 +431,7 @@ void Robot::readFaces(String msg) {
         }
       }
     }
-    facesDraw(myarray, color, 50);
+    facesDraw(myarray, color, 60);
     STprint("angry");
   }else if (msg.equals("neutral")) {
     int myarray[NUMPIXELS] = {0};
@@ -417,5 +449,37 @@ void Robot::readFaces(String msg) {
     }
     facesDraw(myarray, color, 50);
     STprint("neutral");
+  }else if (msg.equals("surprised")) {
+    int myarray[NUMPIXELS] = {0};
+    int indexarray[12] = {13, 14, 18, 21, 22, 26, 34, 42, 45, 46, 53, 54};
+    int color[3] = {255,165,0};
+    int contador = 0;
+    for (int i = 0; i < NUMPIXELS; i++) {
+      if (i == indexarray[contador]) {
+        myarray[i] = 1;
+        contador++;
+        if (contador > 11) {
+          contador = 11;
+        }
+      }
+    }
+    facesDraw(myarray, color, 60);
+    STprint("surprised");
+  }else if (msg.equals("sick")) {
+    int myarray[NUMPIXELS] = {0};
+    int indexarray[12] = {13, 14, 18, 21, 22, 26, 34, 42, 45, 46, 53, 54};
+    int color[3] = {139,69,19};
+    int contador = 0;
+    for (int i = 0; i < NUMPIXELS; i++) {
+      if (i == indexarray[contador]) {
+        myarray[i] = 1;
+        contador++;
+        if (contador > 11) {
+          contador = 11;
+        }
+      }
+    }
+    facesDraw(myarray, color, 30);
+    STprint("sick");
   }
 }

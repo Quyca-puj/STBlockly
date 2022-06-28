@@ -74,7 +74,7 @@ Ardublockly.bindDesignEventListeners = function() {
     Ardublockly.saveSessionStorageBlocksbyLanguage(Ardublockly.selected_language);
     Ardublockly.selected_language=languages.value;
     Ardublockly.discardAllBlocks(true);
-
+    Ardublockly.resetIdeOutputContent();
     switch(languages.value){
       case "arduino":
         Ardublockly.changeIdeButtonsDesign('upload');
@@ -298,7 +298,7 @@ Ardublockly.largeIdeButtonSpinner = function(active) {
   var buttonIdeLarge = document.getElementById('button_ide_large');
   var buttonClass = buttonIdeLarge.className;
   if (active) {
-    spinner.style.display = 'block';
+    // spinner.style.display = 'block';
     buttonIdeLarge.className = buttonIdeLarge.className + ' grey';
   } else {
     spinner.style.display = 'none';

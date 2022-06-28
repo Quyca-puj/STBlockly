@@ -1,6 +1,7 @@
 package com.smartown.server.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,11 @@ public class STBaseActionService implements ISTBaseActionService{
 
 	@Override
 	public STBaseAction createBaseAction(STBaseAction command) {
+		Optional<STBaseAction> possibleCommand = repository.findByName(command.getName());
+		if (possibleCommand.isPresent()) {
+			STBaseAction previous = possibleCommand.get();
+			command.setId(previous.getId());
+		}
 		command.setCustom(true);
 		return repository.save(command);
 	}
@@ -54,7 +60,7 @@ public class STBaseActionService implements ISTBaseActionService{
 
 	@Override
 	public STBaseAction getBaseActionFromName(String name) {
-		STBaseAction action = repository.findByName(name);
+		STBaseAction action = repository.findByName(name).get();
 		return action;
 	}
 

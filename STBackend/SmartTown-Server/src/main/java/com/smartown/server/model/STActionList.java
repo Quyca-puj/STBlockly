@@ -22,19 +22,13 @@ import javax.persistence.JoinColumn;
 public class STActionList {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id", updatable = false, nullable = false)
 	private long id;
 	@Basic
 	private String name;
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name="list_actions", joinColumns=@JoinColumn(name="list_id"))
 	private List<STInstanceAction> actions;
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
+
 	public List<STInstanceAction> getActionList() {
 		return actions;
 	}
@@ -48,9 +42,23 @@ public class STActionList {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public List<STInstanceAction> getActions() {
+		return actions;
+	}
+	public void setActions(List<STInstanceAction> actions) {
+		this.actions = actions;
+	}
 	@Override
 	public String toString() {
-		return "STActionList [id=" + id + ", name=" + name + ", actions=" + actions.size() + "]";
+		return "STActionList [name=" + name + ", actions=" + actions.size() + "]";
 	} 
 
 }

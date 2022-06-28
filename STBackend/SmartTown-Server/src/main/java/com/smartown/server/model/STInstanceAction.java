@@ -47,4 +47,10 @@ public class STInstanceAction {
 	public void setBaseAction(STBaseAction baseAction) {
 		this.baseAction = baseAction;
 	}
+	@Override
+	public String toString() {
+		return "STInstanceAction [instance_id=" + instance_id + ", baseAction=" + baseAction + "]";
+	}
+	
+	
 }

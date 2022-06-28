@@ -232,7 +232,6 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    <block type="spi_transfer_return"></block>' +
 '  </category>' +
 '<category name="SmartTown" colour="#a55b80">'+
-'<block type="setupsmarttown"></block>'+
 '<block type="mvt_avanzar">'+
 '</block>'+
 '<block type="mvt_girar">'+
@@ -369,11 +368,11 @@ Ardublockly.TOOLBOX_JAVA_XML =
 '<block type="setupsmarttown_middle"></block>'+
 '<block type="mvt_avanzar_middle">'+
 '  <field name="Movement">forward</field>'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_girar_middle">'+
 '  <field name="Movement">left</field>'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_avanzar_tiempo_middle">'+
 '  <field name="Movement">forward</field>'+
@@ -508,11 +507,11 @@ Ardublockly.TOOLBOX_PY_XML =
 '<block type="setupsmarttown_middle"></block>'+
 '<block type="mvt_avanzar_middle">'+
 '  <field name="Movement">forward</field>'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_girar_middle">'+
 '  <field name="Movement">left</field>'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_avanzar_tiempo_middle">'+
 '  <field name="Movement">forward</field>'+
@@ -545,13 +544,12 @@ Ardublockly.TOOLBOX_MID_XML =
 '  </category>' +
 '  <sep></sep>' +
 '<category name="SmartTown" colour="#a55b80">'+
-'<block type="setupsmarttown_middle"></block>'+
 '<block type="mvt_avanzar_middle">'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_girar_middle">'+
 '  <field name="Movement">left</field>'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_avanzar_tiempo_middle">'+
 '  <field name="Movement">forward</field>'+
@@ -564,7 +562,7 @@ Ardublockly.TOOLBOX_MID_XML =
 '  <field name="SPEED">1</field>'+
 '</block>'+
 '<block type="mvt_stop_middle">'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>' +
 '<block type="new_smarttown_action_list"></block>' +
 '</category>'+
@@ -589,31 +587,29 @@ Ardublockly.TOOLBOX_EXEC_XML =
 '  </category>' +
 '  <sep></sep>' +
 '<category name="SmartTown" colour="#a55b80">'+
-'<block type="setupsmarttown_exec"></block>'+
 '<block type="mvt_avanzar_exec">'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_girar_exec">'+
 '  <field name="Movement">left</field>'+
-'  <field name="Emotion">MUY_FELIZ</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_avanzar_tiempo_exec">'+
 '  <field name="Movement">t_forward</field>'+
 '  <field name="TIME">1</field>'+
-'  <field name="SPEED">1</field>'+
+'  <field name="SPEED">50</field>'+
 '</block>'+
 '<block type="mvt_girar_tiempo_exec">'+
 '  <field name="Movement">t_left</field>'+
 '  <field name="TIME">1</field>'+
-'  <field name="SPEED">1</field>'+
+'  <field name="SPEED">50</field>'+
 '</block>'+
 '<block type="change_emotion_exec">'+
-'  <field name="Emotion">angry</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>' +
 '<block type="mvt_stop_exec">'+
-'  <field name="Emotion">angry</field>'+
+'  <field name="Emotion">very_happy</field>'+
 '</block>' +
-'<block type="new_smarttown_action_list"></block>' +
 '</category>'+
 '  <sep></sep>' +
 '  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +

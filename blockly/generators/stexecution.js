@@ -88,6 +88,8 @@ Blockly.STExecution.init = function (workspace) {
   } else {
     Blockly.STExecution.variableDB_.reset();
   }
+  Blockly.STExecution.actDict = Object.create(null);
+  Blockly.STExecution.emoDict = Object.create(null);
 
   // Iterate through to capture all blocks types and set the function arguments
   var varsWithTypes = Blockly.STExecution.StaticTyping.collectVarsWithTypes(workspace);
@@ -340,10 +342,29 @@ Blockly.STExecution.noGeneratorCodeInline = function () {
 /** Used for not-yet-implemented block code generators */
 Blockly.STExecution.noGeneratorCodeLine = function () { return ''; };
 
+Blockly.STExecution.LoopToList = function (block, name) {
+  var targetBlock = block.getInputTargetBlock(name);
+  var code = this.LoopToList(targetBlock);
+  return code;
+};
+
 Blockly.STExecution.statementToList = function (block, name, alias) {
   var targetBlock = block.getInputTargetBlock(name);
   var code = this.blockToList(targetBlock, alias);
   return code;
+};
+
+Blockly.STExecution.LoopToList = function (block) {
+  let auxBlock = block;
+  let blockList = [];
+  while (auxBlock !== null) {
+    if (!block.disabled) {
+      let action = this.blockToOutput(auxBlock);
+      blockList.push(action);
+    }
+    auxBlock = auxBlock.getNextBlock();
+  }
+  return blockList;
 };
 
 Blockly.STExecution.blockToList = function (block, alias) {
@@ -358,48 +379,65 @@ Blockly.STExecution.blockToList = function (block, alias) {
   }
   return blockList;
 };
-Blockly.STExecution.blockToSTActions = function(command, alias, id){
-    let retAction = {};
-    let stmt = command;
-    let msg = [];
-    let emoMsg = [];
-    retAction.id=id; 
-    if (stmt.action) {
-      retAction.type = SmartTownUtils.BASE_COMMAND;
-      msg.push(alias);
-      msg.push(stmt.action);
-      if (stmt.params) {
-        msg.push(stmt.params);
-      }
-      retAction.command = msg.join(" ");
-      if (stmt.emotion) {
-        emoMsg.push(alias);
-        emoMsg.push("emotions");
-        emoMsg.push(stmt.emotion);
-        retAction.emotion = emoMsg.join(" ");
-        retAction.type = SmartTownUtils.EMOTION_COMMAND;
+Blockly.STExecution.blockToSTActions = function (command, alias, id) {
+  let retAction = {};
+  let stmt = command;
+  let msg = [];
+  let emoMsg = [];
+  retAction.id = id;
+  console.log("processing");
+  console.log(command);
+  if (stmt.action) {
+    retAction.type = SmartTownUtils.BASE_COMMAND;
+    msg.push(alias);
+    msg.push(stmt.action);
 
-      }
-    }else{
-      if (stmt.emotion){
-        emoMsg.push(alias);
-        emoMsg.push("emotions");
-        emoMsg.push(stmt.emotion);
-        retAction.emotion = emoMsg.join(" ");
-        retAction.type = SmartTownUtils.JUST_EMOTION_COMMAND;
-      }
+    if (stmt.emotion) {
+      emoMsg.push(alias);
+      emoMsg.push("emotions");
+      emoMsg.push(stmt.emotion);
+      retAction.emotion = emoMsg.join(" ");
+      retAction.type = SmartTownUtils.EMOTION_COMMAND;
+      stmt.params = Blockly.STExecution.setEmotionalParams(SmartTownUtils.ACTION_PARAMS[stmt.action], stmt.emotion);
     }
+    
+    if (stmt.params) {
+      msg.push(stmt.params);
+    }
+    retAction.command = msg.join(" ");
 
-    if (stmt.list) {
-      retAction.type = SmartTownUtils.ACTIONLIST_COMMAND;
-      let commands = SmartTown.getActionsFromList(stmt.list);
-      let commandList = [];
-      for(let i in commands){
-        commandList.push(this.blockToSTActions(commands[i], alias, id));
-      }
-      retAction.actions=commandList;
+  } else {
+    if (stmt.emotion) {
+      emoMsg.push(alias);
+      emoMsg.push("emotions");
+      emoMsg.push(stmt.emotion);
+      retAction.emotion = emoMsg.join(" ");
+      retAction.type = SmartTownUtils.JUST_EMOTION_COMMAND;
     }
-    return retAction;
+  }
+
+  if (stmt.list) {
+    retAction.type = SmartTownUtils.ACTIONLIST_COMMAND;
+    let commands = SmartTown.getActionsFromList(stmt.list);
+    let commandList = [];
+    for (let i in commands) {
+      commandList.push(this.blockToSTActions(commands[i], alias, id));
+    }
+    retAction.actions = commandList;
+  }
+
+  if (stmt.array) {
+    retAction.type = SmartTownUtils.ACTIONLIST_COMMAND;
+    let commands = stmt.array;
+    let commandList = [];
+    for (let i in commands) {
+      commandList.push(this.blockToSTActions(commands[i], alias, id));
+    }
+    retAction.actions = commandList;
+  }
+  console.log(retAction);
+
+  return retAction;
 };
 
 Blockly.STExecution.blockToOutput = function (block, alias) {
@@ -420,15 +458,15 @@ Blockly.STExecution.blockToOutput = function (block, alias) {
   // The current prefered method of accessing the block is through the second
   // argument to func.call, which becomes the first parameter to the generator.
   let code = func.call(block, block);
-  if (goog.isObject(code) && !goog.isArray(code)) {
-    let retAction = this.blockToSTActions(code, alias, block.id);
-    
+  if (goog.isObject(code) || goog.isArray(code)) {
+    let retAction;
+    if(alias){
+        retAction = this.blockToSTActions(code, alias, block.id);
+    }else{
+      retAction = code;
+    }
+
     return retAction;
-  } else if (goog.isArray(code)) {
-    // Value blocks return tuples of code and operator order.
-    goog.asserts.assert(block.outputConnection,
-      'Expecting string from statement block "%s".', block.type);
-    return [code[0], code[1]];
   } else if (goog.isString(code)) {
     if (this.STATEMENT_PREFIX) {
       code = this.STATEMENT_PREFIX.replace(/%1/g, '\'' + block.id + '\'') +
@@ -444,10 +482,36 @@ Blockly.STExecution.blockToOutput = function (block, alias) {
 };
 
 //esta cambia los params necesarios.
-Blockly.STExecution.setEmotionalParams = function (emotion) {
-  let auxBlock = emotion;
-  //TO DO
-  return 0;
+Blockly.STExecution.setEmotionalParams = function (actions, emotion) {
+  let retStr = [];
+  console.log()
+  let intensity = Blockly.STExecution.getEmoConfig(emotion);
+  for (let i in actions) {
+    let act = Blockly.STExecution.getActConfig(actions[i]);
+    let min = parseFloat(act.MIN);
+    let max = parseFloat(act.MAX);
+    let aux = ((intensity + 1) / 2);
+    let mid = max - min;
+    retStr.push((aux * mid) + min);
+  }
+  return retStr.join(" ");
+};
+
+
+Blockly.STExecution.setActConfig = function (dict) {
+  Blockly.STExecution.actDict = dict;
+};
+
+Blockly.STExecution.setEmoConfig = function (dict) {
+  Blockly.STExecution.emoDict = dict;
+
+};
+Blockly.STExecution.getActConfig = function (action) {
+  return Blockly.STExecution.actDict[action];
+};
+
+Blockly.STExecution.getEmoConfig = function (emotion) {
+  return parseFloat(Blockly.STExecution.emoDict[emotion]);
 };
 
 Blockly.STExecution.getCommandDict = function () {

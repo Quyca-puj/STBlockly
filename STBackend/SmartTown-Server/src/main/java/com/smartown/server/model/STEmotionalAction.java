@@ -29,4 +29,9 @@ public class STEmotionalAction extends STInstanceAction{
 		this.emotion = emotion;
 	}
 
+	@Override
+	public String toString() {
+		return "STEmotionalAction [emotion=" + emotion + "]";
+	}
+
 }

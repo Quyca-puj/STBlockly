@@ -46,17 +46,13 @@ Blockly.STExecution['controls_repeat'] = function(block) {
 Blockly.STExecution['controls_repeat_ext'] = function(block) {
   var repeats = Blockly.STExecution.valueToCode(block, 'TIMES',
       Blockly.STExecution.ORDER_ADDITIVE) || '0';
-  var branch = Blockly.STExecution.statementToCode(block, 'DO');
-  branch = Blockly.STExecution.addLoopTrap(branch, block.id);
-  var code = '';
-  var loopVar = Blockly.STExecution.variableDB_.getDistinctName(
-      'count', Blockly.Variables.NAME_TYPE);
-  let commandList = "";
+  var list = Blockly.STExecution.statementToList(block, 'DO',"");
+  let commandList = [];
       for (let index = 0; index < repeats; index++) {
-        commandList+= branch;
+        commandList.push(...list);
       }
-
-  return commandList;
+      console.log(commandList);
+  return {array:commandList};
 };
 
 /**

@@ -10,6 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "base_actions")
 public class STBaseAction {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
@@ -19,12 +20,7 @@ public class STBaseAction {
 	private boolean custom;
 	@Basic
 	private boolean usesArgs;
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
+
 	public String getName() {
 		return name;
 	}
@@ -45,9 +41,17 @@ public class STBaseAction {
 	public void setUsesArgs(boolean usesArgs) {
 		this.usesArgs = usesArgs;
 	}
+	
+	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
 	@Override
 	public String toString() {
-		return "STCommand [id=" + id + ", name=" + name + "]";
+		return "STCommand [name=" + name + "]";
 	}
 	
 	
