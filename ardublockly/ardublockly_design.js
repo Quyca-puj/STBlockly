@@ -71,6 +71,7 @@ Ardublockly.bindDesignEventListeners = function() {
     let buttonMiddle = document.getElementById('button_ide_middle');
     let iconMiddle = document.getElementById('button_ide_middle_icon');
     let buttonLarge = document.getElementById('button_ide_large');
+    let code_display = document.getElementById('code_display');
     Ardublockly.saveSessionStorageBlocksbyLanguage(Ardublockly.selected_language);
     Ardublockly.selected_language=languages.value;
     Ardublockly.discardAllBlocks(true);
@@ -78,6 +79,7 @@ Ardublockly.bindDesignEventListeners = function() {
     switch(languages.value){
       case "arduino":
         Ardublockly.changeIdeButtonsDesign('upload');
+        code_display.style.display="";
         buttonLeft.style.display="";
         buttonMiddle.style.display="";
         displayArduino.style.display="initial";
@@ -120,6 +122,7 @@ Ardublockly.bindDesignEventListeners = function() {
         });
       break;
       case "middle":
+        code_display.style.display="none";
         buttonMiddle.style.display="none";
         buttonLeft.style.display="none";
         displayJava.style.display="none";
@@ -136,9 +139,9 @@ Ardublockly.bindDesignEventListeners = function() {
       break;
       case "exec":
         Ardublockly.changeIdeButtonsDesign('upload');
+        code_display.style.display="none";
         buttonMiddle.style.display="";
-
-        buttonLeft.style.display="none";
+        buttonLeft.style.display="";
         displayJava.style.display="none";
         displayPython.style.display="none";
         displayArduino.style.display="none";
@@ -238,6 +241,9 @@ Ardublockly.changeIdeButtonsDesign = function(value) {
       break;
       case "exec":
         if (value === 'upload') {
+          buttonLeft.className =
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+      iconLeft.className = 'mdi-navigation-check';
           buttonMiddle.className =
               buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
           iconMiddle.className = 'mdi-av-pause';
@@ -245,12 +251,25 @@ Ardublockly.changeIdeButtonsDesign = function(value) {
               buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
           iconLarge.className = 'mdi-av-play-arrow';
         } else if (value === 'verify') {
+          buttonLeft.className =
+            buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLeft.className = 'mdi-navigation-check';
           buttonMiddle.className =
               buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
           iconMiddle.className = 'mdi-av-play-arrow';
           buttonLarge.className =
               buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
           iconLarge.className = 'mdi-av-pause';
+        }  else if (value === 'open') {
+          buttonLeft.className =
+              buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
+          iconLeft.className = 'mdi-av-pause';
+          buttonMiddle.className =
+              buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+          iconMiddle.className = 'mdi-av-play-arrow';
+          buttonLarge.className =
+              buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
+          iconLarge.className = 'mdi-navigation-check';
         }
         break;
   }

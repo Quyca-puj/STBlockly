@@ -55,11 +55,12 @@ public class STBaseActionService implements ISTBaseActionService{
 		{
 			return list;
 		}
-		return null;
+		return null; 
 	}
 
 	@Override
 	public STBaseAction getBaseActionFromName(String name) {
+		System.out.println("BASEACTION: "+name);
 		STBaseAction action = repository.findByName(name).get();
 		return action;
 	}

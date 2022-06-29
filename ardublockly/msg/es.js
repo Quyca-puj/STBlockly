@@ -124,4 +124,12 @@ Ardublockly.LOCALISED_TEXT = {
   pauseCommands: "¡Pausa la Ejecución!",
   notSetExecAlertTitle:"No has Agregado Acciones para el Robot",
   notSetExecAlertBody:"Agrega Acciones para el robot utilizando los bloques SmartTown",
+  calibrateToast:"Calibrando el Robot",
+  calibrateMsg:"Calibra el Robot",
+  noCalibrationTitle:"¡No has calibrado el Robot!",
+  noCalibrationBody:"Calibra el Robot dando click al boton 'Calibra el Robot' antes de ejecutar tu creación",
+  sucCalibrateToast:"Calibración exitosa",
+  checkErrorMsg:"Ocurrio un error, por favor revisa la consola",
+  sucALToast:" creada con exito",
+  errALToast:"Error en la creacion de ",
 };

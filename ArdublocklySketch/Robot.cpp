@@ -165,8 +165,7 @@ bool Robot::robotBasicCommands(String msg, bool checkStatus) {
     
     if (msg.equals(EMOTION_STR)) {
       STprint("emotions entered");
-      shouldAnswer = false;
-      readFaces(emotion);
+      toRet = readFaces(emotion);
     }
   }
   return toRet;
@@ -350,7 +349,7 @@ void Robot::processMsgString(String msg) {
 }
 
 
-void Robot::readFaces(String msg) {
+bool Robot::readFaces(String msg) {
   STprint("readFaces entered");
   STprint(msg);
   if (msg.equals("very_happy")) {
@@ -482,4 +481,5 @@ void Robot::readFaces(String msg) {
     facesDraw(myarray, color, 30);
     STprint("sick");
   }
+  return true;
 }

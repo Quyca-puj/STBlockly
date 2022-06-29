@@ -86,7 +86,7 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
                       ],
                       [
                         "Atrás",
-                        "t_backward"
+                        "t_reverse"
                       ]
                     ]
                   },

@@ -38,7 +38,7 @@ class Robot{
   void robotForeverMove(int dir);
   void processMsgString(String msg); 
   void calibration();
-  void readFaces(String msg);
+  bool readFaces(String msg);
   
   public:
   String ip;
@@ -56,9 +56,11 @@ class Robot{
   void readCustomVariablesMotors(String msg,WiFiClient client); 
   void readCustomVariablesSensors(String msg,WiFiClient client);
   void JointServoMsg(String msg,WiFiClient client); 
-  void readFaces(String msg, WiFiClient); 
+  bool readFaces(String msg, WiFiClient); 
   bool processCommands(String msg, bool checkStatus);
- bool intento2();
-bool intento1();
+ bool adelante_atras();
+bool tuntun();
+bool cuadrado();
+bool popurri();
 };
 #endif

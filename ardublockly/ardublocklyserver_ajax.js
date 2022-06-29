@@ -404,6 +404,19 @@ ArdublocklyServer.sendSketchToServer = function(code, callback) {
       '/code', 'POST', 'application/json', {"sketch_code": code,"robot_spec":robotSpec}, callback);
 };
 
+ArdublocklyServer.calibrate = function(ip, alias ,successHandler, errorHandler, workspace){
+  ArdublocklyServer.ack =0 ;
+  let json = {ip:ip,msg:alias+" calibration "+ ArdublocklyServer.ack, ack:ArdublocklyServer.ack};
+  ArdublocklyServer.sendToRobot(json,null, workspace).then(function handle(response) {  
+    let jsonObj = JSON.parse(response);
+    if(jsonObj.success){
+      successHandler();
+    }else{
+      let dataBack = ArdublocklyServer.jsonToIdeModal(jsonObj);
+      errorHandler(dataBack);
+    }
+  });
+}
 
 ArdublocklyServer.startExecution = function (commandObj, workspace ,errorHandler){
   ArdublocklyServer.ack =0 ;

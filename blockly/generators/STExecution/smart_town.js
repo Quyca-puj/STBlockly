@@ -70,7 +70,7 @@ Blockly.STExecution['setupsmarttown_exec'] = function(block) {
   let emo_conf = Blockly.STExecution.statementToCode(block, 'EMOCONFIG');
   let act_conf = Blockly.STExecution.statementToCode(block, 'ACTCONFIG');
   let blockList = Blockly.STExecution.statementToList(block, 'COMMANDS', alias);
-  Blockly.STExecution.addCommandToDict(alias,{ip:ip,list:blockList});
+  Blockly.STExecution.addCommandToDict(alias,{alias:alias,ip:ip,list:blockList});
   return '';
 };
 
