@@ -62,5 +62,6 @@ class Robot{
 bool tuntun();
 bool cuadrado();
 bool popurri();
+boolean action;
 };
 #endif

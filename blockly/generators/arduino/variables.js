@@ -22,6 +22,10 @@ goog.require('Blockly.Arduino');
 Blockly.Arduino['variables_get'] = function(block) {
   var code = Blockly.Arduino.variableDB_.getName(block.getFieldValue('VAR'),
       Blockly.Variables.NAME_TYPE);
+      if(block.getSurroundParent() && (block.getSurroundParent().type !== 'new_smarttown_command' ||block.getSurroundParent().type !== 'setupsmarttown' ||block.getSurroundParent().type !== 'procedures_defreturn') ){
+        if(block.getRootBlock() && (block.getRootBlock().type !== 'new_smarttown_command' && block.getRootBlock().type !== 'setupsmarttown' && block.getRootBlock().type !== 'procedures_defreturn'))
+        code = "robot."+code;
+      }
   return [code, Blockly.Arduino.ORDER_ATOMIC];
 };
 
@@ -37,7 +41,17 @@ Blockly.Arduino['variables_set'] = function(block) {
       Blockly.Arduino.ORDER_ASSIGNMENT) || '0';
   var varName = Blockly.Arduino.variableDB_.getName(
       block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
-  return varName + ' = ' + argument0 + ';\n';
+
+  let code = varName + ' = ' + argument0 + ';\n';
+  if(block.getSurroundParent() && (block.getSurroundParent().type !== 'new_smarttown_command' ||block.getSurroundParent().type !== 'setupsmarttown' ||block.getSurroundParent().type !== 'procedures_defreturn') ){
+    if(block.getRootBlock() && (block.getRootBlock().type !== 'new_smarttown_command' && block.getRootBlock().type !== 'setupsmarttown' && block.getRootBlock().type !== 'procedures_defreturn'))
+    code = "robot."+code;
+  }
+
+  if(block.getSurroundParent() && block.getSurroundParent().type && block.getSurroundParent().type === 'new_smarttown_command'){
+    code += 'nextStep = true;\n';
+  }
+  return code
 };
 
 /**

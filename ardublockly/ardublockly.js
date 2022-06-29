@@ -160,6 +160,7 @@ Ardublockly.errorAlHandler  = function(name){
 }
 
 Ardublockly.errorHandler = function (response) {
+  Ardublockly.calibrated = false;
   Ardublockly.largeIdeButtonSpinner(false);
   Ardublockly.MaterialToast(Ardublockly.getLocalStr('checkErrorMsg'));
   if (response === null) return Ardublockly.openNotConnectedModal();

@@ -50,6 +50,7 @@ Blockly.SmartTown.allSTCommands = function(root) {
 Blockly.SmartTown.generateCommandRobotSketch = function(root) {
   let blocks = root.getAllBlocks();
   let STCommandsNoReturn = [];
+  let variables = [];
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].getCommandDef) {
       var tuple = blocks[i].getCommandDef();
@@ -57,7 +58,22 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
           STCommandsNoReturn.push("bool "+tuple+"();");
       }
     }
+    if(blocks[i].getProcedureDef){
+      let tuple = blocks[i].getProcedureDef()[0];
+      let ret = Blockly.Arduino.getArduinoType_(blocks[i].getReturnType());
+      if (tuple) {
+        if(ret === 'boolean'){
+          ret = 'bool';
+        }
+        STCommandsNoReturn.push(ret+" "+tuple+"();");
+    }
+    }
   }
+  for (var name in Blockly.Arduino.variables_) {
+    variables.push(Blockly.Arduino.variables_[name]);
+  }
+  STCommandsNoReturn.push(...variables);
+  console.log(STCommandsNoReturn);
   return STCommandsNoReturn;
 };
 

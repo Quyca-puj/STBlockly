@@ -3,14 +3,24 @@
 goog.require('Blockly.Arduino');
 
 Blockly.Arduino['mvt_avanzar'] = function(block) {
-    let code='nextStep = robotForward();\n';
+  let code='robotForward();\n';
+
+  if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
+    code = 'nextStep = '+code;
+  }else{
+    code = 'robot.'+code;
+  }
     return code;
   };
 
   Blockly.Arduino['mvt_girar'] = function(block) {
     let dropdown_movement = block.getFieldValue('Movement');
-    let code='nextStep = robotTurn('+dropdown_movement+');\n';
-    // code+=aux_code;
+    let code='robotTurn('+dropdown_movement+');\n';
+    if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
+      code = 'nextStep = '+code;
+    }else{
+      code = 'robot.'+code;
+    }
     return code;
   };
 
@@ -19,7 +29,12 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
     let time = block.getFieldValue('TIME');
 
     let code = "timer = "+time+";\n";
-    let aux_code='nextStep = robotTimedMove('+dropdown_movement+');\n';
+    let aux_code='robotTimedMove('+dropdown_movement+');\n';
+    if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
+      aux_code = 'nextStep = '+aux_code;
+    }else{
+      aux_code = 'robot.'+aux_code;
+    }
     code+=aux_code;
     return code;
   };
@@ -29,13 +44,21 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
     let time = block.getFieldValue('TIME');
 
     let code = 'timer = '+time+';\n';
-    let aux_code='nextStep = robotTimedTurn('+dropdown_movement+');\n';
+    let aux_code='robotTimedTurn('+dropdown_movement+');\n';
+    if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
+      aux_code = 'nextStep = '+aux_code;
+    }else{
+      aux_code = 'robot.'+aux_code;
+    }
     code+=aux_code;
     return code;
   };
 
   Blockly.Arduino['mvt_stop'] = function(block) {
-    let code='nextStep = robotStopMovement();\n';
+    let code='robotStopMovement();\n';
+    if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
+      code += 'nextStep = '+code;
+    }
     return code;
   };
 
@@ -133,7 +156,7 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
     }
 
     let includeCode='#include "Robot.h"\n';
-    let robotDef = 'Robot robot;\nWiFiClient client;\n'
+    let robotDef = 'Robot robot;\nWiFiClient client;\nbool rec_flag = false;\n'
     Blockly.Arduino.addFunction("processCommands",STDef);
 
     for (let name in STFunctionsDict) {
@@ -143,8 +166,6 @@ Blockly.Arduino['mvt_avanzar'] = function(block) {
 
     Blockly.Arduino.addInclude('custom',includeCode);
     Blockly.Arduino.setRobotDef(robotDef);
-    Blockly.Arduino.addVariable('rec_flag','bool rec_flag = false;',true);
-
 
    let  setupRobotCode = 'robot.setupRobot('+serial+',"'+alias+'","'+text_wifiname+'","'+text_pass+'");';
     Blockly.Arduino.addSetup("robotSetup",setupRobotCode,true);
