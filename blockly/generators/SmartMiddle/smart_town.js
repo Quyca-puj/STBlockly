@@ -44,7 +44,9 @@ Blockly.SmartMiddle['mvt_stop_middle'] = function(block) {
  Blockly.SmartMiddle['st_command_call'] = function(block) {
   let funcName = Blockly.SmartMiddle.variableDB_.getName(
       block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
-  let code='{"action": "'+funcName+'"}\n';
+  let speed = block.getFieldValue('SPEED');
+  let code='{"action": "'+funcName+'","time":0,"speed":'+speed+'}\n';
+  console.log(code);
   return code;
 };
 

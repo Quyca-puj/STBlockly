@@ -14,6 +14,7 @@ extern long integral = 0;
 unsigned long Time1;
 int period1 = 70;
 bool overIntersection = true;
+bool isDelayActive = false;
 extern bool checkControl = false;
 /*
   Movement Controller
@@ -33,6 +34,7 @@ bool followLine(int speed) {
     }
     setSpeedsMotor(speed, speed);
     delay(50);
+    return false;
   }
 
   if (sensorValues[2] >= 1500 ^ sensorValues[3] >= 1500 ) {
@@ -112,7 +114,7 @@ bool followLine(int speed) {
 
 bool turn(int direction, int speed) {
   ReadValues();
-  while (overIntersection == true) {
+  if (overIntersection == true) {
     ReadValues();
     if (sensorValues[0] < 1000 && sensorValues[1] < 1000 ) {
       overIntersection = false;
@@ -120,6 +122,7 @@ bool turn(int direction, int speed) {
     }
     setSpeedsMotor(direction * speed, -direction * speed);
     delay(50);
+    return false;
   }
   if (sensorValues[0] >= 1500 ^ sensorValues[1] >= 1500 ) {
     if (sensorValues[0] >= 1500 && finds == false) {
@@ -199,4 +202,13 @@ bool timedTurn(int direction, int speed, int time,  long *timeElapsed) {
 
 void foreverForward(int speed){
   setSpeedsMotor(speed, speed);
+}
+
+
+bool STDelay(long time, long *timeElapsed){
+if (*timeElapsed == 0)
+  {
+    *timeElapsed = millis();
+  }
+  return millis() - *timeElapsed >= time;
 }

@@ -52,7 +52,9 @@ Blockly.STExecution['change_emotion_exec'] = function(block) {
  Blockly.STExecution['st_command_call'] = function(block) {
   let funcName = Blockly.STExecution.variableDB_.getName(
       block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
-  let code={action:funcName};
+  let speed = block.getFieldValue('SPEED');
+
+  let code={action:funcName, params:speed};
   return code;
 };
 

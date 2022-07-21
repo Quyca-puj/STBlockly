@@ -281,9 +281,15 @@ goog.require('Blockly.Types');
     init: function() {
       this.appendDummyInput('TOPROW')
           .appendField(this.id, 'NAME');
+
+      this.appendDummyInput()
+        .appendField("Velocidad")
+        .appendField(new Blockly.FieldNumber(10), "SPEED");
+
       this.setPreviousStatement(true,"COMMAND");
       this.setNextStatement(true);
       this.setColour(120);
+      this.setInputsInline(true);
       // Tooltip is set in renameCommand.
       this.setHelpUrl(Blockly.Msg.PROCEDURES_CALLNORETURN_HELPURL);
       this.arguments_ = [];

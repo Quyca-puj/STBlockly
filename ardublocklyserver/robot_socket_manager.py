@@ -3,6 +3,9 @@ import socket
 from ardublocklyserver.STConstants import STport  
 
 class RobotSocketManager:
+    def __init__(self):
+        self.openSockets = dict()
+
     def get_connection(self, ip):
         connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         connection.connect((ip, STport))  
@@ -14,8 +17,8 @@ class RobotSocketManager:
         s= self.get_connection(conex_details)
         print("MIRAR2", msg)
         s.send(msg.encode('UTF-8'))
-        ret = s.recv(1024)      
         if ack is not None:
+            ret = s.recv(1024)      
             print(ret, ack, int(ret) == int(ack))
             response = int(ret) == int(ack)
         s.close()

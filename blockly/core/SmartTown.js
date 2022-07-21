@@ -232,6 +232,9 @@ Blockly.SmartTown.flyoutCommandCategory = function(workspace) {
         var mutation = goog.dom.createDom('mutation');
         mutation.setAttribute('name', name);
         block.appendChild(mutation);
+        let speed = goog.dom.createDom('field');
+        speed.setAttribute('name', 'SPEED');
+        block.appendChild(speed);
         xmlList.push(block);
   
       }
