@@ -64,65 +64,99 @@ Ardublockly.bindDesignEventListeners = function() {
     let displayJava = document.getElementById("java_area");
     let displayPython = document.getElementById("py_area");
     let displayMid = document.getElementById("mid_area");
+    let displayXML = document.getElementById("xml_area");
     let navBar = document.getElementById("navBar");
     let footer = document.getElementById("ide_output_collapsible_header");
     let buttonLeft = document.getElementById('button_ide_left');
     let buttonMiddle = document.getElementById('button_ide_middle');
+    let iconMiddle = document.getElementById('button_ide_middle_icon');
     let buttonLarge = document.getElementById('button_ide_large');
+    let code_display = document.getElementById('code_display');
     Ardublockly.saveSessionStorageBlocksbyLanguage(Ardublockly.selected_language);
     Ardublockly.selected_language=languages.value;
     Ardublockly.discardAllBlocks(true);
-
+    Ardublockly.resetIdeOutputContent();
     switch(languages.value){
       case "arduino":
+        Ardublockly.changeIdeButtonsDesign('upload');
+        code_display.style.display="";
         buttonLeft.style.display="";
+        buttonMiddle.style.display="";
         displayArduino.style.display="initial";
         displayPython.style.display="none";
         displayMid.style.display="none";
         displayJava.style.display="none";
+        displayXML.style.display="initial";
         navBar.style.backgroundColor= "#00979C"
         footer.style.backgroundColor="#006468";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_ARDUINO_XML);
       break;
       case "java":
+        buttonMiddle.style.display="none";
         buttonLeft.style.display="none";
         displayPython.style.display="none";
         displayMid.style.display="none";
         displayArduino.style.display="none";
+        displayXML.style.display="initial";
         displayJava.style.display="initial";
         navBar.style.backgroundColor= "#6c1ea1";
         footer.style.backgroundColor="#430068";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_JAVA_XML);
         STServer.requestCommands().then(function handle(list) {  
-          Ardublockly.commandList = JSON.parse(list);
+          SmartTown.setCommandList(JSON.parse(list));
         });
       break;
       case "python":
+        buttonMiddle.style.display="none";
         buttonLeft.style.display="none";
         displayJava.style.display="none";
         displayMid.style.display="none";
         displayArduino.style.display="none";
+        displayXML.style.display="initial";
         displayPython.style.display="initial";
         navBar.style.backgroundColor= "#938d2e";
         footer.style.backgroundColor="#6a661e";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_PY_XML);
         STServer.requestCommands().then(function handle(list) {  
-          Ardublockly.commandList= JSON.parse(list);
+          SmartTown.setCommandList(JSON.parse(list));
         });
       break;
       case "middle":
+        code_display.style.display="none";
+        buttonMiddle.style.display="none";
         buttonLeft.style.display="none";
         displayJava.style.display="none";
         displayPython.style.display="none";
         displayArduino.style.display="none";
+        displayXML.style.display="none";
         displayMid.style.display="initial";
         navBar.style.backgroundColor= "#853a2a";
         footer.style.backgroundColor="#824a3e";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_MID_XML);
         STServer.requestCommands().then(function handle(list) {  
-          Ardublockly.commandList= JSON.parse(list);
+          SmartTown.setCommandList(JSON.parse(list));
         });
       break;
+      case "exec":
+        Ardublockly.changeIdeButtonsDesign('upload');
+        code_display.style.display="none";
+        buttonMiddle.style.display="";
+        buttonLeft.style.display="";
+        displayJava.style.display="none";
+        displayPython.style.display="none";
+        displayArduino.style.display="none";
+        displayXML.style.display="none";
+        displayMid.style.display="none";
+        navBar.style.backgroundColor= "#999950";
+        footer.style.backgroundColor="#7a7a40";
+        Ardublockly.updateToolbox(Ardublockly.TOOLBOX_EXEC_XML);
+        STServer.requestCommands().then(function handle(list) {  
+          SmartTown.setCommandList(JSON.parse(list));
+        });
+        STServer.requestActionLists().then(function handle(list) {  
+          SmartTown.setALList(JSON.parse(list));
+        });
+        break;
     }
     
     Ardublockly.loadSessionStorageBlocksByLanguage(Ardublockly.selected_language);
@@ -163,6 +197,7 @@ Ardublockly.buttonLoadXmlCodeDisplay = function() {
  *     in the settings modal: 'upload', 'verify', or 'open'.
  */
 Ardublockly.changeIdeButtonsDesign = function(value) {
+  let lang = Ardublockly.selected_language
   var buttonLeft = document.getElementById('button_ide_left');
   var iconLeft = document.getElementById('button_ide_left_icon');
   var buttonMiddle = document.getElementById('button_ide_middle');
@@ -170,36 +205,73 @@ Ardublockly.changeIdeButtonsDesign = function(value) {
   var buttonLarge = document.getElementById('button_ide_large');
   var iconLarge = document.getElementById('button_ide_large_icon');
 
-  if (value === 'upload') {
-    buttonLeft.className =
-        buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
-    iconLeft.className = 'mdi-action-open-in-browser';
-    buttonMiddle.className =
-        buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
-    iconMiddle.className = 'mdi-navigation-check';
-    buttonLarge.className =
-        buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
-    iconLarge.className = 'mdi-av-play-arrow';
-  } else if (value === 'verify') {
-    buttonLeft.className =
-        buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
-    iconLeft.className = 'mdi-action-open-in-browser';
-    buttonMiddle.className =
-        buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
-    iconMiddle.className = 'mdi-av-play-arrow';
-    buttonLarge.className =
-        buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
-    iconLarge.className = 'mdi-navigation-check';
-  } else if (value === 'open') {
-    buttonLeft.className =
-        buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
-    iconLeft.className = 'mdi-navigation-check';
-    buttonMiddle.className =
-        buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
-    iconMiddle.className = 'mdi-av-play-arrow';
-    buttonLarge.className =
-        buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
-    iconLarge.className = 'mdi-action-open-in-browser';
+  switch(lang){
+    case "arduino":
+      if (value === 'upload') {
+        buttonLeft.className =
+            buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLeft.className = 'mdi-action-open-in-browser';
+        buttonMiddle.className =
+            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
+        iconMiddle.className = 'mdi-navigation-check';
+        buttonLarge.className =
+            buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
+        iconLarge.className = 'mdi-av-play-arrow';
+      } else if (value === 'verify') {
+        buttonLeft.className =
+            buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLeft.className = 'mdi-action-open-in-browser';
+        buttonMiddle.className =
+            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+        iconMiddle.className = 'mdi-av-play-arrow';
+        buttonLarge.className =
+            buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
+        iconLarge.className = 'mdi-navigation-check';
+      } else if (value === 'open') {
+        buttonLeft.className =
+            buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
+        iconLeft.className = 'mdi-navigation-check';
+        buttonMiddle.className =
+            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+        iconMiddle.className = 'mdi-av-play-arrow';
+        buttonLarge.className =
+            buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLarge.className = 'mdi-action-open-in-browser';
+      }
+      break;
+      case "exec":
+        if (value === 'upload') {
+          buttonLeft.className =
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+      iconLeft.className = 'mdi-navigation-check';
+          buttonMiddle.className =
+              buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
+          iconMiddle.className = 'mdi-av-pause';
+          buttonLarge.className =
+              buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
+          iconLarge.className = 'mdi-av-play-arrow';
+        } else if (value === 'verify') {
+          buttonLeft.className =
+            buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLeft.className = 'mdi-navigation-check';
+          buttonMiddle.className =
+              buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+          iconMiddle.className = 'mdi-av-play-arrow';
+          buttonLarge.className =
+              buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
+          iconLarge.className = 'mdi-av-pause';
+        }  else if (value === 'open') {
+          buttonLeft.className =
+              buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
+          iconLeft.className = 'mdi-av-pause';
+          buttonMiddle.className =
+              buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+          iconMiddle.className = 'mdi-av-play-arrow';
+          buttonLarge.className =
+              buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
+          iconLarge.className = 'mdi-navigation-check';
+        }
+        break;
   }
 };
 
@@ -245,7 +317,7 @@ Ardublockly.largeIdeButtonSpinner = function(active) {
   var buttonIdeLarge = document.getElementById('button_ide_large');
   var buttonClass = buttonIdeLarge.className;
   if (active) {
-    spinner.style.display = 'block';
+    // spinner.style.display = 'block';
     buttonIdeLarge.className = buttonIdeLarge.className + ' grey';
   } else {
     spinner.style.display = 'none';

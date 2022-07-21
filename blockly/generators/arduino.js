@@ -193,7 +193,7 @@ Blockly.Arduino.finish = function(code) {
   delete Blockly.Arduino.pins_;
   Blockly.Arduino.variableDB_.reset();
 
-  var allDefs = includes.join('\n') + definitions.join('\n') + variables.join('\n') + functions.join('\n\n');
+  var allDefs = includes.join('\n') + definitions.join('\n') + functions.join('\n\n');
 
 
   let robotDef = Blockly.Arduino.robotDef_;
@@ -221,6 +221,61 @@ Blockly.Arduino.setRobotDef = function(code) {
     Blockly.Arduino.robotDef_ = code;
 };
 
+
+Blockly.Arduino.statementToList = function(block, name) {
+  var targetBlock = block.getInputTargetBlock(name);
+  var code = this.blockToList(targetBlock);
+  return code;
+};
+
+Blockly.Arduino.blockToList = function(block) {
+  let auxBlock = block;
+  let blockList = [];
+    while(auxBlock!==null){
+      if(!block.disabled){
+          blockList.push(this.blockToText(auxBlock));
+      }
+      auxBlock = auxBlock.getNextBlock();
+    }
+    return blockList;
+};
+
+Blockly.Arduino.blockToText = function(block) {
+  if (!block) {
+    return '';
+  }
+  if (block.disabled) {
+    // Skip past this block if it is disabled.
+    return this.blockToText(block.getNextBlock());
+  }
+
+  var func = this[block.type];
+  goog.asserts.assertFunction(func,
+      'Language "%s" does not know how to generate code for block type "%s".',
+      this.name_, block.type);
+  // First argument to func.call is the value of 'this' in the generator.
+  // Prior to 24 September 2013 'this' was the only way to access the block.
+  // The current prefered method of accessing the block is through the second
+  // argument to func.call, which becomes the first parameter to the generator.
+  var code = func.call(block, block);
+  if (goog.isArray(code)) {
+    // Value blocks return tuples of code and operator order.
+    goog.asserts.assert(block.outputConnection,
+        'Expecting string from statement block "%s".', block.type);
+    return [code[0], code[1]];
+  } else if (goog.isString(code)) {
+    if (this.STATEMENT_PREFIX) {
+      code = this.STATEMENT_PREFIX.replace(/%1/g, '\'' + block.id + '\'') +
+          code;
+    }
+    return code;
+  } else if (code === null) {
+    // Block has handled code generation itself.
+    return '';
+  } else {
+    goog.asserts.fail('Invalid code generated: %s', code);
+  }
+};
 
 /**
  * Adds a string of "include" code to be added to the sketch.

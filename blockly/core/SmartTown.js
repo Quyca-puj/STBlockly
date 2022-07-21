@@ -21,7 +21,8 @@ goog.require('Blockly.Workspace');
 /**
  * Category to separate STCommand names from variables and generated functions.
  */
-Blockly.SmartTown.NAME_TYPE = 'STCOMMANDS';
+Blockly.SmartTown.COMMANDS_TYPE = 'STCOMMANDS';
+Blockly.SmartTown.ACTIONLIST_TYPE = 'STACTIONLISTS';
 
 /**
  * Find all user-created STCommand definitions in a workspace.
@@ -32,7 +33,7 @@ Blockly.SmartTown.NAME_TYPE = 'STCOMMANDS';
  *     list, and return value boolean.
  */
 Blockly.SmartTown.allSTCommands = function(root) {
-  var blocks = root.getAllBlocks();
+  let blocks = root.getAllBlocks();
   let STCommandsNoReturn = [];
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].getCommandDef) {
@@ -43,8 +44,37 @@ Blockly.SmartTown.allSTCommands = function(root) {
     }
   }
   STCommandsNoReturn.sort(Blockly.SmartTown.procTupleComparator_);
-  console.log(STCommandsNoReturn)
   return [STCommandsNoReturn];
+};
+
+Blockly.SmartTown.generateCommandRobotSketch = function(root) {
+  let blocks = root.getAllBlocks();
+  let STCommandsNoReturn = [];
+  let variables = [];
+  for (var i = 0; i < blocks.length; i++) {
+    if (blocks[i].getCommandDef) {
+      var tuple = blocks[i].getCommandDef();
+      if (tuple) {
+          STCommandsNoReturn.push("bool "+tuple+"();");
+      }
+    }
+    if(blocks[i].getProcedureDef){
+      let tuple = blocks[i].getProcedureDef()[0];
+      let ret = Blockly.Arduino.getArduinoType_(blocks[i].getReturnType());
+      if (tuple) {
+        if(ret === 'boolean'){
+          ret = 'bool';
+        }
+        STCommandsNoReturn.push(ret+" "+tuple+"();");
+    }
+    }
+  }
+  for (var name in Blockly.Arduino.variables_) {
+    variables.push(Blockly.Arduino.variables_[name]);
+  }
+  STCommandsNoReturn.push(...variables);
+  console.log(STCommandsNoReturn);
+  return STCommandsNoReturn;
 };
 
 
@@ -57,22 +87,27 @@ Blockly.SmartTown.allSTCommands = function(root) {
  *     list, and return value boolean.
  */
  Blockly.SmartTown.allSTAL = function(root) {
-  var blocks = root.getAllBlocks();
+  let blocks = root.getAllBlocks();
   let STALs = [];
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].getSTALDef) {
       var name = blocks[i].getSTALDef();
-      let stmts = Blockly.SmartTown.middleGenerator.statementToCode(blocks[i], 'COMMANDS');
-      var tuple = [name, stmts];
-      console.log(tuple);
-      if (tuple) {
-          STALs.push(tuple);
+      let stmts = Blockly.SmartMiddle.statementToCode(blocks[i], 'COMMANDS');
+      let acts = [], aux = stmts.split("\n ");
+      for(let a in aux){
+        acts.push(JSON.parse(aux[a]));
+      }
+      let actionList ={
+        name: name,
+        actions:acts
+      };
+      if (actionList) {
+          STALs.push(actionList);
       }
     }
   }
-  STALs.sort(Blockly.SmartTown.procTupleComparator_);
-  console.log(STALs)
-  return [STALs];
+  STALs.sort(Blockly.SmartTown.procALComparator_);
+  return STALs;
 };
 
 
@@ -87,6 +122,19 @@ Blockly.SmartTown.allSTCommands = function(root) {
  */
 Blockly.SmartTown.procTupleComparator_ = function(ta, tb) {
   return ta[0].toLowerCase().localeCompare(tb[0].toLowerCase());
+};
+
+
+/**
+ * Comparison function for case-insensitive sorting of the first element of
+ * a tuple.
+ * @param {!Array} ta First tuple.
+ * @param {!Array} tb Second tuple.
+ * @return {number} -1, 0, or 1 to signify greater than, equality, or less than.
+ * @private
+ */
+ Blockly.SmartTown.procALComparator_ = function(ta, tb) {
+  return ta.name.toLowerCase().localeCompare(tb.name.toLowerCase());
 };
 
 /**
@@ -165,7 +213,7 @@ Blockly.SmartTown.rename = function(text) {
  * @param {!Blockly.Workspace} workspace The workspace contianing STCommands.
  * @return {!Array.<!Element>} Array of XML block elements.
  */
-Blockly.SmartTown.flyoutCategory = function(workspace) {
+Blockly.SmartTown.flyoutCommandCategory = function(workspace) {
   var xmlList = [];
 
   if (xmlList.length) {
@@ -184,17 +232,48 @@ Blockly.SmartTown.flyoutCategory = function(workspace) {
         var mutation = goog.dom.createDom('mutation');
         mutation.setAttribute('name', name);
         block.appendChild(mutation);
-        // for (var t = 0; t < args.length; t++) {
-        //   var arg = goog.dom.createDom('arg');
-        //   arg.setAttribute('name', args[t]);
-        //   mutation.appendChild(arg);
-        // }
+        let speed = goog.dom.createDom('field');
+        speed.setAttribute('name', 'SPEED');
+        block.appendChild(speed);
         xmlList.push(block);
   
       }
     }
   }
-  populateSTCommands(Ardublockly.commandList);
+  populateSTCommands(SmartTown.CommandList);
+  return xmlList;
+};
+
+/**
+ * Construct the blocks required by the flyout for the STCommand category.
+ * @param {!Blockly.Workspace} workspace The workspace contianing STCommands.
+ * @return {!Array.<!Element>} Array of XML block elements.
+ */
+ Blockly.SmartTown.flyoutALCategory = function(workspace) {
+  var xmlList = [];
+
+  if (xmlList.length) {
+    // Add slightly larger gap between system blocks and user calls.
+    xmlList[xmlList.length - 1].setAttribute('gap', 24);
+  }
+
+  function populateSTAL(STALList) {
+    if(STALList && STALList.length){
+      for (var i = 0; i < STALList.length; i++) {
+
+        var name = STALList[i].name;
+        var block = goog.dom.createDom('block');
+        block.setAttribute('type', 'st_actionList_call');
+        block.setAttribute('gap', 16);
+        var mutation = goog.dom.createDom('mutation');
+        mutation.setAttribute('name', name);
+        block.appendChild(mutation);
+        xmlList.push(block);
+  
+      }
+    }
+  }
+  populateSTAL(SmartTown.ALList);
   return xmlList;
 };
 

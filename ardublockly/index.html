@@ -40,6 +40,11 @@
   <script src="../blockly/blocks/arduino/hello_world.js"></script>
   <script src="../blockly/blocks/smartown/smart_town.js"></script>
   <script src="../blockly/blocks/smartown/smart_town_middle.js"></script>
+  <script src="../blockly/blocks/smartown/smart_town_exec.js"></script>
+  <script src="../blockly/generators/stexecution.js"></script>
+  <script src="../blockly/generators/STExecution/smart_town.js"></script>
+  <script src="../blockly/generators/STExecution/loops.js"></script>
+  <script src="../blockly/generators/STExecution/math.js"></script>
   <script src="../blockly/generators/arduino.js"></script>
   <script src="../blockly/generators/arduino/boards.js"></script>
   <script src="../blockly/generators/arduino/io.js"></script>
@@ -71,30 +76,7 @@
   <script src="../blockly/generators/SmartMiddle/variables.js"></script>
   <script src="../blockly/generators/SmartMiddle/smart_town.js"></script>
   <script src="../blockly/generators/SmartMiddle/colour.js"></script>
-  <script src="../blockly/generators/java.js"></script>
-  <script src="../blockly/generators/java/lists.js"></script>
-  <script src="../blockly/generators/java/logic.js"></script>
-  <script src="../blockly/generators/java/loops.js"></script>
-  <script src="../blockly/generators/java/map.js"></script>
-  <script src="../blockly/generators/java/math.js"></script>
-  <script src="../blockly/generators/java/procedures.js"></script>
-  <script src="../blockly/generators/java/text.js"></script>
-  <script src="../blockly/generators/java/time.js"></script>
-  <script src="../blockly/generators/java/variables.js"></script>
-  <script src="../blockly/generators/java/smart_town.js"></script>
-  <script src="../blockly/generators/java/colour.js"></script>
-  <script src="../blockly/generators/python.js"></script>
-  <script src="../blockly/generators/python/lists.js"></script>
-  <script src="../blockly/generators/python/logic.js"></script>
-  <script src="../blockly/generators/python/loops.js"></script>
-  <script src="../blockly/generators/python/map.js"></script>
-  <script src="../blockly/generators/python/math.js"></script>
-  <script src="../blockly/generators/python/procedures.js"></script>
-  <script src="../blockly/generators/python/text.js"></script>
-  <script src="../blockly/generators/python/time.js"></script>
-  <script src="../blockly/generators/python/variables.js"></script>
-  <script src="../blockly/generators/python/smart_town.js"></script>
-  <script src="../blockly/generators/python/colour.js"></script>
+
 
   <!-- Default language js files, user selection appended to head on load -->
   <script src="../blockly/msg/js/es.js"></script>
@@ -118,18 +100,21 @@
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><span class="translatable_open">Escoge un lenguaje:  </span></li>
         <li><select name="lang" id="lang">
-          <optgroup label="Nivel Bajo">
-            <option value="arduino">Arduino</option>
+          <optgroup label="Configuracíon">
+            <option value="arduino">Configura el Robot</option>
           </optgroup>
-          <optgroup label="Nivel Medio">
+          <optgroup label="Crea:">
             <!--option value="java">Java</option>
             <option value="python">Python</option-->
-            <option value="middle">Lista de Secuencia</option-->
+            <option value="middle">Listas de Secuencia</option-->
+          </optgroup>
+          <optgroup label="Juega">
+            <option value="exec">Dile al Robot que hacer</option-->
           </optgroup>
         </select></li>
         <li><a href="#" id="button_load"><span class="translatable_open">Cargar</span><i class="mdi-file-file-upload left"></i></a></li>
         <li><a href="#" id="button_save"><span class="translatable_save">Guardar</span><i class="mdi-file-file-download left"></i></a></li>
-        <li><a href="#" id="button_delete"><span class="translatable_deleteAll">Borrar Todo</span><i class="mdi-action-delete left"></i></a></li>
+        <!--li><a href="#" id="button_delete"><span class="translatable_deleteAll">Borrar Todo</span><i class="mdi-action-delete left"></i></a></li-->
       </ul>
     </div>
   </nav>
@@ -221,7 +206,7 @@
           </div>
         </div>
       </div>
-      <div class="col s12 m12 l4">
+      <div id = "code_display" class="col s12 m12 l4">
         <ul class="collapsible z-depth-1" data-collapsible="accordion">
           <li id="arduino_area">
             <div class="collapsible-header active">
@@ -259,7 +244,7 @@
               <pre id="content_mid" class="content content_height_transition content_arduino_large"></pre>
             </div>
           </li>
-          <li>
+          <li id="xml_area">
             <div class="collapsible-header" id="xml_collapsible_header">
               <span class="collapsible_logo">&#60; &#62;</span>
               <span class="translatable_blocksXml">Bloques XML</span>
@@ -280,7 +265,7 @@
       <li>
         <div id="ide_output_collapsible_header" class="collapsible-header ide_output_header_normal">
           <i class="mdi-action-swap-vert Medium" style="font-size: 2.2rem;"></i>
-          <span class="translatable_arduinoOpMainTitle">Consola Arduino</span>
+          <span class="translatable_arduinoOpMainTitle">Consola</span>
         </div>
         <div class="collapsible-body">
           <div id="content_ide_output" class="content"></div>
@@ -398,13 +383,18 @@
   <script src="prettify/prettify.js"></script> 
   <!-- ST app -->
   <script src="STServer.js"></script>
+  <script src="smarttown.js"></script>
+  <script src="smarttown_utils.js"></script>
+  <script src="smarttown_blockly.js"></script>
   <!-- Ardublockly app -->
   <script src="ardublocklyserver_ajax.js"></script>
   <script src="ardublockly_lang.js"></script>
   <script src="ardublockly_design.js"></script>
   <script src="ardublockly_toolbox.js"></script>
   <script src="ardublockly_blockly.js"></script>
+  <script src="Ardublockly_utils.js"></script>
   <script src="ardublockly.js"></script>
+
   <script>
     window.addEventListener('load', function load(event) {
       window.removeEventListener('load', load, false);

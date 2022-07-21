@@ -5,8 +5,8 @@
 
 //Define sensor Motor
 
- #define RIGHT_MOTOR 2
- #define LEFT_MOTOR 0
+ #define RIGHT_MOTOR 0
+ #define LEFT_MOTOR 2
 
 
 void setupmotor();

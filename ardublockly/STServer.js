@@ -108,12 +108,15 @@ STServer.createRequest = function() {
  *     have one argument to receive the JSON response.
  */
  STServer.requestCommands = async function() {
-  return await STServer.getJson('http://127.0.0.1:8080/command/all');
+  return await STServer.getJson('http://127.0.0.1:8080/command/custom');
 };
 
 
+STServer.requestActionLists = async function() {
+  return await STServer.getJson('http://127.0.0.1:8080/actionList/all');
+};
 
- STServer.sendCommands = function(workspace) {
+STServer.sendCommands = function(workspace) {
   let STCommandList = Blockly.SmartTown.allSTCommands(workspace)[0];
   for (let i = 0; i < STCommandList.length; i++) {
     let comName = STCommandList[i][0];
@@ -127,15 +130,18 @@ STServer.sendCommand = function(json) {
   STServer.postJson('http://127.0.0.1:8080/command/new', json);
 };
 
-STServer.sendActionList = function(json) {
-  console.log(json);
-  STServer.postJson('http://127.0.0.1:8080/actionList/new', json);
+STServer.sendActionList = async function(json) {
+  return await STServer.postJson('http://127.0.0.1:8080/actionList/new', json);
 };
 
 
- STServer.sendActionLists = function(workspace) {
+ STServer.sendActionLists = function(workspace, successHandler, errorHandler) {
   let STActionLists = Blockly.SmartTown.allSTAL(workspace);
   for (let i = 0; i < STActionLists.length; i++) {
-    STServer.sendActionList(STActionLists[i]);
+    STServer.sendActionList(STActionLists[i]).then(function handle(response){
+      successHandler(STActionLists[i].name);
+    }).catch(function error(response){
+      errorHandler(STActionLists[i].name);
+    });
   }
 };

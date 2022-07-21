@@ -21,8 +21,6 @@ Ardublockly.workspace = null;
  */
 Ardublockly.xmlTree = null;
 
-
-
 Ardublockly.updateToolbox = function(newXmlTree){
   Ardublockly.xmlTree = Blockly.Xml.textToDom(newXmlTree);
   Ardublockly.workspace.updateToolbox(Ardublockly.xmlTree);
@@ -98,6 +96,10 @@ Ardublockly.generatePython= function() {
 /** @return {!string} Generated Python code from the Blockly workspace. */
 Ardublockly.generateMiddle= function() {
   return Blockly.SmartMiddle.workspaceToCode(Ardublockly.workspace);
+};
+
+Ardublockly.generateExec= function() {
+  return Blockly.STExecution.workspaceToCode(Ardublockly.workspace);
 };
 
 /** @return {!string} Generated XML code from the Blockly workspace. */
@@ -200,11 +202,16 @@ Ardublockly.loadSessionStorageBlocksByLanguage = function(lang) {
       // Restarting Firefox fixes this, so it looks like a bug.
       var loadOnce = null;
     }
-    if (loadOnce) {
+    let xml;
+    if (loadOnce && loadOnce.localeCompare(ArdublocklyUtils.EMPTY_WORKSPACE) != 0) {
       delete window.sessionStorage[lang];
-      var xml = Blockly.Xml.textToDom(loadOnce);
-      Blockly.Xml.domToWorkspace(xml, Ardublockly.workspace);
+      xml = Blockly.Xml.textToDom(loadOnce);
+
     }
+    else{
+      xml = Blockly.Xml.textToDom(ArdublocklyUtils.DEFAULT_WORKSPACE[lang]);
+    }
+    Blockly.Xml.domToWorkspace(xml, Ardublockly.workspace);
   }
 };
 
@@ -371,4 +378,10 @@ Ardublockly.ajaxRequest = function() {
     }
   }
   return request;
+};
+
+
+Ardublockly.execCommandsToList = function(){
+  let commandList = Blockly.STExecution.getCommandDict();
+  return commandList;
 };

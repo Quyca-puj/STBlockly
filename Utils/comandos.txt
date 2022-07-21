@@ -1,0 +1,22 @@
+comandos
+morado connect 192.168.208.33 7897 0
+morado calibration 1
+morado t_forward 50 10 2
+morado emotions happy -1
+morado emotions sad -1
+morado emotions neutral -1
+
+morado t_left * 5 2
+
+
+morado t_reverse 20 20 3
+morado t_left 50 5 4
+morado t_right 50 5 5
+morado s_emotions happy neutral 12 2
+morado off_emotions -1
+morado reverse_roll * -1
+morado roll * -1
+morado reverse_roll 10 -1
+morado reverse_roll 100 -1
+morado stop_all -1
+morado stop_mvt -1

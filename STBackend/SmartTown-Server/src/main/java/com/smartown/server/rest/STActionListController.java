@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartown.server.model.STActionList;
-import com.smartown.server.model.STCommand;
+import com.smartown.server.model.STBaseAction;
+import com.smartown.server.model.STInstanceAction;
+import com.smartown.server.model.dto.ActionDTO;
 import com.smartown.server.model.dto.STActionListDTO;
-import com.smartown.server.model.dto.STCommandDTO;
 import com.smartown.server.services.ISTActionListService;
-import com.smartown.server.services.ISTCommandService;
+import com.smartown.server.services.ISTBaseActionService;
+import com.smartown.server.services.ISTInstanceActionService;
 
 @RestController
 @RequestMapping("actionList")
@@ -25,6 +27,10 @@ public class STActionListController {
 	
 	@Autowired
 	private ISTActionListService aListService;
+	@Autowired
+	private ISTInstanceActionService instanceService;
+	@Autowired
+	private ISTBaseActionService baseService;
 	
 	
 	@GetMapping("/all")
@@ -34,7 +40,17 @@ public class STActionListController {
 		ModelMapper mapper=new ModelMapper();
 		if(aLists!=null) {
 			aLists.forEach(command->{
-				retList.add(mapper.map(command, STActionListDTO.class));
+				
+				STActionListDTO aux = mapper.map(command, STActionListDTO.class);
+				aux.setActions(new ArrayList<>());
+				System.out.println("Size: "+aux.getActions().size());
+				command.getActionList().forEach(action->{
+					System.out.println("Action: "+action.toString());
+					ActionDTO act = instanceService.createActionfromInstance(action);
+					System.out.println("ActionDTO: "+act.toString());
+					aux.getActions().add(act);
+				});
+				retList.add(aux);
 			});
 			
 		}
@@ -45,11 +61,18 @@ public class STActionListController {
 	
 	
 	@PostMapping("/new")
-	STActionListDTO createNewActionList(@RequestBody STActionList aList){
+	STActionListDTO createNewActionList(@RequestBody STActionListDTO aList){
+		STActionList savedAList =  aListService.createFromDTO(aList);
+		final STActionList newAList= aListService.createActionList(savedAList);
+		aList.getActions().forEach(action->{
+			STBaseAction baseAction = baseService.getBaseActionFromName(action.getAction());
+			STInstanceAction newInstance = instanceService.createInstanceAction(action, baseAction);			
+			newAList.getActionList().add(newInstance);
+		});
+		STActionList retList = aListService.updateActionList(newAList);
 		
-		STActionList savedAList= aListService.createActionList(aList);
 		ModelMapper mapper=new ModelMapper();
-		STActionListDTO sendAList = mapper.map(savedAList, STActionListDTO.class);
+		STActionListDTO sendAList = mapper.map(retList, STActionListDTO.class);
 		return sendAList;
 	}
 	

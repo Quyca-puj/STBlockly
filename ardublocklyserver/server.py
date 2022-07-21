@@ -8,6 +8,7 @@ Licensed under the Apache License, Version 2.0 (the "License"):
 from __future__ import unicode_literals, absolute_import, print_function
 import os
 import sys
+from ardublocklyserver.robot_socket_manager import RobotSocketManager
 # local-packages imports
 from bottle import request, response
 from bottle import static_file, run, default_app, redirect, abort
@@ -15,6 +16,7 @@ from bottle import static_file, run, default_app, redirect, abort
 from six import iteritems
 # This package modules
 from ardublocklyserver import actions
+from ardublocklyserver import robotactions
 
 
 #
@@ -22,7 +24,7 @@ from ardublocklyserver import actions
 #
 app = application = default_app()
 document_root = ''
-
+socket_mgmt = RobotSocketManager()
 
 def launch_server(ip='localhost', port=8000, document_root_=''):
     """Launch the Waitress server and Bottle framework with given settings.
@@ -363,6 +365,66 @@ def handler_code_not_allowed():
     abort(405, 'Not Allowed, code can only be sent by POST.')
 
 
+@app.post('/robot/send')
+def handler_robot_code():
+    """Handle sent Arduino Sketch code.
+
+    Error codes:
+    0  - No error
+    1  - Build or Upload failed.
+    2  - Sketch not found.
+    3  - Invalid command line argument
+    4  - Preference passed to 'get-pref' flag does not exist
+    5  - Not Clear, but Arduino IDE sometimes errors with this.
+    50 - Unexpected error code from Arduino IDE
+    51 - Could not create sketch file
+    52 - Invalid path to internally created sketch file
+    53 - Compiler directory not configured in the Settings
+    54 - Launch IDE option not configured in the Settings
+    55 - Serial Port configured in Settings not accessible.
+    56 - Arduino Board not configured in the Settings.
+    52 - Unexpected server error.
+    64 - Unable to parse sent JSON.
+    """
+
+    std_out, err_out = '', ''
+    exit_code = 52
+    success = False
+    response_dict = {'response_type': 'ide_output',
+                     'response_state': 'full_response'}
+    
+    try:
+        action_to_exec = request.json['action']
+        print(request, "yes")
+
+    except (TypeError, ValueError, KeyError) as e:
+        exit_code = 64
+        err_out = 'Unable to parse sent JSON.'
+        print('Error: Unable to parse sent JSON:\n%s' % str(e))
+    else:
+        try:
+            success, ide_mode, std_out, err_out, exit_code = \
+                robotactions.send_code_to_robot(action_to_exec, socket_mgmt)
+        except Exception as e:
+            exit_code = 52
+            err_out += 'Unexpected server error.'
+            print('Error: Exception in arduino_ide_send_code:\n%s' % str(e))
+
+    response_dict.update({'success': success,
+                          'ide_mode': ide_mode,
+                          'ide_data': {
+                              'std_output': std_out,
+                              'err_output': err_out,
+                              'exit_code': exit_code}})
+    if not success:
+        response_dict.update({
+            'errors': [{
+                'id': exit_code
+            }]
+        })
+    set_header_no_cache()
+    return response_dict
+
 @app.post('/code')
 def handler_code_post():
     """Handle sent Arduino Sketch code.
@@ -392,12 +454,14 @@ def handler_code_post():
                      'response_state': 'full_response'}
     try:
         sketch_code = request.json['sketch_code']
+        robot_sketch_code =  request.json['robot_spec']
     except (TypeError, ValueError, KeyError) as e:
         exit_code = 64
         err_out = 'Unable to parse sent JSON.'
         print('Error: Unable to parse sent JSON:\n%s' % str(e))
     else:
         try:
+            actions.send_robot_code(robot_sketch_code)
             success, ide_mode, std_out, err_out, exit_code = \
                 actions.arduino_ide_send_code(sketch_code)
         except Exception as e:

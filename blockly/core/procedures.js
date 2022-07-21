@@ -172,13 +172,13 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
     }
     xmlList.push(block);
   }
-  if (Blockly.Blocks['procedures_defnoreturn']) {
-    // <block type="procedures_defnoreturn" gap="16"></block>
-    var block = goog.dom.createDom('block');
-    block.setAttribute('type', 'procedures_defnoreturn');
-    block.setAttribute('gap', 16);
-    xmlList.push(block);
-  }
+  // if (Blockly.Blocks['procedures_defnoreturn']) {
+  //   // <block type="procedures_defnoreturn" gap="16"></block>
+  //   var block = goog.dom.createDom('block');
+  //   block.setAttribute('type', 'procedures_defnoreturn');
+  //   block.setAttribute('gap', 16);
+  //   xmlList.push(block);
+  // }
   if (Blockly.Blocks['procedures_defreturn']) {
     // <block type="procedures_defreturn" gap="16"></block>
     var block = goog.dom.createDom('block');
@@ -218,7 +218,6 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
         arg.setAttribute('name', args[t]);
         mutation.appendChild(arg);
       }
-      console.log(block);
       xmlList.push(block);
     }
   }
