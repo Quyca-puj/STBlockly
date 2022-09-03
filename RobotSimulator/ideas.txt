@@ -1,0 +1,2 @@
+aparecen los macros de la escena. macro por personaje y por condiciones, se selecciona. 
+se va armando el petri.

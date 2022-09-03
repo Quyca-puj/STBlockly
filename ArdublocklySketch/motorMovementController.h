@@ -1,6 +1,7 @@
 #ifndef MOTORMOVEMENTCONTROLLER_H_
 #define MOTORMOVEMENTCONTROLLER_H_
-
+#define BLACK_VALUE 150
+#define WHITE_VALUE 140
 #include "motorSpeed.h"
 #include "sensorFollow.h" 
 

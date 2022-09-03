@@ -128,8 +128,12 @@ Ardublockly.LOCALISED_TEXT = {
   calibrateMsg:"Calibra el Robot",
   noCalibrationTitle:"¡No has calibrado el Robot!",
   noCalibrationBody:"Calibra el Robot dando click al boton 'Calibra el Robot' antes de ejecutar tu creación",
+  noNetCalibrationTitle:"¡No has calibrado los Personajes!",
+  noNetCalibrationBody:"Calibra los Personajes dando click al boton 'Calibra los Personajes' antes de ejecutar tu creación",
   sucCalibrateToast:"Calibración exitosa",
   checkErrorMsg:"Ocurrio un error, por favor revisa la consola",
   sucALToast:" creada con exito",
   errALToast:"Error en la creacion de ",
+  characErrorTitle:"Ocurrio un Error",
+  characErrorBody:"Un personaje con ese Alias y/o IP ya existe!",
 };

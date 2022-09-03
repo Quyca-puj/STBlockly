@@ -8,15 +8,17 @@ Licensed under the Apache License, Version 2.0 (the "License"):
 from __future__ import unicode_literals, absolute_import, print_function
 import os
 import sys
-from ardublocklyserver.robot_socket_manager import RobotSocketManager
+import subprocess
+# Python 2 and 3 compatibility imports
+from six import iteritems
 # local-packages imports
 from bottle import request, response
 from bottle import static_file, run, default_app, redirect, abort
-# Python 2 and 3 compatibility imports
-from six import iteritems
+from py4j.java_gateway import JavaGateway
 # This package modules
-from ardublocklyserver import actions
+from ardublocklyserver import actions, petrinet_integrator
 from ardublocklyserver import robotactions
+from ardublocklyserver.robot_socket_manager import RobotSocketManager
 
 
 #
@@ -25,9 +27,8 @@ from ardublocklyserver import robotactions
 app = application = default_app()
 document_root = ''
 socket_mgmt = RobotSocketManager()
-
 def launch_server(ip='localhost', port=8000, document_root_=''):
-    """Launch the Waitress server and Bottle framework with given settings.
+    """Launch the Waitress server and Bottle framework with given settings. It also starts the java process for petrinet integration.  
 
     :param ip: IP address to serve. Default to localhost, set to '0.0.0.0' to
             be able to access the server from your local network.
@@ -38,8 +39,13 @@ def launch_server(ip='localhost', port=8000, document_root_=''):
     global document_root
     print('Setting HTTP Server Document Root to:\n\t%s' % document_root_)
     document_root = document_root_
-    print('Launch Server:')
+    
     sys.stdout.flush()
+    subprocess.Popen(['java', '-jar', '../share/dist/STRobotIntegrator.jar'])
+    global gateway
+    gateway = JavaGateway()
+    print('Gateway')
+
     run(app, server='waitress', host=ip, port=port, debug=True)
 
 
@@ -367,22 +373,12 @@ def handler_code_not_allowed():
 
 @app.post('/robot/send')
 def handler_robot_code():
-    """Handle sent Arduino Sketch code.
+    """Handle messages sent to ST Robot.
 
     Error codes:
     0  - No error
-    1  - Build or Upload failed.
-    2  - Sketch not found.
-    3  - Invalid command line argument
-    4  - Preference passed to 'get-pref' flag does not exist
-    5  - Not Clear, but Arduino IDE sometimes errors with this.
-    50 - Unexpected error code from Arduino IDE
-    51 - Could not create sketch file
-    52 - Invalid path to internally created sketch file
-    53 - Compiler directory not configured in the Settings
-    54 - Launch IDE option not configured in the Settings
-    55 - Serial Port configured in Settings not accessible.
-    56 - Arduino Board not configured in the Settings.
+    101  - Erroneous ACK.
+    102  - Failed connection to robot.
     52 - Unexpected server error.
     64 - Unable to parse sent JSON.
     """
@@ -480,6 +476,176 @@ def handler_code_post():
             'errors': [{
                 'id': exit_code,
                 'description': 'More info available in the \'ide_data\' value.'
+            }]
+        })
+    set_header_no_cache()
+    return response_dict
+
+
+@app.post('/play/executeNet')
+def handler_petri_net():
+    """Handle net object and robot information for python integration
+
+    Error codes:
+    0  - No error
+    201 - Unable to start play.
+    """
+
+    std_out, err_out = '', ''
+    exit_code = 52
+    success = False
+    response_dict = {'response_type': 'ide_output',
+                     'response_state': 'full_response'}
+    
+    try:
+        charac_info = request.json['characters']
+        petriNet = request.json['net']
+
+    except (TypeError, ValueError, KeyError) as e:
+        exit_code = 64
+        err_out = 'Unable to parse sent JSON.'
+        print('Error: Unable to parse sent JSON:\n%s' % str(e))
+    else:
+        try:
+            success, ide_mode, std_out, err_out, exit_code = \
+                petrinet_integrator.send_petri_net(charac_info, petriNet, gateway)
+        except Exception as e:
+            exit_code = 52
+            err_out += 'Unexpected server error.'
+            print('Error: Exception in arduino_ide_send_code:\n%s' % str(e))
+
+    response_dict.update({'success': success,
+                          'ide_mode': ide_mode,
+                          'ide_data': {
+                              'std_output': std_out,
+                              'err_output': err_out,
+                              'exit_code': exit_code}})
+    if not success:
+        response_dict.update({
+            'errors': [{
+                'id': exit_code
+            }]
+        })
+    set_header_no_cache()
+    return response_dict
+
+@app.post('/play/pauseNet')
+def handler_pause_petri_net():
+    """Handle pause request for petri net.
+
+    Error codes:
+    0  - No error
+    202 - Unable to pause play.
+    """
+
+    std_out, err_out = '', ''
+    exit_code = 52
+    success = False
+    response_dict = {'response_type': 'ide_output',
+                     'response_state': 'full_response'}
+    
+
+    try:
+        success, ide_mode, std_out, err_out, exit_code = \
+            petrinet_integrator.pause_petri_net(gateway)
+    except Exception as e:
+        exit_code = 52
+        err_out += 'Unexpected server error.'
+        print('Error: Exception in arduino_ide_send_code:\n%s' % str(e))
+
+    response_dict.update({'success': success,
+                            'ide_mode': ide_mode,
+                            'ide_data': {
+                                'std_output': std_out,
+                                'err_output': err_out,
+                                'exit_code': exit_code}})
+    if not success:
+        response_dict.update({
+            'errors': [{
+                'id': exit_code
+            }]
+        })
+    set_header_no_cache()
+    return response_dict
+
+
+
+@app.post('/play/stopNet')
+def handler_stop_petri_net():
+    """Handle stop request for petri net.
+
+
+    Error codes:
+    0  - No error
+    204 - Unable to pause play.
+    """
+
+    std_out, err_out = '', ''
+    exit_code = 52
+    success = False
+    response_dict = {'response_type': 'ide_output',
+                     'response_state': 'full_response'}
+    
+
+    try:
+        success, ide_mode, std_out, err_out, exit_code = \
+            petrinet_integrator.stop_petri_net(gateway)
+    except Exception as e:
+        exit_code = 52
+        err_out += 'Unexpected server error.'
+        print('Error: Exception in arduino_ide_send_code:\n%s' % str(e))
+
+    response_dict.update({'success': success,
+                            'ide_mode': ide_mode,
+                            'ide_data': {
+                                'std_output': std_out,
+                                'err_output': err_out,
+                                'exit_code': exit_code}})
+    if not success:
+        response_dict.update({
+            'errors': [{
+                'id': exit_code
+            }]
+        })
+    set_header_no_cache()
+    return response_dict
+
+
+@app.post('/play/resumeNet')
+def handler_resume_petri_net():
+    """Handle resume request for petri net.
+
+
+    Error codes:
+    0  - No error
+    204 - Unable to pause play.
+    """
+
+    std_out, err_out = '', ''
+    exit_code = 52
+    success = False
+    response_dict = {'response_type': 'ide_output',
+                     'response_state': 'full_response'}
+    
+
+    try:
+        success, ide_mode, std_out, err_out, exit_code = \
+            petrinet_integrator.resume_petri_net(gateway)
+    except Exception as e:
+        exit_code = 52
+        err_out += 'Unexpected server error.'
+        print('Error: Exception in arduino_ide_send_code:\n%s' % str(e))
+
+    response_dict.update({'success': success,
+                            'ide_mode': ide_mode,
+                            'ide_data': {
+                                'std_output': std_out,
+                                'err_output': err_out,
+                                'exit_code': exit_code}})
+    if not success:
+        response_dict.update({
+            'errors': [{
+                'id': exit_code
             }]
         })
     set_header_no_cache()

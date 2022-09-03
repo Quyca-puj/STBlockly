@@ -11,7 +11,7 @@ var Ardublockly = Ardublockly || {};
 
 
 /** Initialises all the design related JavaScript. */
-Ardublockly.designJsInit = function() {
+Ardublockly.designJsInit = function () {
   Ardublockly.materializeJsInit();
   Ardublockly.resizeToggleToolboxBotton();
   Ardublockly.sketchNameSizeEffect();
@@ -22,143 +22,181 @@ Ardublockly.designJsInit = function() {
  * Initialises all required components from materialize framework.
  * The be executed on document ready.
  */
-Ardublockly.materializeJsInit = function() {
+Ardublockly.materializeJsInit = function () {
   // Navigation bar
   $('.button-collapse').sideNav({
-      menuWidth: 240,
-      activationWidth: 70,
-      edge: 'left'
+    menuWidth: 240,
+    activationWidth: 70,
+    edge: 'left'
   });
   // Drop down menus
-  $('.dropdown-button').dropdown({hover: false});
+  $('.dropdown-button').dropdown({ hover: false });
   // Overlay content panels using modals (android dialogs)
   $('.modal-trigger').leanModal({
-      dismissible: true,
-      opacity: .5,
-      in_duration: 200,
-      out_duration: 250
-   });
+    dismissible: true,
+    opacity: .5,
+    in_duration: 200,
+    out_duration: 250
+  });
   // Pop-up tool tips
-  $('.tooltipped').tooltip({'delay': 50});
+  $('.tooltipped').tooltip({ 'delay': 50 });
   // Select menus
   $('select').material_select();
+  
+  $('select').on('contentChanged', function() {
+    $(this).material_select();
+  });
+  
 };
 
 /** Binds the event listeners relevant to the page design. */
-Ardublockly.bindDesignEventListeners = function() {
+Ardublockly.bindDesignEventListeners = function () {
   // Resize blockly workspace on window resize
   window.addEventListener(
-      'resize', Ardublockly.resizeBlocklyWorkspace, false);
+    'resize', Ardublockly.resizeBlocklyWorkspace, false);
   // Display/hide the XML load button when the XML collapsible header is clicked
   document.getElementById('xml_collapsible_header').addEventListener(
-      'click', Ardublockly.buttonLoadXmlCodeDisplay);
+    'click', Ardublockly.buttonLoadXmlCodeDisplay);
   // Toggle the content height on click to the IDE output collapsible header
   document.getElementById('ide_output_collapsible_header').addEventListener(
-      'click', function() {
-        Ardublockly.contentHeightToggle();
-      });
+    'click', function () {
+      Ardublockly.contentHeightToggle();
+    });
   var languages = document.getElementById('lang');
 
-  $("#lang").on("change",function (){
+  $("form select, form input").on("change", function () {
+    if(SmartTown.doubleClickedNode){
+      let nodeAtrr = SmartTown.graph.getNodeAttributes(SmartTown.doubleClickedNode);
+      const select_acttype = document.getElementById('act_type');
+      const select_charac = document.getElementById('charac');
+      const div_params =  document.getElementById('div_params');
+      const params = div_params.children;
+      let newParams = {};
+      for(let i = 0 ;i < params.length-1; i++){
+        newParams[params.id]=params.value;
+      }
+      nodeAtrr['charac'] =SmartTown.characters[select_charac.value];
+      nodeAtrr['act_type'] =select_acttype.value;
+      nodeAtrr['params'] =newParams;
+      nodeAtrr['color']=nodeAtrr['charac'].charac_color;
+      let char_text = select_charac.selectedIndex>=0 ? select_charac.options[select_charac.selectedIndex].outerText:"";
+      let act_text = select_acttype.selectedIndex>=0 ? select_acttype.options[select_acttype.selectedIndex].outerText:"";
+      nodeAtrr['label'] = char_text+"-"+act_text;
+      SmartTown.graph.replaceNodeAttributes(SmartTown.doubleClickedNode,nodeAtrr);
+    }
+    
+  });
+
+  $("#lang").on("change", function () {
     let displayArduino = document.getElementById("arduino_area");
-    let displayJava = document.getElementById("java_area");
-    let displayPython = document.getElementById("py_area");
     let displayMid = document.getElementById("mid_area");
     let displayXML = document.getElementById("xml_area");
     let navBar = document.getElementById("navBar");
     let footer = document.getElementById("ide_output_collapsible_header");
+    let buttonChar = document.getElementById('button_ide_char');
+    let buttonNode = document.getElementById('button_ide_node');
     let buttonLeft = document.getElementById('button_ide_left');
     let buttonMiddle = document.getElementById('button_ide_middle');
-    let iconMiddle = document.getElementById('button_ide_middle_icon');
     let buttonLarge = document.getElementById('button_ide_large');
     let code_display = document.getElementById('code_display');
+    let content_blocks = document.getElementById('content_blocks');
+    let content_graph = document.getElementById('content_graph');
+
+    let button_toggle_toolbox_icon = document.getElementById('button_toggle_toolbox');
+
+    
     Ardublockly.saveSessionStorageBlocksbyLanguage(Ardublockly.selected_language);
-    Ardublockly.selected_language=languages.value;
+    Ardublockly.selected_language = languages.value;
     Ardublockly.discardAllBlocks(true);
     Ardublockly.resetIdeOutputContent();
-    switch(languages.value){
+    switch (languages.value) {
       case "arduino":
         Ardublockly.changeIdeButtonsDesign('upload');
-        code_display.style.display="";
-        buttonLeft.style.display="";
-        buttonMiddle.style.display="";
-        displayArduino.style.display="initial";
-        displayPython.style.display="none";
-        displayMid.style.display="none";
-        displayJava.style.display="none";
-        displayXML.style.display="initial";
-        navBar.style.backgroundColor= "#00979C"
-        footer.style.backgroundColor="#006468";
+        button_toggle_toolbox_icon.style.display = ""
+        node_dialog.style.display = "none"
+        content_graph.style.display = "none"
+        content_blocks.style.display = ""
+        code_display.style.display = "";
+        buttonChar.style.display = "none";
+        buttonNode.style.display = "none";
+        buttonLeft.style.display = "";
+        buttonMiddle.style.display = "";
+        displayArduino.style.display = "initial";
+        displayMid.style.display = "none";
+        displayXML.style.display = "initial";
+        navBar.style.backgroundColor = "#00979C"
+        footer.style.backgroundColor = "#006468";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_ARDUINO_XML);
-      break;
-      case "java":
-        buttonMiddle.style.display="none";
-        buttonLeft.style.display="none";
-        displayPython.style.display="none";
-        displayMid.style.display="none";
-        displayArduino.style.display="none";
-        displayXML.style.display="initial";
-        displayJava.style.display="initial";
-        navBar.style.backgroundColor= "#6c1ea1";
-        footer.style.backgroundColor="#430068";
-        Ardublockly.updateToolbox(Ardublockly.TOOLBOX_JAVA_XML);
-        STServer.requestCommands().then(function handle(list) {  
-          SmartTown.setCommandList(JSON.parse(list));
-        });
-      break;
-      case "python":
-        buttonMiddle.style.display="none";
-        buttonLeft.style.display="none";
-        displayJava.style.display="none";
-        displayMid.style.display="none";
-        displayArduino.style.display="none";
-        displayXML.style.display="initial";
-        displayPython.style.display="initial";
-        navBar.style.backgroundColor= "#938d2e";
-        footer.style.backgroundColor="#6a661e";
-        Ardublockly.updateToolbox(Ardublockly.TOOLBOX_PY_XML);
-        STServer.requestCommands().then(function handle(list) {  
-          SmartTown.setCommandList(JSON.parse(list));
-        });
-      break;
+        break;
       case "middle":
-        code_display.style.display="none";
-        buttonMiddle.style.display="none";
-        buttonLeft.style.display="none";
-        displayJava.style.display="none";
-        displayPython.style.display="none";
-        displayArduino.style.display="none";
-        displayXML.style.display="none";
-        displayMid.style.display="initial";
-        navBar.style.backgroundColor= "#853a2a";
-        footer.style.backgroundColor="#824a3e";
+        button_toggle_toolbox_icon.style.display = ""
+        node_dialog.style.display = "none"
+        buttonChar.style.display = "none";
+        buttonNode.style.display = "none";
+        content_graph.style.display = "none"
+        content_blocks.style.display = ""
+        code_display.style.display = "none";
+        buttonMiddle.style.display = "none";
+        buttonLeft.style.display = "none";
+        displayArduino.style.display = "none";
+        displayXML.style.display = "none";
+        displayMid.style.display = "initial";
+        navBar.style.backgroundColor = "#853a2a";
+        footer.style.backgroundColor = "#824a3e";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_MID_XML);
-        STServer.requestCommands().then(function handle(list) {  
+        STServer.requestCommands().then(function handle(list) {
           SmartTown.setCommandList(JSON.parse(list));
         });
-      break;
+        break;
       case "exec":
+        button_toggle_toolbox_icon.style.display = ""
+        node_dialog.style.display = "none"
+        buttonChar.style.display = "none";
+        buttonNode.style.display = "none";
+        content_graph.style.display = "none";
+        content_blocks.style.display = "";
         Ardublockly.changeIdeButtonsDesign('upload');
-        code_display.style.display="none";
-        buttonMiddle.style.display="";
-        buttonLeft.style.display="";
-        displayJava.style.display="none";
-        displayPython.style.display="none";
-        displayArduino.style.display="none";
-        displayXML.style.display="none";
-        displayMid.style.display="none";
-        navBar.style.backgroundColor= "#999950";
-        footer.style.backgroundColor="#7a7a40";
+        code_display.style.display = "none";
+        buttonMiddle.style.display = "";
+        buttonLeft.style.display = "";
+        displayArduino.style.display = "none";
+        displayXML.style.display = "none";
+        displayMid.style.display = "none";
+        navBar.style.backgroundColor = "#999950";
+        footer.style.backgroundColor = "#7a7a40";
         Ardublockly.updateToolbox(Ardublockly.TOOLBOX_EXEC_XML);
-        STServer.requestCommands().then(function handle(list) {  
+        STServer.requestCommands().then(function handle(list) {
           SmartTown.setCommandList(JSON.parse(list));
         });
-        STServer.requestActionLists().then(function handle(list) {  
+        STServer.requestActionLists().then(function handle(list) {
+          SmartTown.setALList(JSON.parse(list));
+        });
+        break;
+      case "exec_net":
+        buttonChar.style.display = "";
+        buttonNode.style.display = "";
+        buttonLeft.style.display = "none";
+        button_toggle_toolbox_icon.style.display = "none"
+        content_blocks.style.display = "none"
+        content_graph.style.display = "block"
+        Ardublockly.changeIdeButtonsDesign('upload');
+        code_display.style.display = "none";
+        buttonMiddle.style.display = "";
+        buttonLeft.style.display = "";
+        displayArduino.style.display = "none";
+        displayXML.style.display = "none";
+        displayMid.style.display = "none";
+        navBar.style.backgroundColor = "#999950";
+        footer.style.backgroundColor = "#7a7a40";
+        STServer.requestCommands().then(function handle(list) {
+          SmartTown.setCommandList(JSON.parse(list));
+        });
+        STServer.requestActionLists().then(function handle(list) {
           SmartTown.setALList(JSON.parse(list));
         });
         break;
     }
-    
+
     Ardublockly.loadSessionStorageBlocksByLanguage(Ardublockly.selected_language);
     Ardublockly.renderContent();
   }
@@ -167,11 +205,11 @@ Ardublockly.bindDesignEventListeners = function() {
 
 
   // Display/hide the additional IDE buttons when mouse over/out of play button
-  $('#button_ide_large').mouseenter(function() {
-      Ardublockly.showExtraIdeButtons(true);
+  $('#button_ide_large').mouseenter(function () {
+    Ardublockly.showExtraIdeButtons(true);
   });
-  $('#ide_buttons_wrapper').mouseleave(function() {
-      Ardublockly.showExtraIdeButtons(false);
+  $('#ide_buttons_wrapper').mouseleave(function () {
+    Ardublockly.showExtraIdeButtons(false);
   });
 };
 
@@ -179,10 +217,10 @@ Ardublockly.bindDesignEventListeners = function() {
  * Displays or hides the 'load textarea xml' button based on the state of the
  * collapsible 'xml_collapsible_body'.
  */
-Ardublockly.buttonLoadXmlCodeDisplay = function() {
+Ardublockly.buttonLoadXmlCodeDisplay = function () {
   var xmlCollapsibleBody = document.getElementById('xml_collapsible_body');
   // Waiting 400 ms to check status due to the animation delay (300 ms)
-  setTimeout(function() {
+  setTimeout(function () {
     if (xmlCollapsibleBody.style.display == 'none') {
       $('#button_load_xml').hide();
     } else {
@@ -196,7 +234,7 @@ Ardublockly.buttonLoadXmlCodeDisplay = function() {
  * @param {!string} value One of the 3 possible values from the drop down select
  *     in the settings modal: 'upload', 'verify', or 'open'.
  */
-Ardublockly.changeIdeButtonsDesign = function(value) {
+Ardublockly.changeIdeButtonsDesign = function (value) {
   let lang = Ardublockly.selected_language
   var buttonLeft = document.getElementById('button_ide_left');
   var iconLeft = document.getElementById('button_ide_left_icon');
@@ -205,70 +243,103 @@ Ardublockly.changeIdeButtonsDesign = function(value) {
   var buttonLarge = document.getElementById('button_ide_large');
   var iconLarge = document.getElementById('button_ide_large_icon');
 
-  switch(lang){
+  switch (lang) {
     case "arduino":
       if (value === 'upload') {
         buttonLeft.className =
-            buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
         iconLeft.className = 'mdi-action-open-in-browser';
         buttonMiddle.className =
-            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
+          buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
         iconMiddle.className = 'mdi-navigation-check';
         buttonLarge.className =
-            buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
+          buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
         iconLarge.className = 'mdi-av-play-arrow';
       } else if (value === 'verify') {
         buttonLeft.className =
-            buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
         iconLeft.className = 'mdi-action-open-in-browser';
         buttonMiddle.className =
-            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+          buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
         iconMiddle.className = 'mdi-av-play-arrow';
         buttonLarge.className =
-            buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
+          buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
         iconLarge.className = 'mdi-navigation-check';
       } else if (value === 'open') {
         buttonLeft.className =
-            buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
         iconLeft.className = 'mdi-navigation-check';
         buttonMiddle.className =
-            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+          buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
         iconMiddle.className = 'mdi-av-play-arrow';
         buttonLarge.className =
-            buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
+          buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
         iconLarge.className = 'mdi-action-open-in-browser';
       }
       break;
-      case "exec":
+    case "exec":
+      if (value === 'upload') {
+        buttonLeft.className =
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLeft.className = 'mdi-navigation-check';
+        buttonMiddle.className =
+          buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
+        iconMiddle.className = 'mdi-av-pause';
+        buttonLarge.className =
+          buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
+        iconLarge.className = 'mdi-av-play-arrow';
+      } else if (value === 'verify') {
+        buttonLeft.className =
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLeft.className = 'mdi-navigation-check';
+        buttonMiddle.className =
+          buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+        iconMiddle.className = 'mdi-av-play-arrow';
+        buttonLarge.className =
+          buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
+        iconLarge.className = 'mdi-av-pause';
+      } else if (value === 'open') {
+        buttonLeft.className =
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
+        iconLeft.className = 'mdi-av-pause';
+        buttonMiddle.className =
+          buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+        iconMiddle.className = 'mdi-av-play-arrow';
+        buttonLarge.className =
+          buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLarge.className = 'mdi-navigation-check';
+      }
+      break;
+      case "exec_net":
         if (value === 'upload') {
           buttonLeft.className =
-          buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
-      iconLeft.className = 'mdi-navigation-check';
+            buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+          iconLeft.className = 'mdi-navigation-check';
           buttonMiddle.className =
-              buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
+            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
           iconMiddle.className = 'mdi-av-pause';
           buttonLarge.className =
-              buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
+            buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
           iconLarge.className = 'mdi-av-play-arrow';
         } else if (value === 'verify') {
           buttonLeft.className =
             buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
-        iconLeft.className = 'mdi-navigation-check';
+          iconLeft.className = 'mdi-navigation-check';
           buttonMiddle.className =
-              buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
           iconMiddle.className = 'mdi-av-play-arrow';
           buttonLarge.className =
-              buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
+            buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
           iconLarge.className = 'mdi-av-pause';
-        }  else if (value === 'open') {
+        } else if (value === 'open') {
           buttonLeft.className =
-              buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
+            buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
           iconLeft.className = 'mdi-av-pause';
           buttonMiddle.className =
-              buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
           iconMiddle.className = 'mdi-av-play-arrow';
           buttonLarge.className =
-              buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
+            buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
           iconLarge.className = 'mdi-navigation-check';
         }
         break;
@@ -280,7 +351,7 @@ Ardublockly.changeIdeButtonsDesign = function(value) {
  * Hide/display effects done with CCS3 transitions on visibility and opacity.
  * @param {!boolean} show Indicates if the extra buttons are to be shown.
  */
-Ardublockly.showExtraIdeButtons = function(show) {
+Ardublockly.showExtraIdeButtons = function (show) {
   var IdeButtonLeft = document.getElementById('button_ide_left');
   var IdeButtonMiddle = document.getElementById('button_ide_middle');
   if (show) {
@@ -289,18 +360,18 @@ Ardublockly.showExtraIdeButtons = function(show) {
     clearTimeout(Ardublockly.hidetimeoutHandle);
     IdeButtonMiddle.style.visibility = 'visible';
     IdeButtonMiddle.style.opacity = '1';
-    Ardublockly.showtimeoutHandle = setTimeout(function() {
+    Ardublockly.showtimeoutHandle = setTimeout(function () {
       IdeButtonLeft.style.visibility = 'visible';
       IdeButtonLeft.style.opacity = '1';
     }, 50);
   } else {
     // As the mouse out can be accidental, only hide them after a delay
-    Ardublockly.outHoldtimeoutHandle = setTimeout(function() {
+    Ardublockly.outHoldtimeoutHandle = setTimeout(function () {
       // Prevent show time-out to affect the hiding of the buttons
       clearTimeout(Ardublockly.showtimeoutHandle);
       IdeButtonLeft.style.visibility = 'hidden';
       IdeButtonLeft.style.opacity = '0';
-      Ardublockly.hidetimeoutHandle = setTimeout(function() {
+      Ardublockly.hidetimeoutHandle = setTimeout(function () {
         IdeButtonMiddle.style.visibility = 'hidden';
         IdeButtonMiddle.style.opacity = '0';
       }, 50);
@@ -312,7 +383,7 @@ Ardublockly.showExtraIdeButtons = function(show) {
  * Shows or hides the spinner around the large IDE button.
  * @param {!boolean} active True turns ON the spinner, false OFF.
  */
-Ardublockly.largeIdeButtonSpinner = function(active) {
+Ardublockly.largeIdeButtonSpinner = function (active) {
   var spinner = document.getElementById('button_ide_large_spinner');
   var buttonIdeLarge = document.getElementById('button_ide_large');
   var buttonClass = buttonIdeLarge.className;
@@ -322,7 +393,7 @@ Ardublockly.largeIdeButtonSpinner = function(active) {
   } else {
     spinner.style.display = 'none';
     buttonIdeLarge.className = buttonClass.replace(' grey', '');
- }
+  }
 };
 
 /**
@@ -332,7 +403,7 @@ Ardublockly.largeIdeButtonSpinner = function(active) {
  * no background, and the opposite when toolbox is hidden.
  * @param {!boolean} show Indicates if the toolbox should be set visible.
  */
-Ardublockly.displayToolbox = function(show) {
+Ardublockly.displayToolbox = function (show) {
   var toolbox = $('.blocklyToolboxDiv');
   var toolboxTree = $('.blocklyTreeRoot');
   var button = document.getElementById('button_toggle_toolbox');
@@ -343,16 +414,16 @@ Ardublockly.displayToolbox = function(show) {
   // event listeners is better to do it this way for easy framework update).
   var elLocation = $('#button_toggle_toolbox').offset();
   jQuery('<div/>', {
-      id: 'toolboxButtonScreen',
-      css: {
-        position: 'fixed',
-        top: elLocation.top,
-        left: elLocation.left,
-        height: $('#button_toggle_toolbox').height(),
-        width: $('#button_toggle_toolbox').width(),
-        cursor: 'pointer',
-        zIndex: 12
-      },
+    id: 'toolboxButtonScreen',
+    css: {
+      position: 'fixed',
+      top: elLocation.top,
+      left: elLocation.left,
+      height: $('#button_toggle_toolbox').height(),
+      width: $('#button_toggle_toolbox').width(),
+      cursor: 'pointer',
+      zIndex: 12
+    },
   }).appendTo('body');
 
   var classOn = 'button_toggle_toolbox_on';
@@ -364,20 +435,20 @@ Ardublockly.displayToolbox = function(show) {
     button.className = button.className.replace(classOn, classOff);
     buttonIcon.className = buttonIcon.className.replace(visOn, visOff);
     toolbox.animate(
-        {height: document.getElementById('content_blocks').style.height}, 300,
-        function() {
-          toolboxTree.css('overflow-y', 'auto');
-          window.dispatchEvent(new Event('resize'));
-          $('#toolboxButtonScreen').remove();
-        });
+      { height: document.getElementById('content_blocks').style.height }, 300,
+      function () {
+        toolboxTree.css('overflow-y', 'auto');
+        window.dispatchEvent(new Event('resize'));
+        $('#toolboxButtonScreen').remove();
+      });
   } else {
     toolboxTree.css('overflow-y', 'hidden');
     buttonIcon.className = buttonIcon.className.replace(visOff, visOn);
-    toolbox.animate({height: 38}, 300, function() {
+    toolbox.animate({ height: 38 }, 300, function () {
       button.className = button.className.replace(classOff, classOn);
-      toolbox.fadeOut(350, 'linear', function() {
+      toolbox.fadeOut(350, 'linear', function () {
         window.dispatchEvent(new Event('resize'));
-        setTimeout(function() { toolbox.height(38); }, 100);
+        setTimeout(function () { toolbox.height(38); }, 100);
         $('#toolboxButtonScreen').remove();
       });
     });
@@ -389,7 +460,7 @@ Ardublockly.displayToolbox = function(show) {
  * toolbox.
  * The toolbox width does not change with workspace width, so safe to do once.
  */
-Ardublockly.resizeToggleToolboxBotton = function() {
+Ardublockly.resizeToggleToolboxBotton = function () {
   window.dispatchEvent(new Event('resize'));
   var button = $('#button_toggle_toolbox');
   // Sets the toolbox toggle button width to that of the toolbox
@@ -401,10 +472,10 @@ Ardublockly.resizeToggleToolboxBotton = function() {
 };
 
 /** Resizes the container for the Blockly workspace. */
-Ardublockly.resizeBlocklyWorkspace = function() {
+Ardublockly.resizeBlocklyWorkspace = function () {
   var contentBlocks = document.getElementById('content_blocks');
   var wrapperPanelSize =
-      Ardublockly.getBBox_(document.getElementById('blocks_panel'));
+    Ardublockly.getBBox_(document.getElementById('blocks_panel'));
 
   contentBlocks.style.top = wrapperPanelSize.y + 'px';
   contentBlocks.style.left = wrapperPanelSize.x + 'px';
@@ -412,10 +483,10 @@ Ardublockly.resizeBlocklyWorkspace = function() {
   // compensate for scrollbars.
   contentBlocks.style.height = wrapperPanelSize.height + 'px';
   contentBlocks.style.height =
-      (2 * wrapperPanelSize.height - contentBlocks.offsetHeight) + 'px';
+    (2 * wrapperPanelSize.height - contentBlocks.offsetHeight) + 'px';
   contentBlocks.style.width = wrapperPanelSize.width + 'px';
   contentBlocks.style.width =
-      (2 * wrapperPanelSize.width - contentBlocks.offsetWidth) + 'px';
+    (2 * wrapperPanelSize.width - contentBlocks.offsetWidth) + 'px';
 };
 
 /**
@@ -428,17 +499,17 @@ Ardublockly.resizeBlocklyWorkspace = function() {
  * @param {string=|function=} callback If confirm option is selected this would
  *     be the function called when clicked 'OK'.
  */
-Ardublockly.materialAlert = function(title, body, confirm, callback) {
+Ardublockly.materialAlert = function (title, body, confirm, callback) {
   $('#gen_alert_title').text(title);
   $('#gen_alert_body').text('');
   $('#gen_alert_body').append(body);
   if (confirm == true) {
-    $('#gen_alert_cancel_link').css({'display': 'block'});
+    $('#gen_alert_cancel_link').css({ 'display': 'block' });
     if (callback) {
       $('#gen_alert_ok_link').bind('click', callback);
     }
   } else {
-    $('#gen_alert_cancel_link').css({'display': 'none'});
+    $('#gen_alert_cancel_link').css({ 'display': 'none' });
     $('#gen_alert_ok_link').unbind('click');
   }
   $('#gen_alert').openModal();
@@ -446,7 +517,7 @@ Ardublockly.materialAlert = function(title, body, confirm, callback) {
 };
 
 /** Opens the modal that displays the "not connected to server" message. */
-Ardublockly.openNotConnectedModal = function() {
+Ardublockly.openNotConnectedModal = function () {
   $('#not_running_dialog').openModal({
     dismissible: true,
     opacity: .5,
@@ -455,8 +526,9 @@ Ardublockly.openNotConnectedModal = function() {
   });
 };
 
+
 /** Opens the modal that displays the Settings. */
-Ardublockly.openSettingsModal = function() {
+Ardublockly.openSettingsModal = function () {
   $('#settings_dialog').openModal({
     dismissible: true,
     opacity: .5,
@@ -469,7 +541,7 @@ Ardublockly.openSettingsModal = function() {
  * Opens the modal that allows selection on additional toolbox categories.
  * @param {!element} htmlContent HTML to include in modal body.
  */
-Ardublockly.openAdditionalBlocksModal = function(htmlContent) {
+Ardublockly.openAdditionalBlocksModal = function (htmlContent) {
   $('#blocks_menu_body').text('');
   $('#blocks_menu_body').append(htmlContent);
   $('#blocks_menu').openModal({
@@ -487,12 +559,12 @@ Ardublockly.openAdditionalBlocksModal = function(htmlContent) {
  * @param {!function} clickBind Function to bind to the tick box click.
  * @return {!element} HTML element to display the category content.
  */
-Ardublockly.createExtraBlocksCatHtml = function(title, description, clickBind) {
+Ardublockly.createExtraBlocksCatHtml = function (title, description, clickBind) {
   var tickId = title.replace(/\s+/g, '');
   var tickHtml = document.createElement('input');
   tickHtml.type = 'checkbox';
   tickHtml.id = tickId;
-  tickHtml.addEventListener('click', function() {
+  tickHtml.addEventListener('click', function () {
     clickBind(document.getElementById(tickId).checked);
   });
   var tickLabelHtml = document.createElement('label');
@@ -517,7 +589,7 @@ Ardublockly.createExtraBlocksCatHtml = function(title, description, clickBind) {
  * Displays a short message for 4 seconds in the form of a Materialize toast.
  * @param {!string} message Text to be temporarily displayed.
  */
-Ardublockly.MaterialToast = function(message) {
+Ardublockly.MaterialToast = function (message) {
   Materialize.toast(message, 4000);
 };
 
@@ -526,7 +598,7 @@ Ardublockly.MaterialToast = function(message) {
  * highlight to call for the user attention.
  * @param {!element} bodyEl HTML to include into IDE output content area.
  */
-Ardublockly.arduinoIdeOutput = function(bodyEl) {
+Ardublockly.arduinoIdeOutput = function (bodyEl) {
   var ideOuputContent = document.getElementById('content_ide_output');
   ideOuputContent.innerHTML = '';
   ideOuputContent.appendChild(bodyEl);
@@ -537,23 +609,23 @@ Ardublockly.arduinoIdeOutput = function(bodyEl) {
  * Clears the content of the Arduino IDE output element to a default text.
  * @param {!element} bodyEl HTML to include into IDE output content area.
  */
-Ardublockly.resetIdeOutputContent = function(bodyEl) {
+Ardublockly.resetIdeOutputContent = function (bodyEl) {
   var ideOuputContent = document.getElementById('content_ide_output');
   ideOuputContent.innerHTML = '<span class="arduino_dialog_out">' +
-      Ardublockly.getLocalStr('arduinoOpWaiting') + '</span>';
+    Ardublockly.getLocalStr('arduinoOpWaiting') + '</span>';
 };
 
 /**
  * Initialises the sketch name input text JavaScript to dynamically adjust its
  * width to the width of its contents.
  */
-Ardublockly.sketchNameSizeEffect = function() {
-  var resizeInput = function() {
+Ardublockly.sketchNameSizeEffect = function () {
+  var resizeInput = function () {
     $(this).attr('size', $(this).val().length);
   };
 
   let codeName = Ardublockly.getLocalStr("codePlaceHolder");
-  var correctInput = function() {
+  var correctInput = function () {
     // If nothing in the input, add default name
     if ($(this).val() == '') {
       $(this).val(codeName);
@@ -573,7 +645,7 @@ Ardublockly.sketchNameSizeEffect = function() {
  * Ardublockly.sketchNameSizeEffect().
  * @param {string?} newName Optional string to place in the sketch_name input.
  */
-Ardublockly.sketchNameSet = function(newName) {
+Ardublockly.sketchNameSet = function (newName) {
   var sketchNewName = newName || '';
   var sketchNameInput = $('#sketch_name');
   sketchNameInput.val(sketchNewName);
@@ -583,16 +655,16 @@ Ardublockly.sketchNameSet = function(newName) {
 };
 
 /** Creates a highlight animation to the Arduino IDE output header. */
-Ardublockly.highlightIdeOutputHeader = function() {
+Ardublockly.highlightIdeOutputHeader = function () {
   var header = document.getElementById('ide_output_collapsible_header');
   var h = 'ide_output_header_highlight';
   var n = 'ide_output_header_normal';
   header.className = header.className.replace(/ide_output_header_\S+/, h);
-  setTimeout(function() {
+  setTimeout(function () {
     header.className = header.className.replace(/ide_output_header_\S+/, n);
-    setTimeout(function() {
+    setTimeout(function () {
       header.className = header.className.replace(/ide_output_header_\S+/, h);
-      setTimeout(function() {
+      setTimeout(function () {
         header.className = header.className.replace(/ide_output_header_\S+/, n);
       }, 500);
     }, 500);
@@ -606,17 +678,17 @@ Ardublockly.highlightIdeOutputHeader = function() {
  * collapsible functionality from Materialize framework adds the active class,
  * so this class is consulted to shrink or expand the content height.
  */
-Ardublockly.contentHeightToggle = function() {
+Ardublockly.contentHeightToggle = function () {
   var outputHeader = document.getElementById('ide_output_collapsible_header');
   var blocks = document.getElementById('blocks_panel');
   var arduino = document.getElementById('content_arduino');
   var xml = document.getElementById('content_xml');
 
   // Blockly doesn't resize with CSS3 transitions enabled, so do it manually
-  var timerId = setInterval(function() {
+  var timerId = setInterval(function () {
     window.dispatchEvent(new Event('resize'));
   }, 15);
-  setTimeout(function() {
+  setTimeout(function () {
     clearInterval(timerId);
   }, 400);
 
@@ -634,7 +706,7 @@ Ardublockly.contentHeightToggle = function() {
   }
 
   // If the height transition CSS is left then blockly does not resize
-  setTimeout(function() {
+  setTimeout(function () {
     blocks.className = blocks.className.replace('height_transition', '');
     arduino.className = arduino.className.replace('height_transition', '');
     xml.className = xml.className.replace('height_transition', '');
@@ -647,7 +719,7 @@ Ardublockly.contentHeightToggle = function() {
  * @return {!Object} Contains height, width, x, and y properties.
  * @private
  */
-Ardublockly.getBBox_ = function(element) {
+Ardublockly.getBBox_ = function (element) {
   var height = element.offsetHeight;
   var width = element.offsetWidth;
   var x = 0;

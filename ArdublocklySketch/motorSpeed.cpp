@@ -1,7 +1,7 @@
 #include "motorSpeed.h"
 
 //zero value motors
-const int SPEED_DEGREE_CERO_LM=90;
+const int SPEED_DEGREE_CERO_LM=89;
 const int SPEED_DEGREE_CERO_RM=90;
 /* Define again Servo*/
 Servo rightServo;

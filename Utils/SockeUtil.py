@@ -1,6 +1,6 @@
 import socket
 STport = 6000
-STip = "192.168.208.84"
+STip = "192.168.213.84"
 
 
 class RobotSocketManager:

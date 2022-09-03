@@ -23,7 +23,14 @@ goog.require('Blockly.Workspace');
  */
 Blockly.SmartTown.COMMANDS_TYPE = 'STCOMMANDS';
 Blockly.SmartTown.ACTIONLIST_TYPE = 'STACTIONLISTS';
-
+Blockly.SmartTown.BLOCK_ST_AVANZAR ="mvt_avanzar";
+Blockly.SmartTown.BLOCK_ST_GIRAR ="mvt_girar";
+Blockly.SmartTown.BLOCK_ST_AVANZAR_T ="mvt_avanzar_tiempo";
+Blockly.SmartTown.BLOCK_ST_GIRAR_T ="mvt_girar_tiempo";
+Blockly.SmartTown.BLOCK_ST_STOP ="mvt_stop";
+Blockly.SmartTown.BLOCK_ST_HABLAR ="hablar";
+Blockly.SmartTown.BLOCK_ST_SETUP ="setupsmarttown";
+Blockly.SmartTown.BLOCK_ST_COMMAND ="new_smarttown_command";
 /**
  * Find all user-created STCommand definitions in a workspace.
  * @param {!Blockly.Workspace} root Root workspace.
@@ -47,6 +54,7 @@ Blockly.SmartTown.allSTCommands = function(root) {
   return [STCommandsNoReturn];
 };
 
+//TODOL : Change interface for comunnication. Send action list. In other instance send transition list. It means new rest service.
 Blockly.SmartTown.generateCommandRobotSketch = function(root) {
   let blocks = root.getAllBlocks();
   let STCommandsNoReturn = [];
@@ -54,8 +62,10 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].getCommandDef) {
       var tuple = blocks[i].getCommandDef();
+      console.log(tuple);
       if (tuple) {
-          STCommandsNoReturn.push("bool "+tuple+"();");
+          STCommandsNoReturn.push("void "+tuple+"(WiFiClient client);");
+          STCommandsNoReturn.push("int "+tuple+"Step;");
       }
     }
     if(blocks[i].getProcedureDef){

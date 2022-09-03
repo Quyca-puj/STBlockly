@@ -1,6 +1,8 @@
-#define CALIBRATION_SPEED 50
+#define CALIBRATION_SPEED 40
 #define QUEUE_SIZE 10
 #define MAX_ARGS 4
+#define MAX_MSGS 4
+#define TASK_SEP "|"
 #define EMOTION_STR "emotions"
 #define EMOTION_SWITCH "s_emotions"
 #define EMOTION_OFF "off_emotions"
@@ -34,3 +36,7 @@
 #define BUFFER_SIZE 20
 #define EMPTY_STRING "\0"
 #define EMPTY_PARAM "*"
+#define BASIC_SENSOR_FL "sensorReadFrontL"
+#define BASIC_SENSOR_FR "sensorReadFrontR"
+#define BASIC_SENSOR_BL "sensorReadBackL"
+#define BASIC_SENSOR_BR "sensorReadBackR"

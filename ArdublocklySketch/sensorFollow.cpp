@@ -10,5 +10,5 @@ void setupSensors(){
 }
 
 void ReadValues(){
-  qtr.read(sensorValues);
+  qtr.readCalibrated(sensorValues);
 }

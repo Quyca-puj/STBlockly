@@ -28,7 +28,7 @@ bool followLine(int speed) {
   //Detect Black Color by the Front Sensor
   if (overIntersection == true) {
     ReadValues();
-    if (sensorValues[2] < 1000 && sensorValues[3] < 1000 ) {
+    if (sensorValues[2] < WHITE_VALUE && sensorValues[3] < WHITE_VALUE ) {
       overIntersection = false;
       return false;
     }
@@ -37,8 +37,8 @@ bool followLine(int speed) {
     return false;
   }
 
-  if (sensorValues[2] >= 1500 ^ sensorValues[3] >= 1500 ) {
-    if (sensorValues[2] >= 1500 && finds == false) {
+  if (sensorValues[2] >= BLACK_VALUE ^ sensorValues[3] >= BLACK_VALUE ) {
+    if (sensorValues[2] >= BLACK_VALUE && finds == false) {
       Time1 = millis();
       finds = true;
     }
@@ -49,7 +49,7 @@ bool followLine(int speed) {
       }
       finds = false;
     }
-    if (sensorValues[3] >= 1500 && finds == false) {
+    if (sensorValues[3] >= BLACK_VALUE && finds == false) {
       Time1 = millis();
       finds = true;
     }
@@ -61,7 +61,7 @@ bool followLine(int speed) {
       finds = false;
     }
   }
-  if (sensorValues[2] >= 1500 && sensorValues[3] >= 1500 ) {
+  if (sensorValues[2] >= BLACK_VALUE && sensorValues[3] >= BLACK_VALUE ) {
     setSpeedsMotor(0, 0);
     overIntersection = true;
     return true;
@@ -116,7 +116,7 @@ bool turn(int direction, int speed) {
   ReadValues();
   if (overIntersection == true) {
     ReadValues();
-    if (sensorValues[0] < 1000 && sensorValues[1] < 1000 ) {
+    if (sensorValues[0] < WHITE_VALUE && sensorValues[1] < WHITE_VALUE ) {
       overIntersection = false;
       return false;
     }
@@ -124,8 +124,8 @@ bool turn(int direction, int speed) {
     delay(50);
     return false;
   }
-  if (sensorValues[0] >= 1500 ^ sensorValues[1] >= 1500 ) {
-    if (sensorValues[0] >= 1500 && finds == false) {
+  if (sensorValues[0] >= BLACK_VALUE ^ sensorValues[1] >= BLACK_VALUE ) {
+    if (sensorValues[0] >= BLACK_VALUE && finds == false) {
       Time1 = millis();
       finds = true;
     }
@@ -136,7 +136,7 @@ bool turn(int direction, int speed) {
       }
       finds = false;
     }
-    if (sensorValues[1] >= 1500 && finds == false) {
+    if (sensorValues[1] >= BLACK_VALUE && finds == false) {
       Time1 = millis();
       finds = true;
     }
@@ -148,7 +148,7 @@ bool turn(int direction, int speed) {
       finds = false;
     }
   }
-  if (sensorValues[0] >= 1500 && sensorValues[1] >= 1500 ) {
+  if (sensorValues[0] >= BLACK_VALUE && sensorValues[1] >= BLACK_VALUE ) {
     setSpeedsMotor(0, 0);
     overIntersection = true;
     return true;

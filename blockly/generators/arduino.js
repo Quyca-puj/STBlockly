@@ -491,3 +491,24 @@ Blockly.Arduino.noGeneratorCodeInline = function() {
 
 /** Used for not-yet-implemented block code generators */
 Blockly.Arduino.noGeneratorCodeLine = function() { return ''; };
+
+Blockly.Arduino.getConditions = function(type){
+  let conditions;
+  switch(type){
+    case Blockly.SmartTown.BLOCK_ST_AVANZAR:
+    case Blockly.SmartTown.BLOCK_ST_GIRAR: 
+    conditions = ["isFeasibleMvt(msg)","isFeasibleEmotion(msg)"];
+    break;
+    case  Blockly.SmartTown.BLOCK_ST_AVANZAR_T:
+    case Blockly.SmartTown.BLOCK_ST_GIRAR_T:
+      conditions = ["isFeasibleMvt(msg)"];
+      break;
+    case Blockly.SmartTown.BLOCK_ST_HABLAR:
+      conditions = [];
+    break;
+    default:
+      conditions =[] ;
+    break;
+  }
+ return conditions;
+}

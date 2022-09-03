@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 """Collection of actions sent to robot through the ardublocklyserver for relieved HTTP requests.
 
-Copyright (c) 2017 carlosperate https://github.com/carlosperate/
-Licensed under the Apache License, Version 2.0 (the "License"):
-    http://www.apache.org/licenses/LICENSE-2.0
+Copyright (c) 2017 IQBots 
 """
 from __future__ import unicode_literals, absolute_import, print_function
 
 
 def send_code_to_robot(robot_action, socket_mgmt):
     """
+    Handles Robot Connection and maessage lifecycle.
+    - robot_action: robot information and action description.
+    - socket_mgmt: Socket manager interface.
     """
     success = True
     ide_mode = 'unknown'

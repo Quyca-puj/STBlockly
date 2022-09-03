@@ -418,6 +418,21 @@ ArdublocklyServer.calibrate = function(ip, alias ,successHandler, errorHandler, 
   });
 }
 
+//TODOL ENdpoint
+ArdublocklyServer.calibrateMultiple = function(characObj ,successHandler, errorHandler, workspace){
+  ArdublocklyServer.ack =0 ;
+  ArdublocklyServer.calibrateRobots(characObj, workspace).then(function handle(response) {  
+    let jsonObj = JSON.parse(response);
+    if(jsonObj.success){
+      successHandler();
+    }else{
+      let dataBack = ArdublocklyServer.jsonToIdeModal(jsonObj);
+      errorHandler(dataBack);
+    }
+  });
+}
+
+
 ArdublocklyServer.startExecution = function (commandObj, workspace ,errorHandler){
   ArdublocklyServer.ack =0 ;
   ArdublocklyServer.actionPos =0 ;
@@ -499,4 +514,27 @@ ArdublocklyServer.sendToRobot = async function(json, id, workspace) {
   ArdublocklyUtils.highlightBlock(id, workspace);
   return await ArdublocklyServer.postJson('/robot/send', {action:json});
 };
+
+ArdublocklyServer.calibrateRobots = async function(json, id, workspace) {
+  return await ArdublocklyServer.postJson('/robot/calibrateAll', {actions:json});
+};
+
+
+ArdublocklyServer.sendPetriNet = async function(characInfo,net) {
+  return await ArdublocklyServer.postJson('/play/executeNet', {characters:characInfo,net:net});
+};
+
+ArdublocklyServer.pausePetriNet = async function() {
+  return await ArdublocklyServer.postJson('/play/pauseNet', null);
+};
+
+ArdublocklyServer.stopPetriNet = async function() {
+  return await ArdublocklyServer.postJson('/play/stopNet', null);
+};
+
+
+ArdublocklyServer.resumePetriNet = async function() {
+  return await ArdublocklyServer.postJson('/play/resumeNet', null);
+};
+
 

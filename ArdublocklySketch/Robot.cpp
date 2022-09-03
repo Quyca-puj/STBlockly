@@ -14,12 +14,7 @@ Robot::Robot()
   emotionPeriod = 0;
   emotion = "";
   movementCurrentState = false;
-  isTimedAction = false;
   motorInactive = true;
-  reverseActive = false;
-  forwardActive = false;
-  rightActive = false;
-  leftActive = false;
   isMvtExpropiative = true;
   isEmoExpropiative = true;
 }
@@ -102,9 +97,6 @@ bool Robot::isFeasibleMvt(Task *msg)
 }
 bool Robot::isFeasibleEmotion(Task *msg)
 {
-  STprint("isFeasibleEmotion");
-  STprint(isEmoExpropiative);
-  STprint(screenInactive);
   return isEmoExpropiative || (!isEmoExpropiative && screenInactive);
 }
 
@@ -127,13 +119,8 @@ void Robot::processMsg(String msg, bool checkStatus, WiFiClient client)
     // Conversion del comando a una tarea
     STprint("Incoming");
     STprint(msg);
+    processMultipleMsgs(&msg);
 
-    STprint("Before msgToTask");
-    Task *task = msgToTask(msg);
-    STprint("After msgToTask");
-    STprint(task->command);
-    taskQueue.push(task);
-    STprint("After push");
   } // end if
   // procesar comandos y revision de comandos en ejecucion
   STprint("taskQueue.pendingTasks 1");
@@ -221,14 +208,15 @@ void Robot::unwrapTask(Task *task)
       speeds = task->speed;
     }
   }
-  delete(task);
+  delete (task);
 }
 void Robot::answerCommand(TaskList *list, String task, WiFiClient client)
 {
   STprint("list size");
   STprint(list->pendingTasks);
   int ack = list->searchAck(task);
-  if (ack != -1) {
+  if (ack != -1)
+  {
     list->removeTask(task);
     STprint("task");
     STprint(task);
@@ -245,6 +233,34 @@ void Robot::answerCommand(TaskList *list, String task, WiFiClient client)
     else
     {
       client.println(ack);
+    }
+    STprint("Answered");
+  }
+}
+
+void Robot::answerCommandWithInfo(TaskList *list, String task, WiFiClient client, String answer)
+{
+  STprint("list size");
+  STprint(list->pendingTasks);
+  int ack = list->searchAck(task);
+  if (ack != -1)
+  {
+    list->removeTask(task);
+    STprint("task");
+    STprint(task);
+    STprint("Answering");
+    STprint(ack);
+    STprint("list size");
+    STprint(list->pendingTasks);
+
+    // si hay ack pendiente de los motores principales y hay respuesta, responder con ese ack.
+    if (returnSock && returnSock.connected())
+    {
+      returnSock.println(answer);
+    }
+    else
+    {
+      client.println(answer);
     }
     STprint("Answered");
   }
@@ -278,32 +294,20 @@ void Robot::checkEmotionCommands(String msg, bool checkStatus, WiFiClient client
   {
     STprint("emotions entered");
     readFaces(emotion);
-    screenInactive = true;
     runningEmotions.removeTask(EMOTION_STR);
   }
   else if (msg.equals(EMOTION_SWITCH) || runningEmotions.searchAck(EMOTION_SWITCH) != -1)
   {
-    isEmoExpropiative = false;
-    screenInactive = false;
     STprint("switchFaces entered");
     toRet = switchFaces(emotion, emoSwitch, 1000 * emotionTimer, 1000 * emotionPeriod);
     if (toRet)
     {
-      activeEmo = "";
-      emotion = "";
-      emoSwitch = "";
-      emotionTimer= 0;
-      emotionPeriod = 0;
-      emoTimeElapsed = 0;
-      emoAuxTimeElapsed = 0;
-      screenInactive = true;
       answerCommand(&runningEmotions, EMOTION_SWITCH, client);
     }
   }
   else if (msg.equals(EMOTION_OFF))
   {
     STprint("emotions_off entered");
-    screenInactive = true;
     readFaces(EMOTION_STOP);
     runningEmotions.removeTask(EMOTION_STR);
   }
@@ -313,121 +317,88 @@ void Robot::checkMotorCommands(String msg, bool checkStatus, WiFiClient client)
 {
   bool toRet = false;
   // if else de las funciones relacionadas al motor principal. Se maneja con else if porque solo puede haber una accion en el motor activa.
-  if ((msg.equals(MVT_FORWARD)) || (forwardActive && !isTimedAction && checkStatus))
+  if ((msg.equals(MVT_FORWARD)) || runningMvt.searchAck(MVT_FORWARD) != -1)
   { // en general se revisa si llego el comando y el motor esta inactivo
     // o si el movimiento hacia adelante esta activo, la accion es temporal o no y se esta revisando el estado.
-    isMvtExpropiative = false;
-    STprint("forward entered");
-    isTimedAction = false;
     toRet = robotForward();
-    forwardActive = !toRet;
     if (toRet)
     {
       answerCommand(&runningMvt, MVT_FORWARD, client);
     }
   }
-  else if ((msg.equals(MVT_RIGHT)) || (rightActive && !isTimedAction && checkStatus))
+  else if ((msg.equals(MVT_RIGHT)) || runningMvt.searchAck(MVT_RIGHT) != -1)
   {
-    isMvtExpropiative = false;
     STprint("right entered");
-    isTimedAction = false;
     toRet = robotTurn(1);
-    rightActive = !toRet;
     if (toRet)
     {
       answerCommand(&runningMvt, MVT_RIGHT, client);
     }
   }
-  else if ((msg.equals(MVT_LEFT)) || (leftActive && !isTimedAction && checkStatus))
+  else if ((msg.equals(MVT_LEFT)) || runningMvt.searchAck(MVT_LEFT) != -1)
   {
-    isMvtExpropiative = false;
     STprint("left entered");
-    isTimedAction = false;
     toRet = robotTurn(-1);
-    leftActive = !toRet;
     if (toRet)
     {
       answerCommand(&runningMvt, MVT_LEFT, client);
     }
   }
-  else if ((msg.equals(MVT_TIMEDREVERSE)) || (reverseActive && isTimedAction && checkStatus))
+  else if ((msg.equals(MVT_TIMEDREVERSE)) || runningMvt.searchAck(MVT_TIMEDREVERSE) != -1)
   {
-    isTimedAction = true;
-    isMvtExpropiative = false;
     STprint("t_reverse entered");
     toRet = robotTimedMove(-1);
-    reverseActive = !toRet;
     if (toRet)
     {
-      isTimedAction = false;
       answerCommand(&runningMvt, MVT_TIMEDREVERSE, client);
     }
   }
-  else if ((msg.equals(MVT_TIMEDFORWARD)) || (forwardActive && isTimedAction && checkStatus))
+  else if ((msg.equals(MVT_TIMEDFORWARD)) || runningMvt.searchAck(MVT_TIMEDFORWARD) != -1)
   {
-    isTimedAction = true;
-    isMvtExpropiative = false;
     STprint("t_forward entered");
     toRet = robotTimedMove(1);
-    forwardActive = !toRet;
     if (toRet)
     {
-      isTimedAction = false;
       answerCommand(&runningMvt, MVT_TIMEDFORWARD, client);
     }
   }
-  else if ((msg.equals(MVT_TIMEDLEFT)) || (leftActive && isTimedAction && checkStatus))
+  else if ((msg.equals(MVT_TIMEDLEFT)) || runningMvt.searchAck(MVT_TIMEDLEFT) != -1)
   {
-    isTimedAction = true;
-    isMvtExpropiative = false;
     STprint("t_left entered");
     toRet = robotTimedTurn(-1);
-    leftActive = !toRet;
     if (toRet)
     {
-      isTimedAction = false;
       answerCommand(&runningMvt, MVT_TIMEDLEFT, client);
     }
   }
-  else if ((msg.equals(MVT_TIMEDRIGHT)) || (rightActive && isTimedAction && checkStatus))
+  else if ((msg.equals(MVT_TIMEDRIGHT)) || runningMvt.searchAck(MVT_TIMEDRIGHT) != -1)
   {
-    isTimedAction = true;
-    isMvtExpropiative = false;
     STprint("t_right entered");
     toRet = robotTimedTurn(1);
-    rightActive = !toRet;
     if (toRet)
     {
-      isTimedAction = false;
       answerCommand(&runningMvt, MVT_TIMEDRIGHT, client);
     }
   }
 
   if ((msg.equals(MVT_ROLL)))
   {
-    forwardActive = true;
-    isTimedAction = false;
-    isMvtExpropiative = true;
     STprint("forever_forward entered");
     robotForeverMove(1);
     runningMvt.removeTask(MVT_ROLL);
   }
   else if ((msg.equals(MVT_REVERSEROLL)))
   {
-    reverseActive = true;
-    isTimedAction = false;
-    isMvtExpropiative = true;
     STprint("forever_reverse entered");
     robotForeverMove(-1);
     runningMvt.removeTask(MVT_REVERSEROLL);
   }
-
-  motorInactive = getMotorsStatus();
 }
 
 void Robot::robotBasicCommands(String msg, bool checkStatus, WiFiClient client)
 {
-  bool toRet = false;
+  String messageint = "";
+  bool digit = false;
   if (msg.equals(BASIC_CALIB))
   { // if para calibracion
     STprint("calibration entered");
@@ -437,10 +408,8 @@ void Robot::robotBasicCommands(String msg, bool checkStatus, WiFiClient client)
   else if (msg.equals(BASIC_STOP_ALL))
   {
     STprint("stop_all entered");
-    isTimedAction = false;
     robotStopMovement();
     readFaces(EMOTION_STOP);
-    isMvtExpropiative = false;
     isEmoExpropiative = false;
     screenInactive = true;
     answerAllPending(client);
@@ -450,42 +419,69 @@ void Robot::robotBasicCommands(String msg, bool checkStatus, WiFiClient client)
   {
     STprint("Connect entered");
     connectClient();
-    toRet = true;
     answerCommand(&runningBasics, BASIC_CONNECT, client);
   }
   else if (msg.equals(BASIC_STOP_MVT))
   {
     STprint("stop_mvt entered");
-    isTimedAction = false;
     robotStopMovement();
-    isMvtExpropiative = false;
     runningBasics.removeTask(BASIC_STOP_MVT);
+    answerPendingByType(&runningBasics, client);
+  } else  if (msg.equals(BASIC_SENSOR_FL))
+  {
+    ReadValues();
+    answerCommandWithInfo(&runningBasics, BASIC_SENSOR_FL, client, String(sensorValues[0]));
   }
+  else if (msg.equals(BASIC_SENSOR_FR))
+  {
+    ReadValues();
+    answerCommandWithInfo(&runningBasics, BASIC_SENSOR_FR, client, String(sensorValues[1]));
+
+  }
+  else if (msg.equals(BASIC_SENSOR_BL))
+  {
+    ReadValues();
+    answerCommandWithInfo(&runningBasics, BASIC_SENSOR_BL, client, String(sensorValues[2]));
+  }
+  else if (msg.equals(BASIC_SENSOR_BR))
+  {
+    ReadValues();
+    answerCommandWithInfo(&runningBasics, BASIC_SENSOR_BR, client, String(sensorValues[3]));
+  }
+
 }
 
 void Robot::robotForeverMove(int dir)
 {
+  isMvtExpropiative = true;
   STprint("robotFor Command");
   foreverForward(speeds * dir);
 }
 
 bool Robot::robotForward()
 {
+  isMvtExpropiative = false;
   STprint("robotForward Command");
-  return followLine(speeds);
+  motorInactive = followLine(speeds);
+  return motorInactive;
 }
 bool Robot::robotTurn(int dir)
 {
+  isMvtExpropiative = false;
   STprint("robotTurn Command");
-  return turn(dir, speeds);
+  motorInactive = turn(dir, speeds);
+  return motorInactive;
 }
 bool Robot::robotTimedMove(int dir)
 {
+  isMvtExpropiative = false;
   STprint("robotTimedMove Command");
-  return timedMove(dir * speeds, mvtTimer * 1000, &mvtTimeElapsed);
+  motorInactive = timedMove(dir * speeds, mvtTimer * 1000, &mvtTimeElapsed);
+  return motorInactive;
 }
 bool Robot::robotTimedTurn(int dir)
 {
+  isMvtExpropiative = false;
   STprint("robotTimedTurn Command");
   return timedTurn(dir, speeds, mvtTimer * 1000, &mvtTimeElapsed);
 }
@@ -494,125 +490,10 @@ bool Robot::robotStopMovement()
 {
   STprint("robotStopMovement Command");
   setSpeedsMotor(0, 0);
-  forwardActive = false;
-  rightActive = false;
-  leftActive = false;
-  reverseActive = false;
-  isMvtExpropiative = false;
-  motorInactive = getMotorsStatus();
+  motorInactive = true;
   return true;
 }
 
-bool Robot::getMotorsStatus() {
-  return !(rightActive || leftActive || forwardActive || reverseActive);
-}
-void Robot::readCustomVariablesMotors(String msg, WiFiClient client)
-{
-  String messageint = "";
-  bool digit = false;
-  if (!msg.indexOf("speed"))
-  {
-    for (char single : msg)
-    {
-      if (isDigit(single))
-      {
-        digit = true;
-        messageint.concat(single);
-      }
-    }
-    if (digit = true)
-    {
-      speeds = messageint.toInt();
-      client.println(speeds);
-      messageint = "";
-    }
-  }
-  if (msg.equals("check"))
-  {
-    checkControl = !checkControl;
-  }
-  if (!msg.indexOf("kp"))
-  {
-    for (char single : msg)
-    {
-      if (isDigit(single) || single == '.')
-      {
-        digit = true;
-        messageint.concat(single);
-      }
-    }
-    if (digit = true)
-    {
-      kp = messageint.toFloat();
-      client.println(kp);
-      messageint = "";
-    }
-  }
-  if (!msg.indexOf("kd"))
-  {
-    for (char single : msg)
-    {
-      if (isDigit(single) || single == '.')
-      {
-        digit = true;
-        messageint.concat(single);
-      }
-    }
-    if (digit = true)
-    {
-      kd = messageint.toFloat();
-      client.println(kd);
-      messageint = "";
-    }
-  }
-  if (!msg.indexOf("ki"))
-  {
-    for (char single : msg)
-    {
-      if (isDigit(single) || single == '.')
-      {
-        digit = true;
-        messageint.concat(single);
-      }
-    }
-    if (digit = true)
-    {
-      ki = messageint.toFloat();
-      client.println(ki);
-      messageint = "";
-    }
-  }
-}
-
-void Robot::readCustomVariablesSensors(String msg, WiFiClient client)
-{
-  if (!msg.indexOf("calibration"))
-  {
-    STprint("calibration entered");
-    calibration();
-    client.println(arguments[currentArgs - 1]);
-  }
-  if (msg.equals("sensorReadFrontL"))
-  {
-    ReadValues();
-    client.println(sensorValues[0]);
-  }
-  if (msg.equals("sensorReadFrontR"))
-  {
-    ReadValues();
-    client.println(sensorValues[1]);
-  }
-  if (msg.equals("sensorReadBackL"))
-  {
-    ReadValues();
-    client.println(sensorValues[2]);
-  }
-  if (msg.equals("sensorReadBackR"))
-  {
-    ReadValues();
-    client.println(sensorValues[3]);
-  }
-}
 
 void Robot::JointServoMsg(String msg, WiFiClient client)
 {
@@ -819,9 +700,8 @@ bool Robot::readFaces(String msg)
     int color[3] = {0, 0, 0};
     facesDraw(myarray, color, 0);
     STprint(EMOTION_OFF);
-
+    screenInactive = true;
   }
-
   return true;
 }
 
@@ -833,16 +713,6 @@ void Robot::processCommands(String command, bool checkStatus, WiFiClient client)
   STprint(checkStatus);
   STprint("screenInactive");
   STprint(screenInactive);
-  STprint("isTimedAction");
-  STprint(isTimedAction);
-  STprint("forwardActive");
-  STprint(forwardActive);
-  STprint("rightActive");
-  STprint(rightActive);
-  STprint("leftActive");
-  STprint(leftActive);
-  STprint("reverseActive");
-  STprint(reverseActive);
   STprint("motorInactive");
   STprint(motorInactive);
   STprint("runningMvt.pendingTasks");
@@ -851,8 +721,7 @@ void Robot::processCommands(String command, bool checkStatus, WiFiClient client)
   STprint(runningEmotions.pendingTasks);
   STprint("runningCustoms.pendingTasks");
   STprint(runningCustoms.pendingTasks);
-  STprint("macroStep");
-  STprint(macroStep);
+
   if (checkStatus)
   {
     STprint("Checking Status");
@@ -881,7 +750,7 @@ void Robot::processCommands(String command, bool checkStatus, WiFiClient client)
 /*
    Logica para conversion de comandos a tareas nativas. Incluye identificación de tipo de tarea - Va afuera
 */
-Task* Robot::msgToTask(String msg)
+Task *Robot::msgToTask(String msg)
 {
   int tabs{0};
   currentArgs = 0;
@@ -995,19 +864,25 @@ bool Robot::isEmoAction(String command)
 
 bool Robot::isBasicAction(String command)
 {
-  return command.equals(BASIC_STOP_ALL) || command.equals(BASIC_CALIB) || command.equals(BASIC_STOP_MVT) || command.equals(BASIC_CONNECT);
+  return command.equals(BASIC_STOP_ALL) || command.equals(BASIC_CALIB) || command.equals(BASIC_STOP_MVT) || command.equals(BASIC_CONNECT) || command.equals(BASIC_SENSOR_FL) || command.equals(BASIC_SENSOR_FR) || command.equals(BASIC_SENSOR_BL) || command.equals(BASIC_SENSOR_BR);
 }
 
 bool Robot::switchFaces(String emo1, String emo2, long time, long period)
 {
+  isEmoExpropiative = false;
+  screenInactive = false;
   STprint("switchFaces in");
   boolean toRet = robotDelay(time, &emoTimeElapsed);
   if (toRet)
   {
-    screenInactive = !toRet;
+    activeEmo = "";
+    emotion = "";
+    emoSwitch = "";
+    emotionTimer = 0;
+    emotionPeriod = 0;
     emoTimeElapsed = 0;
     emoAuxTimeElapsed = 0;
-    activeEmo = "";
+    screenInactive = true;
     STprint("Ended Time");
   }
   else
@@ -1088,4 +963,34 @@ void Robot::answerPendingByType(TaskList *list, WiFiClient client)
 bool Robot::isInAction()
 {
   return runningBasics.pendingTasks > 0 || runningMvt.pendingTasks > 0 || runningEmotions.pendingTasks > 0 || runningCustoms.pendingTasks > 0 || taskQueue.pendingTasks > 0;
+}
+
+void Robot::processMultipleMsgs(String *msg) {
+  String newMsg;
+  int index = 0;
+  int lastIndex = 0;
+  do {
+    index = msg->indexOf(TASK_SEP, lastIndex);
+    STprint("Index Msgs: ");
+    STprint(index);
+    newMsg = msg->substring(lastIndex, index);
+    STprint("newMsg Msgs: ");
+    STprint(newMsg);
+    STprint("Before msgToTask");
+    STprint(newMsg);
+    Task *task = msgToTask(newMsg);
+    STprint("After msgToTask");
+    STprint(task->command);
+    taskQueue.push(task);
+    STprint("After push");
+    lastIndex = index + 1;
+    index = msg->indexOf(TASK_SEP, lastIndex);
+    STprint("Index Msgs: ");
+    STprint(index);
+    STprint(lastIndex);
+    receivedMsg++;
+  } while (index != -1);
+  STprint("Total Msgs: ");
+  STprint(receivedMsg);
+  receivedMsg = 0;
 }

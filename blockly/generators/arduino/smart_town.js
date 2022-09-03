@@ -2,209 +2,210 @@
 
 goog.require('Blockly.Arduino');
 
-Blockly.Arduino['mvt_avanzar'] = function(block) {
-  let code='robotForward();\n';
+Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_AVANZAR] = function (block) {
+  let code = 'robotForward();\n';
 
-  if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
-    code = 'nextStep = '+code;
-  }else{
-    code = 'robot.'+code;
+  if (block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')) {
+    code = 'nextStep = ' + code;
+  } else {
+    code = 'robot.' + code;
   }
-    return code;
-  };
+  return code;
+};
 
-  Blockly.Arduino['mvt_girar'] = function(block) {
-    let dropdown_movement = block.getFieldValue('Movement');
-    let code='robotTurn('+dropdown_movement+');\n';
-    if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
-      code = 'nextStep = '+code;
-    }else{
-      code = 'robot.'+code;
+Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_GIRAR] = function (block) {
+  let dropdown_movement = block.getFieldValue('Movement');
+  let code = 'robotTurn(' + dropdown_movement + ');\n';
+  if (block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')) {
+    code = 'nextStep = ' + code;
+  } else {
+    code = 'robot.' + code;
+  }
+  return code;
+};
+
+Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_AVANZAR_T] = function (block) {
+  let dropdown_movement = block.getFieldValue('Movement');
+  let time = block.getFieldValue('TIME');
+
+  let code = "mvtTimer = " + time + ";\n";
+  let aux_code = 'robotTimedMove(' + dropdown_movement + ');\n';
+  if (block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')) {
+    aux_code = 'nextStep = ' + aux_code;
+  } else {
+    aux_code = 'robot.' + aux_code;
+  }
+  code += aux_code;
+  return code;
+};
+
+Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_GIRAR_T] = function (block) {
+  let dropdown_movement = block.getFieldValue('Movement');
+  let time = block.getFieldValue('TIME');
+
+  let code = 'mvtTimer = ' + time + ';\n';
+  let aux_code = 'robotTimedTurn(' + dropdown_movement + ');\n';
+  if (block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')) {
+    aux_code = 'nextStep = ' + aux_code;
+  } else {
+    aux_code = 'robot.' + aux_code;
+  }
+  code += aux_code;
+  return code;
+};
+
+Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_STOP] = function (block) {
+  let code = 'robotStopMovement();\n';
+  if (block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')) {
+    code = 'nextStep = ' + code;
+  }
+  return code;
+};
+
+Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_SETUP] = function (block) {
+  let text_wifiname = block.getFieldValue('wifiName');
+  let text_pass = block.getFieldValue('pass');
+  let serial = block.getFieldValue('serialNumber');
+  let alias = block.getFieldValue('alias');
+  let conf = block.getFieldValue('CONF_TYPE');
+  let commands = Blockly.Arduino.statementToCode(block, 'COMMANDS');
+  let STcommands = [];
+  let STFunctionsDict = {};
+  let STchecks = [];
+  let STfeas = [];
+  let isCustAction = "bool Robot::isCustomAction(String command)\n{\n  return ";
+  let isFeasAction = "bool Robot::isFeasibleCustom(Task *msg)\n{\n  bool toRet = false;\n";
+  let checkCustomCommands = "void Robot::checkCustomCommands(String msg, bool checkStatus, WiFiClient client)\n{\n";
+
+
+  for (let name in Blockly.Arduino.STFunctions_) {
+    let code = Blockly.Arduino.STFunctions_[name].code;
+    let restrictions = Blockly.Arduino.STFunctions_[name].restrictions;
+    STfeas.push('  if(strcmp(msg->command, "' + name + '") == 0){\n   toRet =' + restrictions + "\n }");
+    STchecks.push('command.equals("' + name + '")');
+    STcommands.push('  if(msg.equals("' + name + '")|| runningCustoms.searchAck("' + name + '") != -1){\n     ' + name + '(client);\n    }');
+    let functionDecl = 'void Robot::' + name + '(WiFiClient client){\n' + code + '} \n';
+    STFunctionsDict[name] = functionDecl;
+  }
+  if (STchecks.length > 0) {
+    isCustAction += STchecks.join(' || ');
+  } else {
+    isCustAction += "return false"
+  }
+  isCustAction += ";\n}"
+
+  if (STfeas.length > 0) {
+    isFeasAction += STfeas.join('\n else ');
+  }
+  isFeasAction += "  \nreturn toRet;\n}"
+
+  if (STcommands.length > 0) {
+    checkCustomCommands += STcommands.join("\n");
+  }
+  checkCustomCommands += "\n  return;\n }\n";
+
+  Blockly.Arduino.addFunction("isCustomAction", isCustAction);
+  Blockly.Arduino.addFunction("isFeasibleCustom", isFeasAction);
+  Blockly.Arduino.addFunction("checkCustomCommands", checkCustomCommands);
+
+  let setupCode = '//' + conf + ' config\n';
+
+  switch (conf) {
+    case 'Quyca':
+      setupCode +=
+        '   Serial.begin(115200);\n' +
+        '   delay(1000);\n' +
+        '   WifiConnection();\n' +
+        '   setupMotor();\n' +
+        '   setupSensors();\n' +
+        '   setupFaces();\n' +
+        '   JointSetup();\n';
+      break;
+    case 'Smarttown':
+      setupCode +=
+        '   Serial.begin(115200);\n' +
+        '   delay(1000);\n' +
+        '   WifiConnection();\n' +
+        '   setupMotor();\n' +
+        '   setupSensors();\n' +
+        '   setupFaces();\n' +
+        '   JointSetup();\n';
+      break;
+
+  }
+
+  let includeCode = '#include "Robot.h"\n';
+  let robotDef = 'Robot robot;\nbool rec_flag = false;\n'
+
+  for (let name in STFunctionsDict) {
+
+    Blockly.Arduino.addFunction(name, STFunctionsDict[name]);
+  }
+
+  Blockly.Arduino.addInclude('custom', includeCode);
+  Blockly.Arduino.setRobotDef(robotDef);
+
+  let setupRobotCode = 'robot.setupRobot(' + serial + ',"' + alias + '","' + text_wifiname + '","' + text_pass + '");';
+  Blockly.Arduino.addSetup("robotSetup", setupRobotCode, true);
+  let code = ' WiFiClient client = wifiServer.available();\n String messages = "";\n' +
+    ' if(client) {\n' +
+    '  while (client.connected()) {\n' +
+    '   while (client.available() > 0) {\n' +
+    '     char c = client.read();\n' +
+    '     messages.concat(c);\n' +
+    '     rec_flag = true;\n' +
+    '   }\n' +
+    '   if (!messages.indexOf(robot.alias) || (messages.equals("") && robot.isInAction())) {\n' +
+    '     robot.processMsg(messages, !rec_flag, client);\n' +
+    '     messages = "";\n' +
+    '     rec_flag = false;\n' +
+    '   }\n' +
+    '  }\n' +
+    '  Serial.println("Client Disconnected");\n' +
+    '  client.stop();\n' +
+    '} else if (robot.isInAction()){\n' +
+    '   robot.processMsg(messages, true, client);\n' +
+    '}\n';
+  return code;
+};
+
+
+
+Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_COMMAND] = function (block) {
+  let text_name = block.getFieldValue('NAME');
+  let command = {};
+  let code = "";
+  let varsDict = {};
+  let stepCounter = text_name + "Step";
+  let cleanupVars = [" default:\n  " + stepCounter + "=0;\n  toRet = true;\n"];
+  let restrictions = [];
+  let blockList = Blockly.Arduino.statementToList(block, 'COMMANDS');
+  let childBlocks = block.getChildren();
+  for (let i in childBlocks) {
+    
+    if (childBlocks[i].hasConditions) {
+      varsDict[childBlocks[i].type] = Blockly.Arduino.getConditions(childBlocks[i].type);
     }
-    return code;
-  };
-
-  Blockly.Arduino['mvt_avanzar_tiempo'] = function(block) {
-    let dropdown_movement = block.getFieldValue('Movement');
-    let time = block.getFieldValue('TIME');
-
-    let code = "timer = "+time+";\n";
-    let aux_code='robotTimedMove('+dropdown_movement+');\n';
-    if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
-      aux_code = 'nextStep = '+aux_code;
-    }else{
-      aux_code = 'robot.'+aux_code;
+  }
+  for (let name in varsDict) {
+    restrictions.push(...varsDict[name]);
+  }
+  if (blockList.length > 0) {
+    code = " bool toRet=false;\n  bool nextStep=false;\n switch(" + stepCounter + "){\n";
+    for (let i in blockList) {
+      code += "  case " + i + ":\n" + blockList[i] + " break;\n"
     }
-    code+=aux_code;
-    return code;
-  };
+    cleanupVars.push(" break; \n}");
+    code += cleanupVars.join("\n");
+    code += " if(nextStep){" + stepCounter + '++;}\n if(toRet){answerCommand(&runningCustoms, "'+text_name+'", client);};\n'
+  }
 
-  Blockly.Arduino['mvt_girar_tiempo'] = function(block) {
-    let dropdown_movement = block.getFieldValue('Movement');
-    let time = block.getFieldValue('TIME');
-
-    let code = 'timer = '+time+';\n';
-    let aux_code='robotTimedTurn('+dropdown_movement+');\n';
-    if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
-      aux_code = 'nextStep = '+aux_code;
-    }else{
-      aux_code = 'robot.'+aux_code;
-    }
-    code+=aux_code;
-    return code;
-  };
-
-  Blockly.Arduino['mvt_stop'] = function(block) {
-    let code='robotStopMovement();\n';
-    if(block.getRootBlock() && block.getRootBlock().type && (block.getRootBlock().type === 'setupsmarttown' || block.getRootBlock().type === 'procedures_defreturn')){
-      code += 'nextStep = '+code;
-    }
-    return code;
-  };
-
-  Blockly.Arduino['hablar'] = function(block) {
-    let value_tosay = Blockly.Arduino.valueToCode(block, 'ToSay', Blockly.Arduino.ORDER_ATOMIC);
-    let code = 'textToSpeech('+value_tosay+');\n';
-    return code;
-  };
-
-
-  Blockly.Arduino['setupsmarttown'] = function(block) {
-    let text_wifiname = block.getFieldValue('wifiName');
-    let text_pass = block.getFieldValue('pass');
-    let serial = block.getFieldValue('serialNumber');
-    let alias = block.getFieldValue('alias');
-    let conf = block.getFieldValue('CONF_TYPE');
-    let commands = Blockly.Arduino.statementToCode(block, 'COMMANDS');
-    let STcommands = [];
-    let STFunctionsDict = {};
-    let STchecks = [];
-    let STDef = 'bool Robot::processCommands(String command, bool checkStatus) {\n bool toRet = false;\n';
-    STDef+=' STprint("command");\n'+
-    ' STprint(command);\n'+
-    ' STprint("Status");\n'+
-    ' STprint(checkStatus);\n'+
-    ' STprint("inAction");\n'+
-    ' STprint(inAction);\n'+
-    ' STprint("isTimedAction");\n'+
-    ' STprint(isTimedAction);\n'+
-    ' STprint("forwardActive");\n'+
-    ' STprint(forwardActive);\n'+
-    ' STprint("rightActive");\n'+
-    ' STprint(rightActive);\n'+
-    ' STprint("leftActive");\n'+
-    ' STprint(leftActive);\n'+
-    ' STprint("reverseActive");\n'+
-    ' STprint(reverseActive);\n'+
-    ' STprint("motorInactive");\n'+
-    ' STprint(motorInactive);\n'+
-    ' STprint("macroRunning");\n'+
-    ' STprint(macroRunning);\n'+  
-    ' STprint("macroInExec");\n'+
-    ' STprint(macroInExec);\n'+  
-    ' STprint("macroStep");\n'+
-    ' STprint(macroStep);\n';
-
-    STDef+='  if (!checkStatus || (checkStatus && inAction)) {\n'+
-      '    if (checkStatus) {\n'+
-        '      STprint("Checking Status");\n'+
-      '    } else {\n'+
-        '      STprint("Starting Command");\n'+
-      '    }\n';
-    for (let name in Blockly.Arduino.STFunctions_) {
-      STchecks.push('command.equals("'+name+'")');
-      STcommands.push('  if(command.equals("'+name+'")|| macroInExec.equals("'+name+'")){\n      toRet= '+name+'();\n    }');
-      let functionDecl='bool Robot::'+name+'(){\n'+Blockly.Arduino.STFunctions_[name]+'} \n';
-      STFunctionsDict[name]=functionDecl;
-    }
-
-    if(STcommands.length){
-      let auxDef= ['  if (('+STchecks.join(' || ')+') && !macroRunning) {\n    macroRunning=true; \n     if(!checkStatus){\n      macroInExec=command;\n        }\n      }\n'];
-      auxDef.push(' if(macroRunning){\n    '+STcommands.join('\n else')+'\n  } else {\n  toRet = robotBasicCommands(command, checkStatus);\n  }\n');
-      STDef+=auxDef.join("");
-    }else{
-      STDef+='     toRet = robotBasicCommands(command, checkStatus);\n';
-    }
-
-    STDef+='   }\n inAction =  reverseActive || forwardActive ||  rightActive ||  leftActive || macroRunning;\n';
-    STDef+='   return toRet;\n }\n';
-
-    let setupCode = '//'+conf+' config\n';
-
-    switch (conf){
-      case 'Quyca':
-        setupCode += 
-          '   Serial.begin(115200);\n'+
-          '   delay(1000);\n'+
-          '   WifiConnection();\n'+
-          '   setupMotor();\n'+
-          '   setupSensors();\n'+
-          '   setupFaces();\n'+
-          '   JointSetup();\n';
-        break;
-      case 'Smarttown':
-        setupCode += 
-          '   Serial.begin(115200);\n'+
-          '   delay(1000);\n'+
-          '   WifiConnection();\n'+
-          '   setupMotor();\n'+
-          '   setupSensors();\n'+
-          '   setupFaces();\n'+
-          '   JointSetup();\n';
-        break;
-      
-    }
-
-    let includeCode='#include "Robot.h"\n';
-    let robotDef = 'Robot robot;\nWiFiClient client;\nbool rec_flag = false;\n'
-    Blockly.Arduino.addFunction("processCommands",STDef);
-
-    for (let name in STFunctionsDict) {
-
-      Blockly.Arduino.addFunction(name,STFunctionsDict[name]);
-    }
-
-    Blockly.Arduino.addInclude('custom',includeCode);
-    Blockly.Arduino.setRobotDef(robotDef);
-
-   let  setupRobotCode = 'robot.setupRobot('+serial+',"'+alias+'","'+text_wifiname+'","'+text_pass+'");';
-    Blockly.Arduino.addSetup("robotSetup",setupRobotCode,true);
-    let code = 'String messages = "";\n'+
-  'if(client) {\n'+
-      ' if (client.connected()) {\n'+
-        '   while (client.available() > 0) {\n'+
-          '     char c = client.read();\n'+
-          '     messages.concat(c);\n'+
-          '     rec_flag = true;\n'+
-        '   }\n'+
-        '   if (!messages.indexOf(robot.alias) || (robot.inAction && messages.equals(""))) {\n'+
-          '     robot.processMsg(messages, !rec_flag, client);\n'+
-          '     messages = "";\n'+
-          '     rec_flag = false;\n'+
-        '   }\n'+
-      '}\n'+
-      '} else {\n'+
-      'client = wifiServer.available();\n'+
-      '}\n';
-    return code;
-  };
-
-
-
-  Blockly.Arduino['new_smarttown_command'] = function(block) {
-    let text_name = block.getFieldValue('NAME');
-    let code ="";
-    let blockList = Blockly.Arduino.statementToList(block, 'COMMANDS');
-
-    if(blockList.length>0){
-      code=" bool toRet=false;\n  bool nextStep=false;\n switch(macroStep){\n";
-      for(let i in blockList){
-        code+= "  case "+i+":\n"+blockList[i]+" break;\n"
-      }
-      code+=" default:\n  macroRunning=false;\n  macroStep=0;\n  toRet = true;\n break; \n}\n";
-      code+=" if(nextStep){macroStep++;}\n return toRet;\n"
-    }
-
-    Blockly.Arduino.addSTCommand(text_name,code);
-    return '';
-  };
+  command.code = code;
+  restrictions= [... new Set(restrictions)];
+  if(restrictions.length==0){
+    restrictions.push("true");
+  }
+  command.restrictions = restrictions.join(" && ") +";";
+  Blockly.Arduino.addSTCommand(text_name, command);
+  return '';
+};

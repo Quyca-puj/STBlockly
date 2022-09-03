@@ -22,8 +22,6 @@ class Robot
   String arguments[MAX_ARGS];
   String emotion;
   bool shouldAnswer;
-  bool isTimedAction;
-  int macroStep;
   String emoSwitch;
   bool motorInactive;
   bool screenInactive;
@@ -36,10 +34,8 @@ class Robot
   WiFiClient returnSock;
   int returnPort;
   String returnIP;
-  // cppQueue taskQueue = cppQueue(sizeof(Task), QUEUE_SIZE, FIFO, false);
   TaskQueue taskQueue;
 private:
-  bool getMotorsStatus();
   bool robotForward();
   bool robotTurn(int dir);
   bool robotTimedMove(int dir);
@@ -74,6 +70,7 @@ private:
   void unwrapTask(Task *task);
   void answerAllPending(WiFiClient client);
   void answerPendingByType(TaskList *list, WiFiClient client);
+  void answerCommandWithInfo(TaskList *list, String task, WiFiClient client, String answer);
 public:
   String ip;
   String alias;
@@ -82,18 +79,9 @@ public:
   long emoTimeElapsed;
   long emoAuxTimeElapsed;
   long customTimeElapsed;
-  bool inAction;
-  bool reverseActive;
-  bool forwardActive;
-  bool rightActive;
-  bool leftActive;
   bool isInAction();
   Robot();
   void setupRobot(int serial, String givenAlias, String ssid, String password);
   void processMsg(String msg, bool checkStatus, WiFiClient client);
-  bool adelante_atras();
-  bool tuntun();
-  bool cuadrado();
-  bool popurri();
 };
 #endif

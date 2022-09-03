@@ -31,6 +31,8 @@ Ardublockly.init = function () {
     console.log('Offline app modal opened as non localhost host name found: ' +
       document.location.hostname)
   }
+  $("#lang").trigger("change");
+
 };
 
 /** Binds functions to each of the buttons, nav links, and related. */
@@ -88,6 +90,16 @@ Ardublockly.bindActionFunctions = function () {
   Ardublockly.bindClick_('button_ide_left', function () {
     Ardublockly.ideButtonLeftAction();
   });
+
+
+  Ardublockly.bindClick_('button_ide_char', function () {
+    SmartTown.openCharacModal();
+  });
+
+
+  Ardublockly.bindClick_('button_ide_node', function () {
+    SmartTown.addNewNode();
+  });
   Ardublockly.bindClick_('button_load_xml', Ardublockly.XmlTextareaToBlocks);
   Ardublockly.bindClick_('button_toggle_toolbox', Ardublockly.toogleToolbox);
 
@@ -141,8 +153,12 @@ Ardublockly.ideSendUpload = function () {
       Ardublockly.resetIdeOutputContent();
       Ardublockly.startExecution();
       break;
-    case "java":
-    case "python":
+
+      case "exec_net":
+        Ardublockly.shortMessage(Ardublockly.getLocalStr('executeCommands'));
+        Ardublockly.resetIdeOutputContent();
+        Ardublockly.startNetExecution();
+        break;
     case "middle":
       Ardublockly.shortMessage(Ardublockly.getLocalStr('uploadingCommands'));
       Ardublockly.resetIdeOutputContent();
@@ -173,6 +189,14 @@ Ardublockly.calibrate = function(){
   ArdublocklyServer.calibrate(commandObj.ip,commandObj.alias, Ardublockly.successCalibration,Ardublockly.errorHandler,Ardublockly.workspace);
 }
 
+
+Ardublockly.calibrateMultiple = function(){
+  let commandObj = SmartTown.getCharacters();
+  ArdublocklyServer.calibrate(commandObj.ip,commandObj.alias, Ardublockly.successCalibration,Ardublockly.errorHandler,Ardublockly.workspace);
+}
+
+
+
 Ardublockly.startExecution = function () {
   ArdublocklyServer.setPause(false);
   Ardublockly.generateExec(Ardublockly.workspace);
@@ -189,6 +213,26 @@ Ardublockly.startExecution = function () {
   }
 
 };
+
+
+Ardublockly.startNetExecution = function () {
+  ArdublocklyServer.setPause(false);
+  if (!Ardublockly.calibrated) {
+    Ardublockly.materialAlert(Ardublockly.getLocalStr('noNetCalibrationTitle'), Ardublockly.getLocalStr('noNetCalibrationBody'), false);
+  } else {
+    let commandObj = SmartTown.exportGraph();
+    let characObj = SmartTown.getCharacters();
+    if (commandObj) {
+      Ardublockly.largeIdeButtonSpinner(true);
+      ArdublocklyServer.sendPetriNet(characObj,commandObj);
+    } else {
+      Ardublockly.materialAlert(Ardublockly.getLocalStr('notSetExecAlertTitle'), Ardublockly.getLocalStr('notSetExecAlertBody'), false);
+    }
+  }
+
+};
+
+
 /** Sets the Ardublockly server IDE setting to verify and sends the code. */
 Ardublockly.ideSendVerify = function () {
   // Check if this is the currently selected option before edit sever setting
@@ -203,6 +247,7 @@ Ardublockly.ideSendVerify = function () {
       Ardublockly.sendCode();
       break;
     case "exec":
+    case "exec_net":
       Ardublockly.shortMessage(Ardublockly.getLocalStr('pauseCommands'));
       Ardublockly.resetIdeOutputContent();
       Ardublockly.largeIdeButtonSpinner(false)
@@ -230,6 +275,12 @@ Ardublockly.ideSendOpen = function () {
       Ardublockly.resetIdeOutputContent();
       Ardublockly.largeIdeButtonSpinner(false)
       Ardublockly.calibrate();
+      break;
+      case "exec_net":
+        Ardublockly.shortMessage(Ardublockly.getLocalStr('calibrateToast'));
+        Ardublockly.resetIdeOutputContent();
+        Ardublockly.largeIdeButtonSpinner(false)
+        Ardublockly.calibrateMultiple();
       break;
   }
 
