@@ -13,7 +13,9 @@ Ardublockly.calibrated = false;
 Ardublockly.init = function () {
   // Lang init must run first for the rest of the page to pick the right msgs
   Ardublockly.initLanguage();
-
+  STServer.requestEmotions().then(function handle(list) {
+    SmartTown.setEmotions(JSON.parse(list));
+  });
   // Inject Blockly into content_blocks and fetch additional blocks
   Ardublockly.injectBlockly(document.getElementById('content_blocks'), Ardublockly.TOOLBOX_ARDUINO_XML, '../blockly/');
   Ardublockly.importExtraBlocks();
@@ -100,6 +102,12 @@ Ardublockly.bindActionFunctions = function () {
   Ardublockly.bindClick_('button_ide_node', function () {
     SmartTown.addNewNode();
   });
+
+  Ardublockly.bindClick_('button_ide_del_node', function () {
+    SmartTown.deleteSelectedNode();
+  });
+
+
   Ardublockly.bindClick_('button_load_xml', Ardublockly.XmlTextareaToBlocks);
   Ardublockly.bindClick_('button_toggle_toolbox', Ardublockly.toogleToolbox);
 
@@ -145,8 +153,11 @@ Ardublockly.ideSendUpload = function () {
     case "arduino":
       Ardublockly.shortMessage(Ardublockly.getLocalStr('uploadingSketch'));
       Ardublockly.resetIdeOutputContent();
+      console.log("antes");
       Ardublockly.sendCode();
+      console.log("antes2");
       STServer.sendCommands(Ardublockly.workspace);
+      console.log("despues");
       break;
     case "exec":
       Ardublockly.shortMessage(Ardublockly.getLocalStr('executeCommands'));
@@ -154,11 +165,11 @@ Ardublockly.ideSendUpload = function () {
       Ardublockly.startExecution();
       break;
 
-      case "exec_net":
-        Ardublockly.shortMessage(Ardublockly.getLocalStr('executeCommands'));
-        Ardublockly.resetIdeOutputContent();
-        Ardublockly.startNetExecution();
-        break;
+    case "exec_net":
+      Ardublockly.shortMessage(Ardublockly.getLocalStr('executeCommands'));
+      Ardublockly.resetIdeOutputContent();
+      Ardublockly.startNetExecution();
+      break;
     case "middle":
       Ardublockly.shortMessage(Ardublockly.getLocalStr('uploadingCommands'));
       Ardublockly.resetIdeOutputContent();
@@ -167,11 +178,11 @@ Ardublockly.ideSendUpload = function () {
   }
 
 };
-Ardublockly.successALHandler  = function(name){
+Ardublockly.successALHandler = function (name) {
   Ardublockly.MaterialToast(name + Ardublockly.getLocalStr('sucALToast'));
 }
 
-Ardublockly.errorAlHandler  = function(name){
+Ardublockly.errorAlHandler = function (name) {
   Ardublockly.MaterialToast(Ardublockly.getLocalStr('errALToast') + name);
 }
 
@@ -183,16 +194,16 @@ Ardublockly.errorHandler = function (response) {
   Ardublockly.arduinoIdeOutput(response);
 };
 
-Ardublockly.calibrate = function(){
+Ardublockly.calibrate = function () {
   Ardublockly.generateExec(Ardublockly.workspace);
   let commandObj = Ardublockly.execCommandsToList();
-  ArdublocklyServer.calibrate(commandObj.ip,commandObj.alias, Ardublockly.successCalibration,Ardublockly.errorHandler,Ardublockly.workspace);
+  ArdublocklyServer.calibrate(commandObj.ip, commandObj.alias, Ardublockly.successCalibration, Ardublockly.errorHandler, Ardublockly.workspace);
 }
 
 
-Ardublockly.calibrateMultiple = function(){
-  let commandObj = SmartTown.getCharacters();
-  ArdublocklyServer.calibrate(commandObj.ip,commandObj.alias, Ardublockly.successCalibration,Ardublockly.errorHandler,Ardublockly.workspace);
+Ardublockly.calibrateMultiple = function () {
+  let characObj = SmartTown.characters;
+  ArdublocklyServer.calibrateMultiple(characObj, Ardublockly.successCalibration, Ardublockly.errorHandler);
 }
 
 
@@ -221,10 +232,11 @@ Ardublockly.startNetExecution = function () {
     Ardublockly.materialAlert(Ardublockly.getLocalStr('noNetCalibrationTitle'), Ardublockly.getLocalStr('noNetCalibrationBody'), false);
   } else {
     let commandObj = SmartTown.exportGraph();
-    let characObj = SmartTown.getCharacters();
+    console.log(commandObj);
+    let characObj = SmartTown.characters;
     if (commandObj) {
       Ardublockly.largeIdeButtonSpinner(true);
-      ArdublocklyServer.sendPetriNet(characObj,commandObj);
+      ArdublocklyServer.sendPetriNet(characObj, commandObj);
     } else {
       Ardublockly.materialAlert(Ardublockly.getLocalStr('notSetExecAlertTitle'), Ardublockly.getLocalStr('notSetExecAlertBody'), false);
     }
@@ -276,17 +288,17 @@ Ardublockly.ideSendOpen = function () {
       Ardublockly.largeIdeButtonSpinner(false)
       Ardublockly.calibrate();
       break;
-      case "exec_net":
-        Ardublockly.shortMessage(Ardublockly.getLocalStr('calibrateToast'));
-        Ardublockly.resetIdeOutputContent();
-        Ardublockly.largeIdeButtonSpinner(false)
-        Ardublockly.calibrateMultiple();
+    case "exec_net":
+      Ardublockly.shortMessage(Ardublockly.getLocalStr('calibrateToast'));
+      Ardublockly.resetIdeOutputContent();
+      Ardublockly.largeIdeButtonSpinner(false)
+      Ardublockly.calibrateMultiple();
       break;
   }
 
 };
 
-Ardublockly.successCalibration = function(){
+Ardublockly.successCalibration = function () {
   Ardublockly.calibrated = true;
   Ardublockly.MaterialToast(Ardublockly.getLocalStr('sucCalibrateToast'));
 }
@@ -425,47 +437,91 @@ Ardublockly.loadServerXmlFile = function (xmlFile) {
  */
 Ardublockly.loadUserXmlFile = function () {
   // Create File Reader event listener function
-  var parseInputXMLfile = function (e) {
-    var xmlFile = e.target.files[0];
-    var filename = xmlFile.name;
-    var extensionPosition = filename.lastIndexOf('.');
-    if (extensionPosition !== -1) {
-      filename = filename.substr(0, extensionPosition);
-    }
+  switch (Ardublockly.selected_language) {
+    case "arduino":
+    case "middle":
+    case "exec":
+      var parseInputXMLfile = function (e) {
+        var xmlFile = e.target.files[0];
+        var filename = xmlFile.name;
+        var extensionPosition = filename.lastIndexOf('.');
+        if (extensionPosition !== -1) {
+          filename = filename.substr(0, extensionPosition);
+        }
 
-    var reader = new FileReader();
-    reader.onload = function () {
-      var success = Ardublockly.replaceBlocksfromXml(reader.result);
-      if (success) {
-        Ardublockly.renderContent();
-        Ardublockly.sketchNameSet(filename);
-      } else {
-        Ardublockly.alertMessage(
-          Ardublockly.getLocalStr('invalidXmlTitle'),
-          Ardublockly.getLocalStr('invalidXmlBody'),
-          false);
+        var reader = new FileReader();
+        reader.onload = function () {
+          var success = Ardublockly.replaceBlocksfromXml(reader.result);
+          if (success) {
+            Ardublockly.renderContent();
+            Ardublockly.sketchNameSet(filename);
+          } else {
+            Ardublockly.alertMessage(
+              Ardublockly.getLocalStr('invalidXmlTitle'),
+              Ardublockly.getLocalStr('invalidXmlBody'),
+              false);
+          }
+        };
+        reader.readAsText(xmlFile);
+      };
+
+      // Create once invisible browse button with event listener, and click it
+      var selectFile = document.getElementById('select_file');
+      if (selectFile === null) {
+        var selectFileDom = document.createElement('INPUT');
+        selectFileDom.type = 'file';
+        selectFileDom.id = 'select_file';
+
+        var selectFileWrapperDom = document.createElement('DIV');
+        selectFileWrapperDom.id = 'select_file_wrapper';
+        selectFileWrapperDom.style.display = 'none';
+        selectFileWrapperDom.appendChild(selectFileDom);
+
+        document.body.appendChild(selectFileWrapperDom);
+        selectFile = document.getElementById('select_file');
+        selectFile.addEventListener('change', parseInputXMLfile, false);
       }
-    };
-    reader.readAsText(xmlFile);
-  };
+      selectFile.click();
+      break;
 
-  // Create once invisible browse button with event listener, and click it
-  var selectFile = document.getElementById('select_file');
-  if (selectFile === null) {
-    var selectFileDom = document.createElement('INPUT');
-    selectFileDom.type = 'file';
-    selectFileDom.id = 'select_file';
+    case "exec_net":
+      var parseInputGraphFile = function (e) {
+        var graphFile = e.target.files[0];
+        var filename = graphFile.name;
+        var extensionPosition = filename.lastIndexOf('.');
+        if (extensionPosition !== -1) {
+          filename = filename.substr(0, extensionPosition);
+        }
 
-    var selectFileWrapperDom = document.createElement('DIV');
-    selectFileWrapperDom.id = 'select_file_wrapper';
-    selectFileWrapperDom.style.display = 'none';
-    selectFileWrapperDom.appendChild(selectFileDom);
+        var reader = new FileReader();
+        reader.onload = function () {
+        const graph = graphologyLibrary.gexf.parse(graphology.Graph,reader.result);
+          SmartTown.startSigma(graph);
+        };
+        reader.readAsText(graphFile);
+      };
 
-    document.body.appendChild(selectFileWrapperDom);
-    selectFile = document.getElementById('select_file');
-    selectFile.addEventListener('change', parseInputXMLfile, false);
+      // Create once invisible browse button with event listener, and click it
+      var selectFile = document.getElementById('select_file');
+      if (selectFile === null) {
+        var selectFileDom = document.createElement('INPUT');
+        selectFileDom.type = 'file';
+        selectFileDom.id = 'select_file';
+
+        var selectFileWrapperDom = document.createElement('DIV');
+        selectFileWrapperDom.id = 'select_file_wrapper';
+        selectFileWrapperDom.style.display = 'none';
+        selectFileWrapperDom.appendChild(selectFileDom);
+
+        document.body.appendChild(selectFileWrapperDom);
+        selectFile = document.getElementById('select_file');
+        selectFile.addEventListener('change', parseInputGraphFile, false);
+      }
+      selectFile.click();
+    break;
+
   }
-  selectFile.click();
+
 };
 
 /**
@@ -473,9 +529,21 @@ Ardublockly.loadUserXmlFile = function () {
  * prompts the users to save it into their local file system.
  */
 Ardublockly.saveXmlFile = function () {
+  switch (Ardublockly.selected_language) {
+    case "arduino":
+    case "middle":
+    case "exec":
   Ardublockly.saveTextFileAs(
     document.getElementById('sketch_name').value + '.xml',
     Ardublockly.generateXml());
+    break;
+    case "exec_net":
+      Ardublockly.saveTextFileAs(
+        document.getElementById('sketch_name').value + '.gexf',
+        graphologyLibrary.gexf.write(SmartTown.graph)
+        );
+    break;
+  }
 };
 
 /**
@@ -1011,7 +1079,3 @@ Ardublockly.bindClick_ = function (el, func) {
   el.addEventListener('ontouchend', propagateOnce);
   el.addEventListener('click', propagateOnce);
 };
-
-Ardublockly.selectLanguageListener = function () {
-
-}

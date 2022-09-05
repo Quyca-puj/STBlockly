@@ -482,6 +482,8 @@ def handler_code_post():
     return response_dict
 
 
+
+
 @app.post('/play/executeNet')
 def handler_petri_net():
     """Handle net object and robot information for python integration
@@ -490,7 +492,6 @@ def handler_petri_net():
     0  - No error
     201 - Unable to start play.
     """
-
     std_out, err_out = '', ''
     exit_code = 52
     success = False
@@ -498,6 +499,7 @@ def handler_petri_net():
                      'response_state': 'full_response'}
     
     try:
+        print(request)
         charac_info = request.json['characters']
         petriNet = request.json['net']
 
@@ -646,6 +648,65 @@ def handler_resume_petri_net():
         response_dict.update({
             'errors': [{
                 'id': exit_code
+            }]
+        })
+    set_header_no_cache()
+    return response_dict
+
+
+@app.post('/robot/calibrateAll')
+def handler_robot_calibrate_all():
+    """Handle multiple Robot Calibration
+
+    Error codes:
+    0  - No error
+    1  - Build or Upload failed.
+    2  - Sketch not found.
+    3  - Invalid command line argument
+    4  - Preference passed to 'get-pref' flag does not exist
+    5  - Not Clear, but Arduino IDE sometimes errors with this.
+    50 - Unexpected error code from Arduino IDE
+    51 - Could not create sketch file
+    52 - Invalid path to internally created sketch file
+    53 - Compiler directory not configured in the Settings
+    54 - Launch IDE option not configured in the Settings
+    55 - Serial Port configured in Settings not accessible.
+    56 - Arduino Board not configured in the Settings.
+    52 - Unexpected server error.
+    64 - Unable to parse sent JSON.
+    """
+    success = False
+    ide_mode = 'unknown'
+    std_out, err_out = '', ''
+    exit_code = 52
+    response_dict = {'response_type': 'ide_output',
+                     'response_state': 'full_response'}
+    try:
+        characs = request.json['characs']
+    except (TypeError, ValueError, KeyError) as e:
+        exit_code = 64
+        err_out = 'Unable to parse sent JSON.'
+        print('Error: Unable to parse sent JSON:\n%s' % str(e))
+    else:
+        try:
+            success, ide_mode, std_out, err_out, exit_code = \
+            robotactions.send_calibration_to_all(characs, socket_mgmt)
+        except Exception as e:
+            exit_code = 52
+            err_out += 'Unexpected server error.'
+            print('Error: Exception in arduino_ide_send_code:\n%s' % str(e))
+
+    response_dict.update({'success': success,
+                          'ide_mode': ide_mode,
+                          'ide_data': {
+                              'std_output': std_out,
+                              'err_output': err_out,
+                              'exit_code': exit_code}})
+    if not success:
+        response_dict.update({
+            'errors': [{
+                'id': exit_code,
+                'description': 'More info available in the \'ide_data\' value.'
             }]
         })
     set_header_no_cache()

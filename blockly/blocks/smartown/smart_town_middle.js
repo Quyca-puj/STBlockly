@@ -15,7 +15,7 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
                   {
                     "type": "field_dropdown",
                     "name": "Emotion",
-                    "options":  SmartTownUtils.EMOTION_OPTIONS
+                    "options":  SmartTown.emotionsUtil
                   }
                 ],
                 "inputsInline": true,
@@ -56,7 +56,7 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
                   {
                     "type": "field_dropdown",
                     "name": "Emotion",
-                    "options":  SmartTownUtils.EMOTION_OPTIONS
+                    "options":  SmartTown.emotionsUtil
                   }
                 ],
                 "inputsInline": true,
@@ -424,7 +424,7 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
                 {
                   "type": "field_dropdown",
                   "name": "Emotion",
-                  "options":  SmartTownUtils.EMOTION_OPTIONS
+                  "options":  SmartTown.emotionsUtil
                 }
               ],
               "inputsInline": true,

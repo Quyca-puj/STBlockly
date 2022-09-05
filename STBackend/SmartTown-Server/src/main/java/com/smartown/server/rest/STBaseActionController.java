@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smartown.server.model.STActionParameterBundle;
 import com.smartown.server.model.STBaseAction;
+import com.smartown.server.model.dto.STActionParameterDTO;
 import com.smartown.server.model.dto.STBaseActionDTO;
 import com.smartown.server.services.ISTBaseActionService;
 
@@ -31,7 +33,20 @@ public class STBaseActionController {
 		ModelMapper mapper=new ModelMapper();
 		if(commands!=null) {
 			commands.forEach(command->{
-				retList.add(mapper.map(command, STBaseActionDTO.class));
+				STBaseActionDTO dto = mapper.map(command, STBaseActionDTO.class);
+				List<STActionParameterDTO> params = new ArrayList<>();
+				for (STActionParameterBundle bundle : command.getParams()) {
+					System.out.println(bundle);
+					if(bundle !=null && bundle.getParameter()!=null) {
+						STActionParameterDTO paramDTO = new STActionParameterDTO ();
+						paramDTO.setName(bundle.getParameter().getName());
+						paramDTO.setType(bundle.getParameter().getType());
+						params.add(paramDTO);
+					}
+				}
+				dto.setParameters(params);
+				
+				retList.add(dto);
 			});
 		}
 
@@ -55,7 +70,6 @@ public class STBaseActionController {
 	
 	@PostMapping("/new")
 	STBaseActionDTO createNewCommand(@RequestBody STBaseAction command){
-		
 		STBaseAction savedCommand = commandService.createBaseAction(command);
 		ModelMapper mapper=new ModelMapper();
 		STBaseActionDTO sendCommand = mapper.map(savedCommand, STBaseActionDTO.class);

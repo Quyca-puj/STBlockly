@@ -548,7 +548,7 @@ Ardublockly.TOOLBOX_MID_XML =
 '  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_girar_middle">'+
-'  <field name="Movement">t_left</field>'+
+'  <field name="Movement">left</field>'+
 '  <field name="Emotion">very_happy</field>'+
 '</block>'+
 '<block type="mvt_avanzar_tiempo_middle">'+
@@ -557,7 +557,7 @@ Ardublockly.TOOLBOX_MID_XML =
 '  <field name="SPEED">1</field>'+
 '</block>'+
 '<block type="mvt_girar_tiempo_middle">'+
-'  <field name="Movement">left</field>'+
+'  <field name="Movement">t_left</field>'+
 '  <field name="TIME">1</field>'+
 '  <field name="SPEED">1</field>'+
 '</block>'+

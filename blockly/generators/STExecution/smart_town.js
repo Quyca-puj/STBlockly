@@ -7,7 +7,6 @@ Blockly.STExecution['mvt_avanzar_exec'] = function(block) {
   let code={action:"forward", emotion:dropdown_emotion};
   let paramStr = Blockly.STExecution.setEmotionalParams(SmartTownUtils.ACTION_PARAMS[code.action], dropdown_emotion);
   code.params=paramStr
-  console.log(code);
   return code;
 };
 
@@ -17,7 +16,6 @@ Blockly.STExecution['mvt_girar_exec'] = function(block) {
   let code={action:dropdown_movement, emotion:dropdown_emotion}
   let paramStr = Blockly.STExecution.setEmotionalParams(SmartTownUtils.ACTION_PARAMS[code.action], dropdown_emotion);
   code.params=paramStr;
-  console.log(code);
   return code;
 };
 

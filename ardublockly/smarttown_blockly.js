@@ -8,6 +8,8 @@
 
 /** Create a namespace for the application. */
 var SmartTown = SmartTown || {};
+SmartTown.emotions = [];
+SmartTown.CommandList = [];
 
 SmartTown.generateRobotSketch = function (root) {
   return Blockly.SmartTown.generateCommandRobotSketch(root);
@@ -22,6 +24,15 @@ SmartTown.setALList = function (list) {
   SmartTown.ALList = list;
   SmartTown.convertToSendable(list);
 };
+
+SmartTown.setEmotions = function (list) {
+  SmartTown.emotions = list;
+  SmartTown.emotionsUtil = [];
+  SmartTown.emotions.forEach(emo=>{
+    SmartTown.emotionsUtil.push([emo.traduction, emo.name]);
+  });
+};
+
 
 SmartTown.convertToSendable = function (alList) {
   SmartTown.ALDict = {};

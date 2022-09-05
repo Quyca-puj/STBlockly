@@ -12,6 +12,7 @@ class Robot
 {
 
   int speeds;
+  int receivedMsg;
   int currentArgs;
   bool movementCurrentState;
   String command;
@@ -71,6 +72,7 @@ private:
   void answerAllPending(WiFiClient client);
   void answerPendingByType(TaskList *list, WiFiClient client);
   void answerCommandWithInfo(TaskList *list, String task, WiFiClient client, String answer);
+  void processMultipleMsgs(String *msg);
 public:
   String ip;
   String alias;

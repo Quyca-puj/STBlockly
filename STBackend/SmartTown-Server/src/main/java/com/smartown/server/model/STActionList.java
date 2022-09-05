@@ -1,10 +1,10 @@
 package com.smartown.server.model;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
-import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,8 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import com.smartown.server.model.dto.STActionListDTO;
 
 import javax.persistence.JoinColumn;
 
@@ -28,7 +26,7 @@ public class STActionList {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name="list_actions", joinColumns=@JoinColumn(name="list_id"))
 	private List<STInstanceAction> actions;
-
+	
 	public List<STInstanceAction> getActionList() {
 		return actions;
 	}
@@ -43,7 +41,6 @@ public class STActionList {
 		this.name = name;
 	}
 	
-	
 	public long getId() {
 		return id;
 	}
@@ -53,9 +50,11 @@ public class STActionList {
 	public List<STInstanceAction> getActions() {
 		return actions;
 	}
+	
 	public void setActions(List<STInstanceAction> actions) {
 		this.actions = actions;
 	}
+		
 	@Override
 	public String toString() {
 		return "STActionList [name=" + name + ", actions=" + actions.size() + "]";

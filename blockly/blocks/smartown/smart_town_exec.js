@@ -15,7 +15,7 @@ Blockly.Blocks['mvt_avanzar_exec'] = {
           {
             "type": "field_dropdown",
             "name": "Emotion",
-            "options":  SmartTownUtils.EMOTION_OPTIONS
+            "options":  SmartTown.emotionsUtil
           }
         ],
         "inputsInline": true,
@@ -56,7 +56,7 @@ Blockly.Blocks['mvt_girar_exec'] = {
           {
             "type": "field_dropdown",
             "name": "Emotion",
-            "options":  SmartTownUtils.EMOTION_OPTIONS
+            "options":  SmartTown.emotionsUtil
           }
         ],
         "inputsInline": true,
@@ -209,7 +209,7 @@ Blockly.Blocks['mvt_stop_exec'] = {
           {
             "type": "field_dropdown",
             "name": "Emotion",
-            "options":  SmartTownUtils.EMOTION_OPTIONS
+            "options":  SmartTown.emotionsUtil
           }
         ],
         "inputsInline": true,
@@ -237,7 +237,7 @@ Blockly.Blocks['change_emotion_exec'] = {
           {
             "type": "field_dropdown",
             "name": "Emotion",
-            "options":  SmartTownUtils.EMOTION_OPTIONS
+            "options":  SmartTown.emotionsUtil
           }
         ],
         "inputsInline": true,

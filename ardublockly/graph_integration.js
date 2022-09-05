@@ -9,15 +9,16 @@
 var SmartTown = SmartTown || {};
 
 SmartTown.characters = {};
+SmartTown.actions = {};
 SmartTown.selectNodeForEdge = null;
 /** Create a namespace for the application. */
 SmartTown.graphContainer = document.getElementById("content_graph");
 
 SmartTown.reset = () => {
-  SmartTown.startSigma();
+  SmartTown.startSigma(null);
 }
 
-SmartTown.startSigma = function () {
+SmartTown.startSigma = function (graph) {
 
   window.oncontextmenu = () => { return false; };
   const form = document.getElementById('new_char_form');
@@ -26,8 +27,12 @@ SmartTown.startSigma = function () {
     event.preventDefault();
     SmartTown.modalCharacOnSubmit();
   });
+  if (graph) {
+    SmartTown.graph = graph;
+  } else {
+    SmartTown.graph = new graphology.Graph({ allowSelfLoops: false, type: 'directed' });
 
-  SmartTown.graph = new graphology.Graph({ allowSelfLoops: false, type: 'directed' });
+  }
   SmartTown.sigmaRenderer = new Sigma(SmartTown.graph, SmartTown.graphContainer,
     {
       minArrowSize: 10,
@@ -61,7 +66,7 @@ SmartTown.startSigma = function () {
       let nodeAtrr = SmartTown.graph.getNodeAttributes(SmartTown.doubleClickedNode);
       console.log(nodeAtrr);
       select_charac.value = nodeAtrr['charac'] ? nodeAtrr['charac'].charac_alias : "empty";
-      select_acttype.value = nodeAtrr['act_type'];
+      select_acttype.value = nodeAtrr['act_type'] ? nodeAtrr['act_type'].name : "empty";;
       const params = nodeAtrr['params'];
       if (params) {
         for (const [key, value] of Object.entries(params)) {
@@ -105,18 +110,19 @@ SmartTown.startSigma = function () {
     SmartTown.draggedNode = null;
   });
   SmartTown.sigmaRenderer.on("rightClickNode", (e) => {
-
-    if (SmartTown.selectNodeForEdge && SmartTown.selectNodeForEdge !== e.node) {
-      SmartTown.graph.setNodeAttribute(e.node, "highlighted", true);
-      SmartTown.addEdge(SmartTown.selectNodeForEdge, e.node);
-      SmartTown.graph.setNodeAttribute(SmartTown.selectNodeForEdge, "highlighted", false);
-      SmartTown.graph.setNodeAttribute(e.node, "highlighted", false);
-      SmartTown.selectNodeForEdge = null;
-    } else {
-      SmartTown.selectNodeForEdge = e.node;
-      SmartTown.graph.setNodeAttribute(SmartTown.selectNodeForEdge, "highlighted", true);
+    const act = SmartTown.graph.getNodeAttribute(e.node, "action");
+    if (act) {
+      if (SmartTown.selectNodeForEdge && SmartTown.selectNodeForEdge !== e.node) {
+        SmartTown.graph.setNodeAttribute(e.node, "highlighted", true);
+        SmartTown.addEdge(SmartTown.selectNodeForEdge, e.node);
+        SmartTown.graph.setNodeAttribute(SmartTown.selectNodeForEdge, "highlighted", false);
+        SmartTown.graph.setNodeAttribute(e.node, "highlighted", false);
+        SmartTown.selectNodeForEdge = null;
+      } else {
+        SmartTown.selectNodeForEdge = e.node;
+        SmartTown.graph.setNodeAttribute(SmartTown.selectNodeForEdge, "highlighted", true);
+      }
     }
-
   });
 
   SmartTown.sigmaRenderer.getMouseCaptor().on("mousedown", () => {
@@ -125,10 +131,10 @@ SmartTown.startSigma = function () {
 
   SmartTown.sigmaRenderer.on('clickStage', () => {
     let node_dialog = document.getElementById('node_dialog');
-    node_dialog.style.display="none";
+    node_dialog.style.display = "none";
     SmartTown.doubleClickedNode = null;
     SmartTown.selectNodeForEdge = null;
-
+    SmartTown.ClickedNode  = null;
     SmartTown.graph.updateEachNodeAttributes((node, attr) => {
       return {
         ...attr,
@@ -136,6 +142,24 @@ SmartTown.startSigma = function () {
       };
     }, { attributes: ['highlighted'] });
     SmartTown.sigmaRenderer.refresh();
+  });
+  
+
+  SmartTown.sigmaRenderer.on('clickNode', (e) => {
+    let node_dialog = document.getElementById('node_dialog');
+    if(SmartTown.ClickedNode ){
+      SmartTown.graph.setNodeAttribute(SmartTown.ClickedNode , "highlighted", false);
+    }
+
+    SmartTown.ClickedNode = e.node;
+    SmartTown.graph.setNodeAttribute(e.node, "highlighted", true);
+
+  });
+
+
+  
+  SmartTown.sigmaRenderer.on("wheelNode", (e) => {
+    SmartTown.graph.dropNode(e.node);
   });
 
 }
@@ -153,6 +177,13 @@ SmartTown.addNewNode = () => {
   SmartTown.graph.addNode(id, node);
 };
 
+SmartTown.deleteSelectedNode = () =>{
+  if(SmartTown.ClickedNode){
+    SmartTown.graph.dropNode(SmartTown.ClickedNode);
+    SmartTown.ClickedNode = null;
+  }
+};
+
 
 SmartTown.exportGraph = () => {
   return SmartTown.graph.export();
@@ -160,63 +191,77 @@ SmartTown.exportGraph = () => {
 
 SmartTown.addEdge = (origin, destination) => {
 
-  /*
-  Tomar nodo destino
-  Tomar edges hacia nodo destino.
-  Tomar origen de cada edge y ver set de condiciones.
-  Combinar set de condiciones y ver si es valido.
-
-  Si es valido:
-    creamos arco y agregamos key a cada atributo de cada place.
-  si no:
-    retornamos.
-  */
   let key = origin > destination ? origin + "" + destination : destination + "" + origin;
   if (SmartTown.graph.hasEdge(key)) {
+    const destIn = SmartTown.graph.getNodeAttribute(destination, 'inArcs');
+    const orIn = SmartTown.graph.getNodeAttribute(origin, 'inArcs');
+    const destOut = SmartTown.graph.getNodeAttribute(destination, 'outArcs');
+    const orOut = SmartTown.graph.getNodeAttribute(origin, 'outArcs');
+    let index = destIn.indexOf(key);
+    if (index > -1)
+      destIn.splice(index, 1);
+
+    index = orIn.indexOf(key);
+    if (index > -1)
+      orIn.splice(index, 1);
+
+    index = destOut.indexOf(key);
+    if (index > -1)
+      destOut.splice(index, 1);
+
+    index = orOut.indexOf(key);
+    if (index > -1)
+      orOut.splice(index, 1);
+
+    SmartTown.graph.updateNodeAttribute(destination, 'inArcs', destIn);
+    SmartTown.graph.updateNodeAttribute(destination, 'outArcs', destOut);
+    SmartTown.graph.updateNodeAttribute(origin, 'inArcs', orIn);
+    SmartTown.graph.updateNodeAttribute(origin, 'outArcs', orOut);
+
     SmartTown.graph.dropEdge(key);
   } else {
-    SmartTown.graph.addEdgeWithKey(key, origin, destination, {
-      weight: 1,
-      type: "arrow",
-      size: 5,
-      color: "#000000"
-    });
+    let isValid = true;
+    const orAction = SmartTown.graph.getNodeAttribute(origin, 'action');
+    const destIn = SmartTown.graph.getNodeAttribute(destination, 'inArcs');
+    if (!destIn) destIn = {};
+    const orOut = SmartTown.graph.getNodeAttribute(origin, 'outArcs');
+    if (!orOut) orOut = {};
+
+    /*
+    edge guarda origen y destino. Se puede tomar origen de las edges y buscar attr en el grafo. De ahi tomar action y sacarlo.
+    */
+
+    destIn.forEach(element => {
+      let orEdgeNode = SmartTown.graph.getEdgeAttribute(element, 'origin');
+      let orEdgeAction = SmartTown.graph.getEdgeAttribute(orEdgeNode, 'action');
+      let isValid = isValid && !SmartTown.compareActionResources(orAction, orEdgeAction);
+    }
+    );
+
+    if (isValid) {
+      destIn.push(key);
+      orOut.push(key);
+      SmartTown.graph.updateNodeAttribute(destination, 'inArcs', destIn);
+      SmartTown.graph.updateNodeAttribute(origin, 'outArcs', orOut);
+      SmartTown.graph.addEdgeWithKey(key, origin, destination, {
+        weight: 1,
+        type: "arrow",
+        size: 5,
+        color: "#000000",
+        origin: origin,
+        destination: destination
+      });
+    }
   }
 
-
-
-
-
-  // let isValid = true;
-  // const destIn = SmartTown.graph.getNodeAttribute(destination, 'inArcs');
-  // destIn.forEach(element => {
-  //   let edge = SmartTown.graph.getEdgeAttribute(element, 'conditions');
-  //   const attributes = graph.getEdgeAttributes(edge);
-  //   let isValid = isValid && !element.getOrigin().hasConditions(origin);
-  // });
-  // if (isValid) {
-  //   const arc = new Arc(origin, destination);
-  //   origin.addArc(arc, true);
-  //   destination.addArc(arc, false);
-  //   this.arcs.push(arc);
-  // }
-
-  // return isValid;
-
 }
 
-SmartTown.addNode = (name, attributes) => {
-  graph.addNode(name, attributes);
+SmartTown.compareActionResources = (origin, otherOrigin) => {
+  let conditionSet = origin.conditions;
+  let intersection = new Set(
+    [...conditionSet].filter(x => otherOrigin.conditions.has(x)));
+  return intersection.size == 0;
 }
-
-SmartTown.removeNode = (node) => {
-  SmartTown.graph.dropNode(node);
-}
-
-SmartTown.removeEdge = (edge) => {
-  SmartTown.graph.dropEdge(edge);
-}
-
 
 SmartTown.addCharacter = (charac) => {
 
@@ -227,4 +272,10 @@ SmartTown.addCharacter = (charac) => {
   return false;
 }
 
-SmartTown.startSigma();
+SmartTown.setActions = (list) => {
+  list.forEach(action => {
+    SmartTown.actions[action['name']] = action;
+  });
+}
+
+SmartTown.startSigma(null);

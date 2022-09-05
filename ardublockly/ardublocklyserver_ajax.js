@@ -418,10 +418,9 @@ ArdublocklyServer.calibrate = function(ip, alias ,successHandler, errorHandler, 
   });
 }
 
-//TODOL ENdpoint
-ArdublocklyServer.calibrateMultiple = function(characObj ,successHandler, errorHandler, workspace){
+ArdublocklyServer.calibrateMultiple = function(characObj ,successHandler, errorHandler){
   ArdublocklyServer.ack =0 ;
-  ArdublocklyServer.calibrateRobots(characObj, workspace).then(function handle(response) {  
+  ArdublocklyServer.calibrateRobots(characObj).then(function handle(response) {  
     let jsonObj = JSON.parse(response);
     if(jsonObj.success){
       successHandler();
@@ -515,8 +514,8 @@ ArdublocklyServer.sendToRobot = async function(json, id, workspace) {
   return await ArdublocklyServer.postJson('/robot/send', {action:json});
 };
 
-ArdublocklyServer.calibrateRobots = async function(json, id, workspace) {
-  return await ArdublocklyServer.postJson('/robot/calibrateAll', {actions:json});
+ArdublocklyServer.calibrateRobots = async function(json) {
+  return await ArdublocklyServer.postJson('/robot/calibrateAll', {characs:json});
 };
 
 

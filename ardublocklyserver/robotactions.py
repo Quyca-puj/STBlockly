@@ -4,11 +4,11 @@
 Copyright (c) 2017 IQBots 
 """
 from __future__ import unicode_literals, absolute_import, print_function
-
+import threading
 
 def send_code_to_robot(robot_action, socket_mgmt):
     """
-    Handles Robot Connection and maessage lifecycle.
+    Handles Robot Connection and message lifecycle.
     - robot_action: robot information and action description.
     - socket_mgmt: Socket manager interface.
     """
@@ -33,5 +33,30 @@ def send_code_to_robot(robot_action, socket_mgmt):
 
     return success, ide_mode, std_out, err_out, exit_code
 
+def send_calibration_to_all(characs, socket_mgmt):
+    """
+    Handles Robot Connection and maessage lifecycle.
+    - robot_action: robot information and action description.
+    - socket_mgmt: Socket manager interface.
+    """
+    success = True
+    ide_mode = 'unknown'
+    std_out, err_out = '', ''
+    exit_code = 0
+    thread_list = []
+    try:
+        for char, char_info in characs:
+            msg_info = {"ip":char_info['ip'], "ack":0, "msg":char_info['alias']+" calibration"}
+            t = threading.Thread(target=send_code_to_robot, args=(msg_info,socket_mgmt))
+            t.start()
+            thread_list.append(t)
+        
+        for thread in thread_list:
+            thread.join()
+    except Exception:
+        success = False
+        exit_code = 102
+        err_out = 'Conexion con el robot fallida. Revisa la ip configurada o la red.'
 
+    return success, ide_mode, std_out, err_out, exit_code
 

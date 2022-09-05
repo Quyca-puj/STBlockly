@@ -113,7 +113,8 @@ Blockly.Arduino.init = function(workspace) {
   Blockly.Arduino.pins_ = Object.create(null);
   // Create a dictionary for SmartTown commands definition;
   Blockly.Arduino.STFunctions_ = Object.create(null);
-
+  // Create a dictionary for SmartTown commands definition;
+  Blockly.Arduino.STFunctionConditions_ = Object.create(null);
   if (!Blockly.Arduino.variableDB_) {
     Blockly.Arduino.variableDB_ =
         new Blockly.Names(Blockly.Arduino.RESERVED_WORDS_);
@@ -211,9 +212,10 @@ Blockly.Arduino.finish = function(code) {
  * @param {!string} commandName Identifier for this SmartTown command code.
  * @param {!string} code Code to be included at the very top of the sketch.
  */
- Blockly.Arduino.addSTCommand = function(commandName, code) {
+ Blockly.Arduino.addSTCommand = function(commandName, code,conditions) {
   if (Blockly.Arduino.STFunctions_[commandName] === undefined) {
     Blockly.Arduino.STFunctions_[commandName] = code;
+    Blockly.Arduino.STFunctionConditions_[commandName] = conditions;
   }
 };
 
@@ -502,6 +504,27 @@ Blockly.Arduino.getConditions = function(type){
     case  Blockly.SmartTown.BLOCK_ST_AVANZAR_T:
     case Blockly.SmartTown.BLOCK_ST_GIRAR_T:
       conditions = ["isFeasibleMvt(msg)"];
+      break;
+    case Blockly.SmartTown.BLOCK_ST_HABLAR:
+      conditions = [];
+    break;
+    default:
+      conditions =[] ;
+    break;
+  }
+ return conditions;
+};
+
+Blockly.Arduino.getConditionsST = function(type){
+  let conditions;
+  switch(type){
+    case Blockly.SmartTown.BLOCK_ST_AVANZAR:
+    case Blockly.SmartTown.BLOCK_ST_GIRAR: 
+    conditions = ["screen","motor"];
+    break;
+    case  Blockly.SmartTown.BLOCK_ST_AVANZAR_T:
+    case Blockly.SmartTown.BLOCK_ST_GIRAR_T:
+      conditions = ["motor"];
       break;
     case Blockly.SmartTown.BLOCK_ST_HABLAR:
       conditions = [];

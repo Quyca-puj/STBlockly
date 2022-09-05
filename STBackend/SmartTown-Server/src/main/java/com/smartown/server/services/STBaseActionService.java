@@ -1,12 +1,17 @@
 package com.smartown.server.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.smartown.server.model.STActionParameter;
+import com.smartown.server.model.STActionParameterBundle;
 import com.smartown.server.model.STBaseAction;
+import com.smartown.server.model.repository.STActionParameterBundleRepository;
+import com.smartown.server.model.repository.STActionParametersRepository;
 import com.smartown.server.model.repository.STBaseActionRepository;
 
 
@@ -16,6 +21,10 @@ public class STBaseActionService implements ISTBaseActionService{
 	
 	@Autowired
 	private STBaseActionRepository repository;
+	@Autowired
+	private STActionParameterBundleRepository bundleRepository;
+	@Autowired
+	private STActionParametersRepository paramsRepository;
 	
 	@Override
 	public List<STBaseAction> getAllBaseActions() {
@@ -33,8 +42,17 @@ public class STBaseActionService implements ISTBaseActionService{
 		if (possibleCommand.isPresent()) {
 			STBaseAction previous = possibleCommand.get();
 			command.setId(previous.getId());
+		}else {
+			List<STActionParameterBundle> bundleList = new ArrayList<>();
+			STActionParameter param =  paramsRepository.findByName("speed");
+			STActionParameterBundle bundle = new STActionParameterBundle();
+			bundle.setParameter(param);
+			bundle = bundleRepository.save(bundle);
+			bundleList.add(bundle);
+			command.setParams(bundleList);
 		}
 		command.setCustom(true);
+		command.setUsesArgs(true);
 		return repository.save(command);
 	}
 

@@ -54,7 +54,6 @@ Blockly.SmartTown.allSTCommands = function(root) {
   return [STCommandsNoReturn];
 };
 
-//TODOL : Change interface for comunnication. Send action list. In other instance send transition list. It means new rest service.
 Blockly.SmartTown.generateCommandRobotSketch = function(root) {
   let blocks = root.getAllBlocks();
   let STCommandsNoReturn = [];

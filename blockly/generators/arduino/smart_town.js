@@ -176,19 +176,23 @@ Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_COMMAND] = function (block) {
   let command = {};
   let code = "";
   let varsDict = {};
+  let condDict = {};
   let stepCounter = text_name + "Step";
   let cleanupVars = [" default:\n  " + stepCounter + "=0;\n  toRet = true;\n"];
   let restrictions = [];
+  let conditions = [];
   let blockList = Blockly.Arduino.statementToList(block, 'COMMANDS');
   let childBlocks = block.getChildren();
   for (let i in childBlocks) {
     
     if (childBlocks[i].hasConditions) {
       varsDict[childBlocks[i].type] = Blockly.Arduino.getConditions(childBlocks[i].type);
+      condDict[childBlocks[i].type] = Blockly.Arduino.getConditionsST(childBlocks[i].type);
     }
   }
   for (let name in varsDict) {
     restrictions.push(...varsDict[name]);
+    conditions.push(...condDict[name]);
   }
   if (blockList.length > 0) {
     code = " bool toRet=false;\n  bool nextStep=false;\n switch(" + stepCounter + "){\n";
@@ -202,10 +206,11 @@ Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_COMMAND] = function (block) {
 
   command.code = code;
   restrictions= [... new Set(restrictions)];
+  conditions= [... new Set(conditions)];
   if(restrictions.length==0){
     restrictions.push("true");
   }
   command.restrictions = restrictions.join(" && ") +";";
-  Blockly.Arduino.addSTCommand(text_name, command);
+  Blockly.Arduino.addSTCommand(text_name, command,conditions);
   return '';
 };

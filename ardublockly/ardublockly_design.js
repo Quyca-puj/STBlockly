@@ -64,7 +64,7 @@ Ardublockly.bindDesignEventListeners = function () {
     });
   var languages = document.getElementById('lang');
 
-  $("form select, form input").on("change", function () {
+  $("#node_form select, #node_form input").on("change", function () {
     if(SmartTown.doubleClickedNode){
       let nodeAtrr = SmartTown.graph.getNodeAttributes(SmartTown.doubleClickedNode);
       const select_acttype = document.getElementById('act_type');
@@ -75,10 +75,10 @@ Ardublockly.bindDesignEventListeners = function () {
       for(let i = 0 ;i < params.length-1; i++){
         newParams[params.id]=params.value;
       }
-      nodeAtrr['charac'] =SmartTown.characters[select_charac.value];
-      nodeAtrr['act_type'] =select_acttype.value;
-      nodeAtrr['params'] =newParams;
-      nodeAtrr['color']=nodeAtrr['charac'].charac_color;
+      nodeAtrr['charac'] = SmartTown.characters[select_charac.value];
+      nodeAtrr['action'] = SmartTown.actions[select_acttype.value];
+      nodeAtrr['params'] = newParams;
+      nodeAtrr['color'] = nodeAtrr['charac'].charac_color;
       let char_text = select_charac.selectedIndex>=0 ? select_charac.options[select_charac.selectedIndex].outerText:"";
       let act_text = select_acttype.selectedIndex>=0 ? select_acttype.options[select_acttype.selectedIndex].outerText:"";
       nodeAtrr['label'] = char_text+"-"+act_text;
@@ -95,6 +95,7 @@ Ardublockly.bindDesignEventListeners = function () {
     let footer = document.getElementById("ide_output_collapsible_header");
     let buttonChar = document.getElementById('button_ide_char');
     let buttonNode = document.getElementById('button_ide_node');
+    let buttonDelNode = document.getElementById('button_ide_del_node');
     let buttonLeft = document.getElementById('button_ide_left');
     let buttonMiddle = document.getElementById('button_ide_middle');
     let buttonLarge = document.getElementById('button_ide_large');
@@ -119,6 +120,7 @@ Ardublockly.bindDesignEventListeners = function () {
         code_display.style.display = "";
         buttonChar.style.display = "none";
         buttonNode.style.display = "none";
+        buttonDelNode.style.display = "none";
         buttonLeft.style.display = "";
         buttonMiddle.style.display = "";
         displayArduino.style.display = "initial";
@@ -133,6 +135,7 @@ Ardublockly.bindDesignEventListeners = function () {
         node_dialog.style.display = "none"
         buttonChar.style.display = "none";
         buttonNode.style.display = "none";
+        buttonDelNode.style.display = "none";
         content_graph.style.display = "none"
         content_blocks.style.display = ""
         code_display.style.display = "none";
@@ -147,12 +150,16 @@ Ardublockly.bindDesignEventListeners = function () {
         STServer.requestCommands().then(function handle(list) {
           SmartTown.setCommandList(JSON.parse(list));
         });
+        STServer.requestActions().then(function handle(list) {
+          SmartTown.setActions(JSON.parse(list));
+        });
         break;
       case "exec":
-        button_toggle_toolbox_icon.style.display = ""
+        button_toggle_toolbox_icon.style.display = "";
         node_dialog.style.display = "none"
         buttonChar.style.display = "none";
         buttonNode.style.display = "none";
+        buttonDelNode.style.display = "none";
         content_graph.style.display = "none";
         content_blocks.style.display = "";
         Ardublockly.changeIdeButtonsDesign('upload');
@@ -171,12 +178,16 @@ Ardublockly.bindDesignEventListeners = function () {
         STServer.requestActionLists().then(function handle(list) {
           SmartTown.setALList(JSON.parse(list));
         });
+        STServer.requestActions().then(function handle(list) {
+          SmartTown.setActions(JSON.parse(list));
+        });
         break;
       case "exec_net":
         buttonChar.style.display = "";
         buttonNode.style.display = "";
+        buttonDelNode.style.display = "";
         buttonLeft.style.display = "none";
-        button_toggle_toolbox_icon.style.display = "none"
+        button_toggle_toolbox_icon.style.display = "none";
         content_blocks.style.display = "none"
         content_graph.style.display = "block"
         Ardublockly.changeIdeButtonsDesign('upload');
@@ -188,11 +199,15 @@ Ardublockly.bindDesignEventListeners = function () {
         displayMid.style.display = "none";
         navBar.style.backgroundColor = "#999950";
         footer.style.backgroundColor = "#7a7a40";
+        
         STServer.requestCommands().then(function handle(list) {
           SmartTown.setCommandList(JSON.parse(list));
         });
         STServer.requestActionLists().then(function handle(list) {
           SmartTown.setALList(JSON.parse(list));
+        });
+        STServer.requestActions().then(function handle(list) {
+          SmartTown.setActions(JSON.parse(list));
         });
         break;
     }

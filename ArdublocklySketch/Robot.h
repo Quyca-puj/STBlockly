@@ -12,6 +12,7 @@ class Robot
 {
 
   int speeds;
+  int receivedMsg;
   int currentArgs;
   bool movementCurrentState;
   String command;
@@ -71,6 +72,7 @@ private:
   void answerAllPending(WiFiClient client);
   void answerPendingByType(TaskList *list, WiFiClient client);
   void answerCommandWithInfo(TaskList *list, String task, WiFiClient client, String answer);
+  void processMultipleMsgs(String *msg);
 public:
   String ip;
   String alias;
@@ -82,6 +84,14 @@ public:
   bool isInAction();
   Robot();
   void setupRobot(int serial, String givenAlias, String ssid, String password);
-  void processMsg(String msg, bool checkStatus, WiFiClient client);
+  void processMsg(String msg, bool checkStatus, WiFiClient client);void adelante_atras(WiFiClient client);
+int adelante_atrasStep;
+void tuntun(WiFiClient client);
+int tuntunStep;
+void cuadrado(WiFiClient client);
+int cuadradoStep;
+void popurri(WiFiClient client);
+int popurriStep;
+boolean action;
 };
 #endif

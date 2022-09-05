@@ -32,3 +32,13 @@
 #button_ide_node:hover {
     background-color: #2ab3a5;
 }
+
+#button_ide_del_node{
+    top: 10px;
+    right: 70%;
+    background-color: rgb(35, 236, 69);
+}
+
+#button_ide_del_node:hover {
+    background-color: #2ab3a5;
+}
