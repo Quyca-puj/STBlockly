@@ -8,8 +8,9 @@
 
 /** Create a namespace for the application. */
 var SmartTown = SmartTown || {};
-SmartTown.emotions = [];
+SmartTown.emotions = {};
 SmartTown.CommandList = [];
+SmartTown.emotionsUtil = [];
 
 SmartTown.generateRobotSketch = function (root) {
   return Blockly.SmartTown.generateCommandRobotSketch(root);
@@ -27,9 +28,8 @@ SmartTown.setALList = function (list) {
 
 SmartTown.setEmotions = function (list) {
   SmartTown.emotions = list;
-  SmartTown.emotionsUtil = [];
   SmartTown.emotions.forEach(emo=>{
-    SmartTown.emotionsUtil.push([emo.traduction, emo.name]);
+    SmartTown.emotionsUtil.push([emo.translatedName, emo.name]);
   });
 };
 
@@ -42,15 +42,26 @@ SmartTown.convertToSendable = function (alList) {
     for (let j in actionsAr) {
       let act = actionsAr[j];
       let action = { action: act.action };
-      if (act.time !== null && act.speed !== null) {
-        action.params = act.speed + " " + act.time;
+      if (act.speed !== null && act.speed >0) {
+        action.params = ""+act.speed;
+      }
+      if (act.time !== null) {
+        if(action.params){
+          action.params+= " ";
+        }else{
+          action.params = "";
+        }
+        action.params += act.time;
       }
       if (act.emotion !== null) {
         action.emotion = act.emotion;
       }
+      if (act.shouldAnswer !== null) {
+        action.shouldAnswer = act.shouldAnswer;
+      }
       al.push(action);
     }
-    SmartTown.ALDict[alList[i].name] = al;
+    SmartTown.ALDict[alList[i].name] = {name:alList[i].name, translatedName:alList[i].name,actions:al, conditions:alList[i].conditions};
   }
 };
 
@@ -62,7 +73,7 @@ SmartTown.getActionsFromList = function (alName) {
 /** Opens the modal that displays the "not connected to server" message. */
 SmartTown.openCharacModal = function () {
   $('#new_charac_dialog').openModal({
-    dismissible: true,
+    dismissible: false,
     opacity: .5,
     in_duration: 200,
     out_duration: 250
@@ -77,7 +88,6 @@ SmartTown.modalCharacOnSubmit = () => {
   let charac_color = form.elements["charac_color"];
   let charac = {"charac_name":charac_name.value,"charac_alias":charac_alias.value,"charac_ip":charac_ip.value,"charac_color":charac_color.value};
   let valid = SmartTown.addCharacter(charac);
-  console.log(valid);
   if(!valid){
     Ardublockly.materialAlert(Ardublockly.getLocalStr('characErrorTitle'), Ardublockly.getLocalStr('characErrorBody'), false);
   }else{

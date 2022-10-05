@@ -31,7 +31,7 @@ project_root_dir = \
     os.path.dirname(                                  # going up 1 level
         os.path.dirname(os.path.realpath(__file__)))  # folder dir of this
 sys.path.append(project_root_dir)
-
+print('project_root_dir ', project_root_dir)
 
 spec_coll_name = "server"
 exec_folder_name = "arduexec"

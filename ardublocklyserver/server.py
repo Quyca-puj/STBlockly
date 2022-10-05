@@ -14,7 +14,7 @@ from six import iteritems
 # local-packages imports
 from bottle import request, response
 from bottle import static_file, run, default_app, redirect, abort
-from py4j.java_gateway import JavaGateway
+from py4j.java_gateway import JavaGateway, GatewayParameters
 # This package modules
 from ardublocklyserver import actions, petrinet_integrator
 from ardublocklyserver import robotactions
@@ -43,9 +43,8 @@ def launch_server(ip='localhost', port=8000, document_root_=''):
     sys.stdout.flush()
     subprocess.Popen(['java', '-jar', '../share/dist/STRobotIntegrator.jar'])
     global gateway
-    gateway = JavaGateway()
+    gateway = JavaGateway(gateway_parameters=GatewayParameters(auto_convert=True))
     print('Gateway')
-
     run(app, server='waitress', host=ip, port=port, debug=True)
 
 
@@ -391,7 +390,6 @@ def handler_robot_code():
     
     try:
         action_to_exec = request.json['action']
-        print(request, "yes")
 
     except (TypeError, ValueError, KeyError) as e:
         exit_code = 64
@@ -499,7 +497,6 @@ def handler_petri_net():
                      'response_state': 'full_response'}
     
     try:
-        print(request)
         charac_info = request.json['characters']
         petriNet = request.json['net']
 
@@ -710,4 +707,6 @@ def handler_robot_calibrate_all():
             }]
         })
     set_header_no_cache()
+    print(response_dict)
+
     return response_dict

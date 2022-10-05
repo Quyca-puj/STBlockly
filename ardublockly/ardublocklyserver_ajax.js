@@ -421,7 +421,9 @@ ArdublocklyServer.calibrate = function(ip, alias ,successHandler, errorHandler, 
 ArdublocklyServer.calibrateMultiple = function(characObj ,successHandler, errorHandler){
   ArdublocklyServer.ack =0 ;
   ArdublocklyServer.calibrateRobots(characObj).then(function handle(response) {  
+    console.log("Im in return");
     let jsonObj = JSON.parse(response);
+    console.log(jsonObj);
     if(jsonObj.success){
       successHandler();
     }else{

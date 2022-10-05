@@ -41,6 +41,8 @@ public class STBaseActionController {
 						STActionParameterDTO paramDTO = new STActionParameterDTO ();
 						paramDTO.setName(bundle.getParameter().getName());
 						paramDTO.setType(bundle.getParameter().getType());
+						paramDTO.setTranslatedName(bundle.getTranslatedName());
+						paramDTO.setPosition(bundle.getPosition());
 						params.add(paramDTO);
 					}
 				}

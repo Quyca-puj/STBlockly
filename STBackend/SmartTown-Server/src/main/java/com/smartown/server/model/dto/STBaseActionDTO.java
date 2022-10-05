@@ -6,8 +6,10 @@ import java.util.Set;
 public class STBaseActionDTO {
 
 	private String name;
+	private String translatedName;
 	private Set<String> conditions;
 	private List<STActionParameterDTO> parameters;
+	private boolean shouldAnswer;
 	
 	public String getName() {
 		return name;
@@ -31,6 +33,18 @@ public class STBaseActionDTO {
 	}
 	public void setParameters(List<STActionParameterDTO> parameters) {
 		this.parameters = parameters;
+	}
+	public String getTranslatedName() {
+		return translatedName;
+	}
+	public void setTranslatedName(String translatedName) {
+		this.translatedName = translatedName;
+	}
+	public boolean isShouldAnswer() {
+		return shouldAnswer;
+	}
+	public void setShouldAnswer(boolean shouldAnswer) {
+		this.shouldAnswer = shouldAnswer;
 	}
 	
 	

@@ -42,13 +42,13 @@ public class STInstanceActionService implements ISTInstanceActionService{
 		STInstanceAction action;
 		switch(type) {
 		case COMMAND:
-			action = new STInstanceAction(baseAction);
+			action = new STInstanceAction(actionDto,baseAction);
 			break;
 		case EMOTIONAL:
 			action = new STEmotionalAction(actionDto, baseAction);
 			break;
 		case TIMED:
-			action = new STTimedAction(actionDto, baseAction);;
+			action = new STTimedAction(actionDto, baseAction);
 			break;
 		default:
 			action=null;
@@ -61,12 +61,13 @@ public class STInstanceActionService implements ISTInstanceActionService{
 	public ActionDTO createActionfromInstance(STInstanceAction action) {
 		ActionDTO newAction = new ActionDTO();
 		newAction.setAction(action.getBaseAction().getName());
+		newAction.setShouldAnswer(action.getBaseAction().isShouldAnswer());
 		if(action instanceof STEmotionalAction) {
 			newAction.setEmotion(((STEmotionalAction)action).getEmotion());
 		}else if(action instanceof STTimedAction) {
-			newAction.setSpeed(((STTimedAction)action).getSpeed());
 			newAction.setTime(((STTimedAction)action).getTime());
 		}
+		newAction.setSpeed(action.getSpeed());
 		return newAction;
 		
 	}

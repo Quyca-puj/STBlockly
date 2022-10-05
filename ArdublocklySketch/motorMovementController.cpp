@@ -201,11 +201,13 @@ bool timedTurn(int direction, int speed, int time,  long *timeElapsed) {
 
 
 void foreverForward(int speed){
+  Serial.println("foreverForward");
   setSpeedsMotor(speed, speed);
 }
 
 
 bool STDelay(long time, long *timeElapsed){
+  Serial.println("STDelay");
 if (*timeElapsed == 0)
   {
     *timeElapsed = millis();

@@ -31,6 +31,10 @@ class Robot
   TaskList runningEmotions;
   TaskList runningCustoms;
   TaskList runningBasics;
+  Task *basicExpro;
+  Task *mvtExpro;
+  Task *customExpro;
+  Task *emotionalExpro;
   bool isMvtExpropiative;
   bool isEmoExpropiative;
   WiFiClient returnSock;

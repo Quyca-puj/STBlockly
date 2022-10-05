@@ -23,9 +23,9 @@ class RobotSocketManager:
         response = True
         s= self.get_connection(conex_details)
         s.send(msg.encode('UTF-8'))
-        if ack is not None or ack == "-1":
+        if ack is not None or ack != "-1":
             ret = s.recv(1024)      
-            print(ret, ack, int(ret) == int(ack))
+            print("returning",ret, ack, int(ret) == int(ack))
             response = int(ret) == int(ack)
         return response
 

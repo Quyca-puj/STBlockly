@@ -8,7 +8,7 @@
 
 /** Create a namespace for the application. */
 var Ardublockly = Ardublockly || {};
-
+Ardublockly.activeNet = false;
 
 /** Initialises all the design related JavaScript. */
 Ardublockly.designJsInit = function () {
@@ -42,11 +42,11 @@ Ardublockly.materializeJsInit = function () {
   $('.tooltipped').tooltip({ 'delay': 50 });
   // Select menus
   $('select').material_select();
-  
-  $('select').on('contentChanged', function() {
+
+  $('select').on('contentChanged', function () {
     $(this).material_select();
   });
-  
+
 };
 
 /** Binds the event listeners relevant to the page design. */
@@ -54,6 +54,16 @@ Ardublockly.bindDesignEventListeners = function () {
   // Resize blockly workspace on window resize
   window.addEventListener(
     'resize', Ardublockly.resizeBlocklyWorkspace, false);
+
+  window.onbeforeunload = function () {
+    if (Ardublockly.activeNet) {
+      Ardublockly.stopNetExecution();
+    }
+    if(SmartTown.GUIsocket){
+      SmartTown.GUIsocket.close();
+      SmartTown.GUIsocket = null;
+    }
+  };
   // Display/hide the XML load button when the XML collapsible header is clicked
   document.getElementById('xml_collapsible_header').addEventListener(
     'click', Ardublockly.buttonLoadXmlCodeDisplay);
@@ -64,27 +74,57 @@ Ardublockly.bindDesignEventListeners = function () {
     });
   var languages = document.getElementById('lang');
 
-  $("#node_form select, #node_form input").on("change", function () {
-    if(SmartTown.doubleClickedNode){
+  $("#action_options").on("change", function () {
+    var actionValue = document.getElementById('action_options');
+
+    console.log('actionValue');
+    console.log(actionValue.value);
+    switch (actionValue.value) {
+      case "actions":
+        SmartTown.resetAndFillActionDropDown(SmartTown.actions);
+        break;
+      case "actionlists":
+        SmartTown.resetAndFillActionDropDown(SmartTown.ALDict);
+        break;
+    }
+  });
+
+
+  $(document).on("change", "#node_form .collectable", function () {
+    if (SmartTown.doubleClickedNode) {
       let nodeAtrr = SmartTown.graph.getNodeAttributes(SmartTown.doubleClickedNode);
       const select_acttype = document.getElementById('act_type');
       const select_charac = document.getElementById('charac');
-      const div_params =  document.getElementById('div_params');
-      const params = div_params.children;
       let newParams = {};
-      for(let i = 0 ;i < params.length-1; i++){
-        newParams[params.id]=params.value;
+      const params = document.querySelectorAll(".param_child");
+
+      params.forEach((param) => {
+        newParams[param.id] = param.value;
+      });
+
+      console.log(nodeAtrr);
+      if (!nodeAtrr['charac'] || !nodeAtrr['action'] || nodeAtrr['charac'].charac_name !== SmartTown.characters[select_charac.value].charac_name || nodeAtrr['action'].name !== SmartTown.activeActionDropdown[select_acttype.value].name) {
+        nodeAtrr['charac'] = select_charac.selectedIndex >= 0 ? SmartTown.characters[select_charac.value] : nodeAtrr['charac'] ? nodeAtrr['charac'] : undefined;
+        if (SmartTown.activeActionDropdown) {
+          nodeAtrr['action'] = select_acttype.selectedIndex >= 0 ? SmartTown.activeActionDropdown[select_acttype.value] : nodeAtrr['action'] ? nodeAtrr['action'] : undefined;
+          //           if(nodeAtrr['action'] ==""){
+          // //TODOL
+          //           }else{
+
+          //           }
+        }
+        SmartTown.deleteAllOutEdges(SmartTown.doubleClickedNode);
       }
-      nodeAtrr['charac'] = SmartTown.characters[select_charac.value];
-      nodeAtrr['action'] = SmartTown.actions[select_acttype.value];
+
       nodeAtrr['params'] = newParams;
-      nodeAtrr['color'] = nodeAtrr['charac'].charac_color;
-      let char_text = select_charac.selectedIndex>=0 ? select_charac.options[select_charac.selectedIndex].outerText:"";
-      let act_text = select_acttype.selectedIndex>=0 ? select_acttype.options[select_acttype.selectedIndex].outerText:"";
-      nodeAtrr['label'] = char_text+"-"+act_text;
-      SmartTown.graph.replaceNodeAttributes(SmartTown.doubleClickedNode,nodeAtrr);
+      nodeAtrr['color'] = nodeAtrr['charac'] ? nodeAtrr['charac'].charac_color : "";
+      nodeAtrr['defaultColor'] = nodeAtrr['charac'] ? nodeAtrr['charac'].charac_color : "";
+      let char_text = select_charac.selectedIndex >= 0 ? select_charac.options[select_charac.selectedIndex].outerText : nodeAtrr['charac'] ? nodeAtrr['charac'].name : "";
+      let act_text = select_acttype.selectedIndex >= 0 ? select_acttype.options[select_acttype.selectedIndex].outerText : nodeAtrr['action'] ? nodeAtrr['action'].translatedName : "";
+      nodeAtrr['label'] = char_text + "-" + act_text;
+      SmartTown.graph.replaceNodeAttributes(SmartTown.doubleClickedNode, nodeAtrr);
     }
-    
+
   });
 
   $("#lang").on("change", function () {
@@ -105,7 +145,7 @@ Ardublockly.bindDesignEventListeners = function () {
 
     let button_toggle_toolbox_icon = document.getElementById('button_toggle_toolbox');
 
-    
+
     Ardublockly.saveSessionStorageBlocksbyLanguage(Ardublockly.selected_language);
     Ardublockly.selected_language = languages.value;
     Ardublockly.discardAllBlocks(true);
@@ -150,9 +190,6 @@ Ardublockly.bindDesignEventListeners = function () {
         STServer.requestCommands().then(function handle(list) {
           SmartTown.setCommandList(JSON.parse(list));
         });
-        STServer.requestActions().then(function handle(list) {
-          SmartTown.setActions(JSON.parse(list));
-        });
         break;
       case "exec":
         button_toggle_toolbox_icon.style.display = "";
@@ -178,9 +215,6 @@ Ardublockly.bindDesignEventListeners = function () {
         STServer.requestActionLists().then(function handle(list) {
           SmartTown.setALList(JSON.parse(list));
         });
-        STServer.requestActions().then(function handle(list) {
-          SmartTown.setActions(JSON.parse(list));
-        });
         break;
       case "exec_net":
         buttonChar.style.display = "";
@@ -199,7 +233,7 @@ Ardublockly.bindDesignEventListeners = function () {
         displayMid.style.display = "none";
         navBar.style.backgroundColor = "#999950";
         footer.style.backgroundColor = "#7a7a40";
-        
+
         STServer.requestCommands().then(function handle(list) {
           SmartTown.setCommandList(JSON.parse(list));
         });
@@ -211,6 +245,10 @@ Ardublockly.bindDesignEventListeners = function () {
         });
         break;
     }
+
+    $("#act_type").on("change", function () {
+      Ardublockly.changeActType(null);
+    });
 
     Ardublockly.loadSessionStorageBlocksByLanguage(Ardublockly.selected_language);
     Ardublockly.renderContent();
@@ -228,6 +266,57 @@ Ardublockly.bindDesignEventListeners = function () {
   });
 };
 
+
+Ardublockly.clearActType = () => {
+  var divParams = document.getElementById('params_menu');
+  while (divParams.firstChild) {
+    divParams.removeChild(divParams.lastChild);
+  }
+}
+
+Ardublockly.changeActType = (actParams) => {
+  var actType = document.getElementById('act_type');
+  Ardublockly.clearActType();
+
+  console.log(actType.value);
+
+  let selectedAction = null;
+  if (SmartTown.activeActionDropdown) {
+    selectedAction = SmartTown.activeActionDropdown[actType.value];
+  }
+  if (selectedAction && selectedAction.parameters) {
+    selectedAction.parameters.forEach(param => {
+      let $newOpt;
+      var $label = $('<li><span class="translatable_open">' + param.translatedName + '</span></li>');
+      switch (param.type) {
+        case "Emotions":
+          $newOpt = $('<select class="browser-default param_child collectable" name="' + param.translatedName + '" id="' + param.translatedName + '"></select>');
+          SmartTown.emotions.forEach(emotion => {
+            var val = actParams && actParams[param] ? actParams[param] : "";
+            let $newOption;
+            if (val === emotion.name) {
+              $newOption = $("<option selected>").attr("value", emotion.name).text(emotion.translatedName);
+            } else {
+              $newOption = $("<option>").attr("value", emotion.name).text(emotion.translatedName);
+            }
+            $newOpt.append($newOption);
+          });
+          break;
+        case "numeric":
+          var val = actParams && actParams[param] ? actParams[param] : 0;
+          $newOpt = $('<li><input class = "param_child collectable" type="number" name="' + param.translatedName + '" id="' + param.translatedName + '" value = "' + val + '"/></li>');
+          break;
+        default:
+          var val = actParams && actParams[param] ? actParams[param] : "";
+          $newOpt = $('<li><input class = "param_child collectable" name="' + param.translatedName + 'id="' + param.translatedName + '" value = "' + val + '"/></li>');
+          break;
+      }
+      $("#params_menu").append($label);
+      $("#params_menu").append($newOpt);
+    });
+  }
+
+};
 /**
  * Displays or hides the 'load textarea xml' button based on the state of the
  * collapsible 'xml_collapsible_body'.
@@ -299,7 +388,7 @@ Ardublockly.changeIdeButtonsDesign = function (value) {
         iconLeft.className = 'mdi-navigation-check';
         buttonMiddle.className =
           buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
-        iconMiddle.className = 'mdi-av-pause';
+        iconMiddle.className = 'mdi-av-stop';
         buttonLarge.className =
           buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
         iconLarge.className = 'mdi-av-play-arrow';
@@ -312,11 +401,11 @@ Ardublockly.changeIdeButtonsDesign = function (value) {
         iconMiddle.className = 'mdi-av-play-arrow';
         buttonLarge.className =
           buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
-        iconLarge.className = 'mdi-av-pause';
+        iconLarge.className = 'mdi-av-stop';
       } else if (value === 'open') {
         buttonLeft.className =
           buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
-        iconLeft.className = 'mdi-av-pause';
+        iconLeft.className = 'mdi-av-stop';
         buttonMiddle.className =
           buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
         iconMiddle.className = 'mdi-av-play-arrow';
@@ -325,39 +414,39 @@ Ardublockly.changeIdeButtonsDesign = function (value) {
         iconLarge.className = 'mdi-navigation-check';
       }
       break;
-      case "exec_net":
-        if (value === 'upload') {
-          buttonLeft.className =
-            buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
-          iconLeft.className = 'mdi-navigation-check';
-          buttonMiddle.className =
-            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
-          iconMiddle.className = 'mdi-av-pause';
-          buttonLarge.className =
-            buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
-          iconLarge.className = 'mdi-av-play-arrow';
-        } else if (value === 'verify') {
-          buttonLeft.className =
-            buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
-          iconLeft.className = 'mdi-navigation-check';
-          buttonMiddle.className =
-            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
-          iconMiddle.className = 'mdi-av-play-arrow';
-          buttonLarge.className =
-            buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
-          iconLarge.className = 'mdi-av-pause';
-        } else if (value === 'open') {
-          buttonLeft.className =
-            buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
-          iconLeft.className = 'mdi-av-pause';
-          buttonMiddle.className =
-            buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
-          iconMiddle.className = 'mdi-av-play-arrow';
-          buttonLarge.className =
-            buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
-          iconLarge.className = 'mdi-navigation-check';
-        }
-        break;
+    case "exec_net":
+      if (value === 'upload') {
+        buttonLeft.className =
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLeft.className = 'mdi-navigation-check';
+        buttonMiddle.className =
+          buttonMiddle.className.replace(/arduino_\S+/, 'arduino_teal');
+        iconMiddle.className = 'mdi-av-stop';
+        buttonLarge.className =
+          buttonLarge.className.replace(/arduino_\S+/, 'arduino_orange');
+        iconLarge.className = 'mdi-av-play-arrow';
+      } else if (value === 'verify') {
+        buttonLeft.className =
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLeft.className = 'mdi-navigation-check';
+        buttonMiddle.className =
+          buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+        iconMiddle.className = 'mdi-av-play-arrow';
+        buttonLarge.className =
+          buttonLarge.className.replace(/arduino_\S+/, 'arduino_teal');
+        iconLarge.className = 'mdi-av-stop';
+      } else if (value === 'open') {
+        buttonLeft.className =
+          buttonLeft.className.replace(/arduino_\S+/, 'arduino_teal');
+        iconLeft.className = 'mdi-av-stop';
+        buttonMiddle.className =
+          buttonMiddle.className.replace(/arduino_\S+/, 'arduino_orange');
+        iconMiddle.className = 'mdi-av-play-arrow';
+        buttonLarge.className =
+          buttonLarge.className.replace(/arduino_\S+/, 'arduino_yellow');
+        iconLarge.className = 'mdi-navigation-check';
+      }
+      break;
   }
 };
 
@@ -398,12 +487,23 @@ Ardublockly.showExtraIdeButtons = function (show) {
  * Shows or hides the spinner around the large IDE button.
  * @param {!boolean} active True turns ON the spinner, false OFF.
  */
-Ardublockly.largeIdeButtonSpinner = function (active) {
+Ardublockly.largeIdeButtonSpinner = function (active, isExec) {
   var spinner = document.getElementById('button_ide_large_spinner');
   var buttonIdeLarge = document.getElementById('button_ide_large');
   var buttonClass = buttonIdeLarge.className;
+  var iconLarge = document.getElementById('button_ide_large_icon');
+
+  if (isExec) {
+    if (active) {
+      iconLarge.className = 'mdi-av-pause';
+    } else {
+      iconLarge.className = 'mdi-av-play-arrow';
+    }
+    return;
+  }
+
   if (active) {
-    // spinner.style.display = 'block';
+    spinner.style.display = '';
     buttonIdeLarge.className = buttonIdeLarge.className + ' grey';
   } else {
     spinner.style.display = 'none';

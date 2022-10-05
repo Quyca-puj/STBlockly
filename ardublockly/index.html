@@ -169,14 +169,14 @@
         <!-- Arduino IDE action buttons -->
         <div id="ide_buttons_wrapper">
           <a id="button_ide_del_node"
-          class="waves-effect waves-light waves-circle btn-floating z-depth-1-half arduino_yellow" style="display:none"><i
-            id="button_ide_del_node_icon" class="mdi-action-delete"></i></a>
+            class="waves-effect waves-light waves-circle btn-floating z-depth-1-half arduino_yellow"
+            style="display:none"><i id="button_ide_del_node_icon" class="mdi-action-delete"></i></a>
           <a id="button_ide_node"
-          class="waves-effect waves-light waves-circle btn-floating z-depth-1-half arduino_yellow" style="display:none"><i
-            id="button_ide_node_icon" class="mdi-action-group-work"></i></a>
+            class="waves-effect waves-light waves-circle btn-floating z-depth-1-half arduino_yellow"
+            style="display:none"><i id="button_ide_node_icon" class="mdi-action-group-work"></i></a>
           <a id="button_ide_char"
-          class="waves-effect waves-light waves-circle btn-floating z-depth-1-half arduino_yellow" style="display:none"><i
-            id="button_ide_char_icon" class="mdi-image-edit"></i></a>
+            class="waves-effect waves-light waves-circle btn-floating z-depth-1-half arduino_yellow"
+            style="display:none"><i id="button_ide_char_icon" class="mdi-image-edit"></i></a>
           <a id="button_ide_left"
             class="waves-effect waves-light waves-circle btn-floating z-depth-1-half arduino_yellow"><i
               id="button_ide_left_icon" class="mdi-action-open-in-browser"></i></a>
@@ -228,7 +228,7 @@
                 <div class="circle"></div>
               </div>
               <div class="circle-clipper right">
-                <div class="circle"></div> 
+                <div class="circle"></div>
               </div>
             </div>
           </div>
@@ -239,6 +239,7 @@
           <div id="blocks_panel" class="content blocks_panel_large">
             <div id="content_blocks" class="content z-depth-1"></div>
             <div id="content_graph" class="content z-depth-1">
+            </div>
           </div>
         </div>
       </div>
@@ -251,24 +252,6 @@
             </div>
             <div class="collapsible-body">
               <pre id="content_arduino" class="content content_height_transition content_arduino_large"></pre>
-            </div>
-          </li>
-          <li id="java_area" style="display: none;">
-            <div class="collapsible-header">
-              <span class="collapsible_logo">{ J }</span>
-              <span class="translatable_arduinoSourceCode">Código Java</span>
-            </div>
-            <div class="collapsible-body">
-              <pre id="content_java" class="content content_height_transition content_arduino_large"></pre>
-            </div>
-          </li>
-          <li id="py_area" style="display: none;">
-            <div class="collapsible-header">
-              <span class="collapsible_logo">{ P }</span>
-              <span class="translatable_arduinoSourceCode">Código Python</span>
-            </div>
-            <div class="collapsible-body">
-              <pre id="content_py" class="content content_height_transition content_arduino_large"></pre>
             </div>
           </li>
           <li id="mid_area" style="display: none;">
@@ -295,31 +278,32 @@
         </ul>
       </div>
       <div id="node_dialog" class="col s12 m12 l4" style="display: none;">
-        <div class="node-cointainer z-depth-1">
-          <ul id="node_menu" class="left hide-on-med-and-down">
+        <div >
+          <ul id="node_menu" class="hide-on-med-and-down">
             <form id="node_form">
-            <li><span class="translatable_open">Escoge un personaje: </span></li>
-            <li><select name="charac" id="charac">
-              <option value="empty"></option>
-              </select></li>
-            <li><span class="translatable_open">Escoge un tipo de acción: </span></li>
-            <li><select name="act_type" id="act_type">
+              <li><span class="translatable_open">Escoge un personaje: </span></li>
+              <li><select class="browser-default collectable" name="charac" id="charac">
+                  <option value="empty"></option>
+                </select></li>
+              <li><select class="browser-default" name="action_options" id="action_options">
+                  <option value="empty"></option>
+                  <option value="actions">Acciones</option>
+                  <option value="actionlists">Listas de Acciones</option>
+                </select></li>
+              <li><span class="translatable_open">Escoge un tipo de acción: </span></li>
+              <li><select class="browser-default collectable" name="act_type" id="act_type">
                   <option value="empty" selected></option>
-                  <option value="emocion" selected>Emoción</option>
-                  <option value="mvt_linea">Movimiento Base</option>
-                  <option value="mvt_tiempo">Movimento por Tiempo</option>
-                  <option value="custom">Acciones Custom</option>
-                  <option value="lista_acc">Lista de Acciones</option>
-              </select></li>
+                </select></li>
               <li><span class="translatable_open">Ingresa los parámetros: </span></li>
-              <li><div id="div_params">
-
-
-              </div></li>
-
-
+              <li>
+                <div id="div_params">
+                  <ul id="params_menu" name="params_menu">
+                </div>
+              </li>
             </form>
+          </ul>
         </div>
+      </div>
     </div>
   </div>
 
@@ -424,13 +408,16 @@
   <div id="not_running_dialog" class="modal">
     <div class="modal-content">
       <div>
-        <h4 id="gen_alert_title"><span class="translatable_noServerTitle">Aplicacion de Ardublocky sin iniciar</span>
+        <h4 id="gen_alert_title"><span class="translatable_noServerTitle">Aplicacion de Ardublocky sin
+            iniciar</span>
         </h4>
       </div>
       <div class="translatable_noServerBody">
-        <p>Para que todas las funciones de Ardublockly estén habilitadas, la aplicación de escritorio Ardublockly debe
+        <p>Para que todas las funciones de Ardublockly estén habilitadas, la aplicación de escritorio Ardublockly
+          debe
           ejecutarse localmente en su computadora.</p>
-        <p>Si está utilizando una versión en línea, no podrá configurar los ajustes ni cargar el código de bloques en un
+        <p>Si está utilizando una versión en línea, no podrá configurar los ajustes ni cargar el código de bloques
+          en un
           Arduino.</p>
         <p>Las instrucciones de instalación se pueden encontrar en el <a
             href="https://github.com/carlosperate/ardublockly">repositorio de Ardublockly</a>.</p>
@@ -444,66 +431,67 @@
   </div>
 
 
-    <!-- Local Modal to be shown if Ardublockly Server is not running. -->
-    <div id="new_charac_dialog" class="modal">
-      <div class="charac-content">
-        <div>
-          <h4 id="gen_alert_title"><span class="translatable_noServerTitle">Nuevo Personaje</span>
-          </h4>
-        </div>
-        <form id="new_char_form">
-          <label for="charac_name">Nombre:</label>
-          <input id="charac_name" type ="text" required />
-          <label for="charac_alias">Alias:</label>
-          <input id="charac_alias" type ="text" required />
-          <label for="charac_ip">IP:</label>
-          <input id="charac_ip" type ="text" required />
-          <label for="charac_color">Color:</label>
-          <input id="charac_color" type ="color" required />
-          <div class="modal-footer">
-            <a id="gen_alert_ok_link" href="#" class="waves-effect btn-flat modal-close"><input type ="submit"/></a>
-          </div>
-          
-        </form>
+  <!-- Local Modal to be shown if Ardublockly Server is not running. -->
+  <div id="new_charac_dialog" class="modal">
+    <div class="charac-content">
+      <div>
+        <h4 id="gen_alert_title"><span class="translatable_noServerTitle">Nuevo Personaje</span>
+        </h4>
       </div>
+      <form id="new_char_form">
+        <label for="charac_name">Nombre:</label>
+        <input id="charac_name" type="text" required />
+        <label for="charac_alias">Alias:</label>
+        <input id="charac_alias" type="text" required />
+        <label for="charac_ip">IP:</label>
+        <input id="charac_ip" type="text" required />
+        <label for="charac_color">Color:</label>
+        <input id="charac_color" type="color" required />
+        <div class="modal-footer">
+          <a id="gen_alert_ok_link" href="#" class="waves-effect btn-flat modal-close"><input type="submit"/></a>
+        </div>
+
+      </form>
     </div>
+  </div>
 
-    <!-- Desktop version of Ardublockly JS, needs to be loaded first. -->
-    <script src="ardublockly_desktop.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
-    <script src="libs/graphology.min.js"></script>
-    <script src="libs/graphology-library.min.js"></script>
-    <script src="libs/sigma.min.js"></script>
-    <!-- jQuery and Materialize JS -->
-    <script src="js_libs/jquery-2.1.3.min.js"></script>
-    <script src="materialize/materialize.js"></script>
-    <!-- FileSaver JS -->
-    <script src="js_libs/FileSaver.min.js"></script>
-    <!-- JS Diff -->
-    <script src="js_libs/diff.js"></script>
-    <!-- Prettify JS -->
-    <script src="prettify/prettify.js"></script>
-    <!-- ST app -->
-    <script src="STServer.js"></script>
-    <script src="smarttown.js"></script>
-    <script src="smarttown_utils.js"></script>
-    <script src="smarttown_blockly.js"></script>
-    <script src="graph_integration.js"></script>
-    <!-- Ardublockly app -->
-    <script src="ardublocklyserver_ajax.js"></script>
-    <script src="ardublockly_lang.js"></script>
-    <script src="ardublockly_design.js"></script>
-    <script src="ardublockly_toolbox.js"></script>
-    <script src="ardublockly_blockly.js"></script>
-    <script src="Ardublockly_utils.js"></script>
-    <script src="ardublockly.js"></script>
+  <!-- Desktop version of Ardublockly JS, needs to be loaded first. -->
+  <script src="ardublockly_desktop.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
+  <script src="libs/graphology.min.js"></script>
+  <script src="libs/graphology-library.min.js"></script>
+  <script src="libs/sigma.min.js"></script>
+  <!-- jQuery and Materialize JS -->
+  <script src="js_libs/jquery-2.1.3.min.js"></script>
+  <script src="materialize/materialize.js"></script>
+  <!-- FileSaver JS -->
+  <script src="js_libs/FileSaver.min.js"></script>
+  <!-- JS Diff -->
+  <script src="js_libs/diff.js"></script>
+  <!-- Prettify JS -->
+  <script src="prettify/prettify.js"></script>
+  <!-- ST app -->
+  <script src="STServer.js"></script>
+  <script src="smarttown.js"></script>
+  <script src="smarttown_utils.js"></script>
+  <script src="smarttown_blockly.js"></script>
+  <script src="graph_integration.js"></script>
+  <script src="gui_integrator.js"></script>
+  <!-- Ardublockly app -->
+  <script src="ardublocklyserver_ajax.js"></script>
+  <script src="ardublockly_lang.js"></script>
+  <script src="ardublockly_design.js"></script>
+  <script src="ardublockly_toolbox.js"></script>
+  <script src="ardublockly_blockly.js"></script>
+  <script src="Ardublockly_utils.js"></script>
+  <script src="ardublockly.js"></script>
 
-    <script>
-      window.addEventListener('load', function load(event) {
-        window.removeEventListener('load', load, false);
-        Ardublockly.init();
-      });
-    </script>
+  <script>
+    window.addEventListener('load', function load(event) {
+      window.removeEventListener('load', load, false);
+      Ardublockly.init();
+    });
+  </script>
 </body>
 
 </html>

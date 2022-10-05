@@ -1,3 +1,5 @@
+from py4j.java_collections import MapConverter
+
 def send_petri_net(charac_info,petriNet, gateway):
     """Sends petrinet object and character information through Py4J getaway"""
     success = True
@@ -5,7 +7,11 @@ def send_petri_net(charac_info,petriNet, gateway):
     std_out, err_out = '', ''
     exit_code = 0
     try:
-        success = gateway.entry_point.runPetriNetFromString({"characs":charac_info,"net":petriNet})
+
+        print("Entra send_petri_net")
+        print("charac_info",charac_info)
+        print("petriNet",petriNet)
+        success = gateway.entry_point.runPetriNetFromStrings(str(charac_info), str(petriNet))
     except Exception:
         success = False
         exit_code = 201

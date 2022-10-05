@@ -1,8 +1,12 @@
 package com.smartown.server.model;
 
+import java.util.Set;
+
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +18,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.smartown.server.model.dto.ActionDTO;
+
 @Entity
 @Embeddable
 @Table(name = "instance_actions")
@@ -23,16 +29,20 @@ public class STInstanceAction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "instance_id", updatable = false, nullable = false)
-	private long instance_id;
+	protected long instance_id;
 	@ManyToOne(fetch=FetchType.EAGER,cascade = CascadeType.REMOVE)
-	private STBaseAction baseAction;
-
-		
+	protected STBaseAction baseAction;
+	@Basic
+	protected float speed;
+	
 	public STInstanceAction() {
 		super();
 	}
-	public STInstanceAction(STBaseAction baseAction) {
+	public STInstanceAction(ActionDTO actionDto, STBaseAction baseAction) {
 		super();
+		if(actionDto.getSpeed()!=null) {
+			speed=actionDto.getSpeed();
+		}
 		this.baseAction = baseAction;
 	}
 	public long getId() {
@@ -46,6 +56,19 @@ public class STInstanceAction {
 	}
 	public void setBaseAction(STBaseAction baseAction) {
 		this.baseAction = baseAction;
+	}
+	public long getInstance_id() {
+		return instance_id;
+	}
+	public void setInstance_id(long instance_id) {
+		this.instance_id = instance_id;
+	}
+
+	public float getSpeed() {
+		return speed;
+	}
+	public void setSpeed(float speed) {
+		this.speed = speed;
 	}
 	@Override
 	public String toString() {

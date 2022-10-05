@@ -27,6 +27,10 @@ public class STBaseAction {
 	private boolean custom;
 	@Basic
 	private boolean usesArgs;
+	@Basic
+	private boolean shouldAnswer;
+	@Basic
+	private String translatedName;
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<String> conditions;
 	@ElementCollection(fetch = FetchType.EAGER)
@@ -79,6 +83,29 @@ public class STBaseAction {
 	public void setParams(List<STActionParameterBundle> params) {
 		this.parameters = params;
 	}
-	
+
+	public String getTranslatedName() {
+		return translatedName;
+	}
+
+	public void setTranslatedName(String translatedName) {
+		this.translatedName = translatedName;
+	}
+
+	public List<STActionParameterBundle> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(List<STActionParameterBundle> parameters) {
+		this.parameters = parameters;
+	}
+
+	public boolean isShouldAnswer() {
+		return shouldAnswer;
+	}
+
+	public void setShouldAnswer(boolean shouldAnswer) {
+		this.shouldAnswer = shouldAnswer;
+	}
 
 }

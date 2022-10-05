@@ -35,9 +35,19 @@ Blockly.SmartMiddle['mvt_girar_tiempo_middle'] = function(block) {
   return code;
 };
 
-Blockly.SmartMiddle['mvt_stop_middle'] = function(block) {
+Blockly.SmartMiddle['mvt_stop_mvt_middle'] = function(block) {
+  let code='{"action": "stop_mvt"}\n';
+  return code;
+};
+
+Blockly.SmartMiddle['mvt_stop_all_middle'] = function(block) {
+  let code='{"action": "stop_all"}\n';
+  return code;
+};
+
+Blockly.SmartMiddle['change_emo_middle'] = function(block) {
   let dropdown_emotion = block.getFieldValue('Emotion');
-  let code='{"action": "stop_mvt","emotion":"'+dropdown_emotion+'"}\n';
+  let code='{"action": "emotions","emotion":"'+dropdown_emotion+'"}\n';
   return code;
 };
 
@@ -45,7 +55,7 @@ Blockly.SmartMiddle['mvt_stop_middle'] = function(block) {
   let funcName = Blockly.SmartMiddle.variableDB_.getName(
       block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
   let speed = block.getFieldValue('SPEED');
-  let code='{"action": "'+funcName+'","time":0,"speed":'+speed+'}\n';
+  let code='{"action": "'+funcName+'", "speed":'+speed+'}\n';
   return code;
 };
 

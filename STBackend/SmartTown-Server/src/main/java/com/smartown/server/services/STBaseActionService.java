@@ -14,23 +14,20 @@ import com.smartown.server.model.repository.STActionParameterBundleRepository;
 import com.smartown.server.model.repository.STActionParametersRepository;
 import com.smartown.server.model.repository.STBaseActionRepository;
 
-
 @Service
-public class STBaseActionService implements ISTBaseActionService{
+public class STBaseActionService implements ISTBaseActionService {
 
-	
 	@Autowired
 	private STBaseActionRepository repository;
 	@Autowired
 	private STActionParameterBundleRepository bundleRepository;
 	@Autowired
 	private STActionParametersRepository paramsRepository;
-	
+
 	@Override
 	public List<STBaseAction> getAllBaseActions() {
 		List<STBaseAction> list = (List<STBaseAction>) repository.findAll();
-		if(list.size()>0)
-		{
+		if (list.size() > 0) {
 			return list;
 		}
 		return null;
@@ -42,25 +39,28 @@ public class STBaseActionService implements ISTBaseActionService{
 		if (possibleCommand.isPresent()) {
 			STBaseAction previous = possibleCommand.get();
 			command.setId(previous.getId());
-		}else {
-			List<STActionParameterBundle> bundleList = new ArrayList<>();
-			STActionParameter param =  paramsRepository.findByName("speed");
-			STActionParameterBundle bundle = new STActionParameterBundle();
-			bundle.setParameter(param);
-			bundle = bundleRepository.save(bundle);
-			bundleList.add(bundle);
-			command.setParams(bundleList);
 		}
+
+		List<STActionParameterBundle> bundleList = new ArrayList<>();
+		STActionParameter param = paramsRepository.findByName("speed");
+		STActionParameterBundle bundle = new STActionParameterBundle();
+		bundle.setParameter(param);
+		bundle.setPosition(0);
+		bundle.setTranslatedName("Velocidad");
+		bundle = bundleRepository.save(bundle);
+		bundleList.add(bundle);
+		command.setParams(bundleList);
+		command.setTranslatedName(command.getName());
 		command.setCustom(true);
 		command.setUsesArgs(true);
+		command.setShouldAnswer(true);
 		return repository.save(command);
 	}
 
 	@Override
 	public List<STBaseAction> getAllCustomBaseActions() {
 		List<STBaseAction> list = (List<STBaseAction>) repository.findAllByCustom(true);
-		if(list.size()>0)
-		{
+		if (list.size() > 0) {
 			return list;
 		}
 		return null;
@@ -69,16 +69,15 @@ public class STBaseActionService implements ISTBaseActionService{
 	@Override
 	public List<STBaseAction> getAllFixedBaseActions() {
 		List<STBaseAction> list = (List<STBaseAction>) repository.findAllByCustom(false);
-		if(list.size()>0)
-		{
+		if (list.size() > 0) {
 			return list;
 		}
-		return null; 
+		return null;
 	}
 
 	@Override
 	public STBaseAction getBaseActionFromName(String name) {
-		System.out.println("BASEACTION: "+name);
+		System.out.println("BASEACTION: " + name);
 		STBaseAction action = repository.findByName(name).get();
 		return action;
 	}

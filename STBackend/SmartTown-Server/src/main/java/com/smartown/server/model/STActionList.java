@@ -26,7 +26,9 @@ public class STActionList {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name="list_actions", joinColumns=@JoinColumn(name="list_id"))
 	private List<STInstanceAction> actions;
-	
+	@ElementCollection(fetch = FetchType.EAGER)
+	private Set<String> conditions;
+		
 	public List<STInstanceAction> getActionList() {
 		return actions;
 	}
@@ -54,7 +56,12 @@ public class STActionList {
 	public void setActions(List<STInstanceAction> actions) {
 		this.actions = actions;
 	}
-		
+	public Set<String> getConditions() {
+		return conditions;
+	}
+	public void setConditions(Set<String> conditions) {
+		this.conditions = conditions;
+	}
 	@Override
 	public String toString() {
 		return "STActionList [name=" + name + ", actions=" + actions.size() + "]";

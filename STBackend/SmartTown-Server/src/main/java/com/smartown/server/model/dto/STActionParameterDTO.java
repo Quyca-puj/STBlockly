@@ -1,10 +1,11 @@
 package com.smartown.server.model.dto;
 
-import javax.persistence.Basic;
 
 public class STActionParameterDTO {
 	private String name;
 	private String type;
+	private String translatedName;
+	private int position;
 	public String getName() {
 		return name;
 	}
@@ -18,5 +19,17 @@ public class STActionParameterDTO {
 		this.type = type;
 	}
 
+	public String getTranslatedName() {
+		return translatedName;
+	}
+	public void setTranslatedName(String translatedName) {
+		this.translatedName = translatedName;
+	}
+	public int getPosition() {
+		return position;
+	}
+	public void setPosition(int position) {
+		this.position = position;
+	}
 
 }

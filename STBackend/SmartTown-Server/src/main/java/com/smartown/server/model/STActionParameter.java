@@ -15,6 +15,7 @@ public class STActionParameter {
 	private long id;
 	@Basic
 	private String name;
+
 	@Basic
 	private String type;
 	
@@ -36,6 +37,7 @@ public class STActionParameter {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
 	@Override
 	public String toString() {
 		return "STActionParameter [id=" + id + ", name=" + name + ", type=" + type + "]";

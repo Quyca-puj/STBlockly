@@ -48,18 +48,24 @@ public class STConfig {
 				baseAction.setName(aux[0]);
 				baseAction.setCustom(Boolean.parseBoolean(aux[1]));
 				baseAction.setUsesArgs(Boolean.parseBoolean(aux[2]));
-				
+				baseAction.setShouldAnswer(Boolean.parseBoolean(aux[6]));
+				baseAction.setTranslatedName(aux[5]);
 				Set<String> set = new HashSet<>(Arrays.asList(aux[3].trim().split("\\|")));
 				List<String> param = Arrays.asList(aux[4].trim().split("\\|"));
 				List<STActionParameterBundle> parameters = new ArrayList<>();
 				for (String parm : param) {
-					System.out.println(parm);
-					STActionParameter paramet = paramRepository.findByName(parm);
-					System.out.println(paramet);
-					STActionParameterBundle bundle = new STActionParameterBundle();
-					bundle.setParameter(paramet);
-					bundle = bundleRepository.save(bundle);
-					parameters.add(bundle);
+
+					if(!parm.trim().isBlank() && !parm.trim().isEmpty()) {
+						String [] auxParam =  parm.split(":");
+						STActionParameter paramet = paramRepository.findByName(auxParam[0]);
+						STActionParameterBundle bundle = new STActionParameterBundle();
+						bundle.setParameter(paramet);
+						bundle.setTranslatedName(auxParam[1]);
+						bundle.setPosition(Integer.parseInt(auxParam[2]));
+						bundle = bundleRepository.save(bundle);
+						parameters.add(bundle);
+					}
+
 				}
 				baseAction.setParams(parameters);
 				baseAction.setConditions(set);
@@ -70,7 +76,7 @@ public class STConfig {
 				String [] aux = string.split(":");
 				Emotion emotion = new Emotion();
 				emotion.setName(aux[1]);
-				emotion.setTraduction(aux[0]);
+				emotion.setTranslatedName(aux[0]);
 				emoRepository.save(emotion);
 			});
 			

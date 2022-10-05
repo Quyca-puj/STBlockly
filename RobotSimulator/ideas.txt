@@ -1,2 +1,10 @@
 aparecen los macros de la escena. macro por personaje y por condiciones, se selecciona. 
 se va armando el petri.
+
+
+1. saco lista de acciones paralelas
+    si es primera lista, los top son los top del bundle.
+    Si no es primera ni ultima, los bottom son los bottom del bundle.
+    En todos los casos:
+    Se genera una transicion de todas las acciones top
+    se conectan todas las bottom a la transicion siguiente.

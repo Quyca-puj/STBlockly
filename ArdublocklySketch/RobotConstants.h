@@ -1,10 +1,11 @@
 #define CALIBRATION_SPEED 40
 #define QUEUE_SIZE 10
-#define MAX_ARGS 4
+#define MAX_ARGS 10
 #define MAX_MSGS 4
 #define TASK_SEP "|"
 #define EMOTION_STR "emotions"
 #define EMOTION_SWITCH "s_emotions"
+#define EMOTION_SWITCH_ASYNC "s_emotions_async"
 #define EMOTION_OFF "off_emotions"
 #define VERSION "2.0"
 #define TYPE_MOVEMENT "MOVEMENT"

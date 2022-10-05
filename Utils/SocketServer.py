@@ -1,6 +1,6 @@
 import socket
 from threading import Thread
-HOST = "192.168.213.33"  # Standard loopback interface address (localhost)
+HOST = "192.168.186.33"  # Standard loopback interface address (localhost)
 PORT = 7897  # Port to listen on (non-privileged ports are > 1023)
 class SocketServer:
 

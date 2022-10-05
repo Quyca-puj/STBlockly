@@ -5,7 +5,7 @@ import java.util.Set;
 public class EmotionDTO {
 
 	private String name;
-	private String traduction;
+	private String translatedName;
 
 	public String getName() {
 		return name;
@@ -14,16 +14,13 @@ public class EmotionDTO {
 		this.name = name;
 	}
 	
-	public String getTraduction() {
-		return traduction;
+	public String getTranslatedName() {
+		return translatedName;
 	}
-	public void setTraduction(String traduction) {
-		this.traduction = traduction;
+	public void setTranslatedName(String translatedName) {
+		this.translatedName = translatedName;
 	}
-	public String toString() {
-		return "STCommanDTO [name=" + name + "]";
-	}
-	
+
 	
 
 }

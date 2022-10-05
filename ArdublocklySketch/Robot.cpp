@@ -17,6 +17,10 @@ Robot::Robot()
   motorInactive = true;
   isMvtExpropiative = true;
   isEmoExpropiative = true;
+  emotionalExpro = NULL;
+  mvtExpro = NULL;
+  customExpro = NULL;
+  basicExpro = NULL;
 }
 
 void Robot::connectClient()
@@ -64,6 +68,10 @@ bool Robot::isFeasible(Task *msg)
     toRet = isFeasibleMvt(msg);
     if (toRet)
     {
+      if (mvtExpro != NULL) {
+        delete(mvtExpro);
+        mvtExpro = NULL;
+      }
       runningMvt.addNewTask(msg);
     }
   }
@@ -72,6 +80,10 @@ bool Robot::isFeasible(Task *msg)
     toRet = isFeasibleEmotion(msg);
     if (toRet)
     {
+      if (emotionalExpro != NULL) {
+        delete(emotionalExpro);
+        emotionalExpro = NULL;
+      }
       runningEmotions.addNewTask(msg);
     }
   }
@@ -80,6 +92,10 @@ bool Robot::isFeasible(Task *msg)
     toRet = isFeasibleCustom(msg);
     if (toRet)
     {
+      if (customExpro != NULL) {
+        delete(customExpro);
+        customExpro = NULL;
+      }
       runningCustoms.addNewTask(msg);
     }
   }
@@ -138,7 +154,6 @@ void Robot::processMsg(String msg, bool checkStatus, WiFiClient client)
     {
       STprint("Task Feasible");
       aux = taskQueue.pop();
-      // taskQueue.pop(aux);
       unwrapTask(aux);
       STprint("Speed");
       STprint(speeds);
@@ -194,6 +209,21 @@ void Robot::unwrapTask(Task *task)
       if (task->time > 0)
       {
         emotionTimer = task->time;
+      }
+      if (task->period > 0)
+      {
+        emotionPeriod = task->period;
+      }
+    }
+    else if (strcmp(task->command, EMOTION_SWITCH_ASYNC) == 0)
+    {
+      if (strlen(task->emo1) > 1)
+      {
+        emotion = task->emo1;
+      }
+      if (strlen(task->emo2) > 1)
+      {
+        emoSwitch = task->emo2;
       }
       if (task->period > 0)
       {
@@ -304,13 +334,22 @@ void Robot::checkEmotionCommands(String msg, bool checkStatus, WiFiClient client
     {
       answerCommand(&runningEmotions, EMOTION_SWITCH, client);
     }
+  } else if (msg.equals(EMOTION_SWITCH_ASYNC) || (emotionalExpro != NULL && strcmp(emotionalExpro->command, EMOTION_SWITCH_ASYNC) == 0))
+  {
+    STprint("switchFacesAsync entered");
+    switchFacesAsync(emotion, emoSwitch, 1000 * emotionPeriod);
+    if (emotionalExpro == NULL ) {
+      emotionalExpro = new Task(EMOTION_SWITCH_ASYNC, -1);
+    }
+
   }
   else if (msg.equals(EMOTION_OFF))
   {
     STprint("emotions_off entered");
     readFaces(EMOTION_STOP);
-    runningEmotions.removeTask(EMOTION_STR);
+    runningEmotions.removeTask(EMOTION_OFF);
   }
+
 }
 
 void Robot::checkMotorCommands(String msg, bool checkStatus, WiFiClient client)
@@ -412,8 +451,8 @@ void Robot::robotBasicCommands(String msg, bool checkStatus, WiFiClient client)
     readFaces(EMOTION_STOP);
     isEmoExpropiative = false;
     screenInactive = true;
-    answerAllPending(client);
     runningBasics.removeTask(BASIC_STOP_ALL);
+    answerAllPending(client);
   }
   else if (msg.equals(BASIC_CONNECT))
   {
@@ -425,8 +464,10 @@ void Robot::robotBasicCommands(String msg, bool checkStatus, WiFiClient client)
   {
     STprint("stop_mvt entered");
     robotStopMovement();
+    STprint("removing task");
     runningBasics.removeTask(BASIC_STOP_MVT);
-    answerPendingByType(&runningBasics, client);
+    STprint("answerPendingByType task");
+    answerPendingByType(&runningMvt, client);
   } else  if (msg.equals(BASIC_SENSOR_FL))
   {
     ReadValues();
@@ -715,6 +756,8 @@ void Robot::processCommands(String command, bool checkStatus, WiFiClient client)
   STprint(screenInactive);
   STprint("motorInactive");
   STprint(motorInactive);
+  STprint("runningBasics.pendingTasks");
+  STprint(runningBasics.pendingTasks);
   STprint("runningMvt.pendingTasks");
   STprint(runningMvt.pendingTasks);
   STprint("runningEmotions.pendingTasks");
@@ -754,10 +797,20 @@ Task *Robot::msgToTask(String msg)
 {
   int tabs{0};
   currentArgs = 0;
+  STprint("Before");
+  for (int i = 0; i < MAX_ARGS; i++)
+  { // inicialziacion del arreglo de parametros
+    STprint(arguments[i]);
+  }
 
   for (int i = 0; i < MAX_ARGS; i++)
   { // inicialziacion del arreglo de parametros
     arguments[i] = "";
+  }
+  STprint("AfterClean");
+  for (int i = 0; i < MAX_ARGS; i++)
+  { // inicialziacion del arreglo de parametros
+    STprint(arguments[i]);
   }
   Task *task = new Task();
   for (char index : msg)
@@ -810,6 +863,11 @@ Task *Robot::msgToTask(String msg)
         arguments[1].toCharArray(task->emo2, BUFFER_SIZE);
         task->time = arguments[2].toInt();
         task->period = arguments[3].toInt();
+      } else if (command.equals(EMOTION_SWITCH_ASYNC))
+      {
+        arguments[0].toCharArray(task->emo1, BUFFER_SIZE);
+        arguments[1].toCharArray(task->emo2, BUFFER_SIZE);
+        task->period = arguments[2].toInt();
       }
       else if (command.equals(EMOTION_STR))
       {
@@ -842,6 +900,13 @@ Task *Robot::msgToTask(String msg)
     }
     command.toCharArray(task->command, BUFFER_SIZE);
     task->ack = arguments[currentArgs - 1].toInt();
+    STprint("AfterClean");
+    for (int i = 0; i < MAX_ARGS; i++)
+    { // inicialziacion del arreglo de parametros
+      STprint(arguments[i]);
+    }
+    STprint("DETECTED ACK");
+    STprint(arguments[currentArgs - 1]);
   }
   command = "";
   return task;
@@ -859,7 +924,7 @@ bool Robot::isMvtTimedAction(String command)
 
 bool Robot::isEmoAction(String command)
 {
-  return command.equals(EMOTION_STR) || command.equals(EMOTION_SWITCH) || command.equals(EMOTION_OFF);
+  return command.equals(EMOTION_STR) || command.equals(EMOTION_SWITCH) || command.equals(EMOTION_SWITCH_ASYNC) || command.equals(EMOTION_OFF);
 }
 
 bool Robot::isBasicAction(String command)
@@ -920,6 +985,45 @@ bool Robot::switchFaces(String emo1, String emo2, long time, long period)
   }
   return toRet;
 }
+
+
+void Robot::switchFacesAsync(String emo1, String emo2, long period)
+{
+  isEmoExpropiative = true;
+  screenInactive = false;
+  STprint("switchFacesAsync in");
+  boolean periodDone = robotDelay(period, &emoAuxTimeElapsed);
+  if (periodDone)
+  {
+    STprint("Changing Face");
+
+    if (activeEmo.equals(emo1))
+    {
+      emoAuxTimeElapsed = 0;
+      activeEmo = emo2;
+      readFaces(emo2);
+    }
+    else
+    {
+      emoAuxTimeElapsed = 0;
+      activeEmo = emo1;
+      readFaces(emo1);
+    }
+  }
+  else
+  {
+    if (activeEmo.isEmpty())
+    {
+      STprint("Start switch Face");
+
+      activeEmo = emo1;
+      readFaces(emo1);
+    }
+  }
+  STprint(activeEmo);
+}
+
+
 bool Robot::robotDelay(long time, long *timeElapsed)
 {
   return STDelay(time, timeElapsed);
@@ -928,21 +1032,38 @@ bool Robot::robotDelay(long time, long *timeElapsed)
 void Robot::answerAllPending(WiFiClient client)
 {
   ActiveTask *aux;
+
+  STprint("answering AllPending");
+
+  STprint("runningBasics.pendingTasks");
+
+  STprint(runningBasics.pendingTasks);
   for (int i = 0; i < runningBasics.pendingTasks; i++)
   {
     aux = runningBasics.runningTasks[i];
     answerCommand(&runningBasics, String(aux->command), client);
   }
+
+  STprint("runningMvt.pendingTasks");
+
+  STprint(runningMvt.pendingTasks);
   for (int i = 0; i < runningMvt.pendingTasks; i++)
   {
     aux = runningMvt.runningTasks[i];
     answerCommand(&runningMvt, String(aux->command), client);
   }
+
+  STprint("runningEmotions.pendingTasks");
+
+  STprint(runningEmotions.pendingTasks);
   for (int i = 0; i < runningEmotions.pendingTasks; i++)
   {
     aux = runningEmotions.runningTasks[i];
     answerCommand(&runningEmotions, String(aux->command), client);
   }
+
+  STprint("runningCustoms.pendingTasks");
+  STprint(runningCustoms.pendingTasks);
   for (int i = 0; i < runningCustoms.pendingTasks; i++)
   {
     aux = runningCustoms.runningTasks[i];

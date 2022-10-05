@@ -15,7 +15,7 @@ public class Emotion {
 	private String name;
 	
 	@Basic
-	private String traduction;
+	private String translatedName;
 	public long getId() {
 		return id;
 	}
@@ -28,11 +28,12 @@ public class Emotion {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getTraduction() {
-		return traduction;
+	public String getTranslatedName() {
+		return translatedName;
 	}
-	public void setTraduction(String traduction) {
-		this.traduction = traduction;
+	public void setTranslatedName(String translatedName) {
+		this.translatedName = translatedName;
 	}
+
 	
 }

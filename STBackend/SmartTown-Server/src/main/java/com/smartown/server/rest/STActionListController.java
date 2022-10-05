@@ -1,7 +1,9 @@
 package com.smartown.server.rest;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +44,10 @@ public class STActionListController {
 			aLists.forEach(command->{
 				
 				STActionListDTO aux = mapper.map(command, STActionListDTO.class);
+				
 				aux.setActions(new ArrayList<>());
-				System.out.println("Size: "+aux.getActions().size());
 				command.getActionList().forEach(action->{
-					System.out.println("Action: "+action.toString());
 					ActionDTO act = instanceService.createActionfromInstance(action);
-					System.out.println("ActionDTO: "+act.toString());
 					aux.getActions().add(act);
 				});
 				retList.add(aux);
@@ -64,11 +64,14 @@ public class STActionListController {
 	STActionListDTO createNewActionList(@RequestBody STActionListDTO aList){
 		STActionList savedAList =  aListService.createFromDTO(aList);
 		final STActionList newAList= aListService.createActionList(savedAList);
+		final Set<String> listConditions = new HashSet<>();
 		aList.getActions().forEach(action->{
 			STBaseAction baseAction = baseService.getBaseActionFromName(action.getAction());
+			listConditions.addAll(baseAction.getConditions());
 			STInstanceAction newInstance = instanceService.createInstanceAction(action, baseAction);			
 			newAList.getActionList().add(newInstance);
 		});
+		newAList.setConditions(listConditions);
 		STActionList retList = aListService.updateActionList(newAList);
 		
 		ModelMapper mapper=new ModelMapper();

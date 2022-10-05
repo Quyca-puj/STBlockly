@@ -561,7 +561,11 @@ Ardublockly.TOOLBOX_MID_XML =
 '  <field name="TIME">1</field>'+
 '  <field name="SPEED">1</field>'+
 '</block>'+
-'<block type="mvt_stop_middle">'+
+'<block type="mvt_stop_mvt_middle">'+
+'</block>' +
+'<block type="mvt_stop_all_middle">'+
+'</block>' +
+'<block type="change_emo_middle">'+
 '  <field name="Emotion">very_happy</field>'+
 '</block>' +
 '<block type="new_smarttown_action_list"></block>' +

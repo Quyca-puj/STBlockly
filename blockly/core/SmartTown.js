@@ -103,7 +103,9 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
       var name = blocks[i].getSTALDef();
       let stmts = Blockly.SmartMiddle.statementToCode(blocks[i], 'COMMANDS');
       let acts = [], aux = stmts.split("\n ");
+      console.log(aux);
       for(let a in aux){
+      console.log(aux[a]);
         acts.push(JSON.parse(aux[a]));
       }
       let actionList ={

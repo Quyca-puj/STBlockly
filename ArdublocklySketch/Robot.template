@@ -73,6 +73,7 @@ private:
   void answerPendingByType(TaskList *list, WiFiClient client);
   void answerCommandWithInfo(TaskList *list, String task, WiFiClient client, String answer);
   void processMultipleMsgs(String *msg);
+  void switchFacesAsync(String emo1, String emo2, long period);
 public:
   String ip;
   String alias;

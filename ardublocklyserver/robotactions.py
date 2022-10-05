@@ -19,7 +19,6 @@ def send_code_to_robot(robot_action, socket_mgmt):
     try:
         ip = robot_action['ip']
         if "emomsg" in robot_action:
-            print(robot_action['emomsg'], "emotionText")
             socket_mgmt.send_msg(ip,robot_action['emomsg'])
         if "msg" in robot_action:
             success = socket_mgmt.send_msg(ip,robot_action['msg'],robot_action['ack'])
@@ -44,13 +43,13 @@ def send_calibration_to_all(characs, socket_mgmt):
     std_out, err_out = '', ''
     exit_code = 0
     thread_list = []
+
     try:
-        for char, char_info in characs:
-            msg_info = {"ip":char_info['ip'], "ack":0, "msg":char_info['alias']+" calibration"}
+        for char, char_info in characs.items():
+            msg_info = {"ip":char_info['charac_ip'], "ack":0, "msg":char_info['charac_alias']+" calibration 0"}
             t = threading.Thread(target=send_code_to_robot, args=(msg_info,socket_mgmt))
             t.start()
             thread_list.append(t)
-        
         for thread in thread_list:
             thread.join()
     except Exception:

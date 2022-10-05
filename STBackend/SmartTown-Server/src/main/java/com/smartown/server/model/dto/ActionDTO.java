@@ -8,7 +8,7 @@ public class ActionDTO {
 	private String emotion;
 	private Float time;
 	private Float speed;
-	
+	private boolean shouldAnswer;
 	
 
 	public String getAction() {
@@ -35,6 +35,14 @@ public class ActionDTO {
 	public void setSpeed(Float speed) {
 		this.speed = speed;
 	}
+	
+	
+	public boolean isShouldAnswer() {
+		return shouldAnswer;
+	}
+	public void setShouldAnswer(boolean shouldAnswer) {
+		this.shouldAnswer = shouldAnswer;
+	}
 	@Override
 	public String toString() {
 		return "ActionDTO [action=" + action + ", emotion=" + emotion + ", time=" + time + ", speed=" + speed + "]";
@@ -44,7 +52,7 @@ public class ActionDTO {
 		if(speed == null && time == null && emotion != null) {
 			return ActionDTOType.EMOTIONAL;
 		}else {
-			if(!(speed == null && time == null)) {
+			if(!(speed == null || time == null)) {
 				return ActionDTOType.TIMED;
 			}else {
 				return ActionDTOType.COMMAND;

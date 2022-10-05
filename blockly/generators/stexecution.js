@@ -419,6 +419,7 @@ Blockly.STExecution.blockToSTActions = function (command, alias, id) {
   if (stmt.list) {
     retAction.type = SmartTownUtils.ACTIONLIST_COMMAND;
     let commands = SmartTown.getActionsFromList(stmt.list);
+    commands = commands.actions;
     let commandList = [];
     for (let i in commands) {
       commandList.push(this.blockToSTActions(commands[i], alias, id));

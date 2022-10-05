@@ -1,5 +1,6 @@
 package com.smartown.server.model;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +16,11 @@ public class STActionParameterBundle {
 	private long id;
 	@ManyToOne(fetch=FetchType.EAGER,cascade = CascadeType.REMOVE)
 	private STActionParameter parameter;
+	@Basic
+	private String translatedName;
+	@Basic
+	private int position;
+	
 	public long getId() {
 		return id;
 	}
@@ -26,6 +32,21 @@ public class STActionParameterBundle {
 	}
 	public void setParameter(STActionParameter parameter) {
 		this.parameter = parameter;
+	}
+	
+	public String getTranslatedName() {
+		return translatedName;
+	}
+	public void setTranslatedName(String translatedName) {
+		this.translatedName = translatedName;
+	}
+	
+	
+	public int getPosition() {
+		return position;
+	}
+	public void setPosition(int position) {
+		this.position = position;
 	}
 	@Override
 	public String toString() {

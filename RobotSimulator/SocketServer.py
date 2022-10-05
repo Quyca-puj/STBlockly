@@ -2,7 +2,7 @@ import random
 import socket
 from threading import Thread
 import time
-HOST = "192.168.1.7"  # Standard loopback interface address (localhost)
+HOST = "192.168.1.12"  # Standard loopback interface address (localhost)
 class SocketServer:
 
     def __init__(self, port) -> None:
@@ -22,7 +22,8 @@ class SocketServer:
             with conn:
                 print(self.port,f"Connected by {addr}")
                 while True:
-                    data = conn.recv(30).decode()
+                    data = conn.recv(125).decode()
+                    print(self.port,"data ", data)
                     params = data.split(" ")
                     print(self.port,"params ", params)
                     t = random.randint(1,5)

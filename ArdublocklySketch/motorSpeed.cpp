@@ -1,8 +1,8 @@
 #include "motorSpeed.h"
 
 //zero value motors
-const int SPEED_DEGREE_CERO_LM=89;
-const int SPEED_DEGREE_CERO_RM=90;
+const int SPEED_DEGREE_CERO_LM=90;
+const int SPEED_DEGREE_CERO_RM=85;
 /* Define again Servo*/
 Servo rightServo;
 Servo leftServo;
@@ -21,6 +21,7 @@ void setSpeedsMotor(int leftSp,int rigthSp){
       int rigthS = 0;
     
       // Check if speed more than 0.
+      
       if (leftSp >= 0)
       {
         // Scale it to use it with the servo (value between 0 and 90 -> 0 to 90).
@@ -44,7 +45,6 @@ void setSpeedsMotor(int leftSp,int rigthSp){
         rigthS = SPEED_DEGREE_CERO_RM - map( (rigthSp * -1) , 0, 255, 0, 90);
       }
     
-      // Set the results speeds.
       leftServo.write(leftS);
       rightServo.write(rigthS);
 }

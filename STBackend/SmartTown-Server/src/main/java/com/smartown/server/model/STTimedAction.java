@@ -12,8 +12,6 @@ import com.smartown.server.model.dto.ActionDTO;
 @DiscriminatorValue("TimedAction")
 public class STTimedAction extends STInstanceAction{
 	@Basic
-	private float speed;
-	@Basic
 	private float time;
 
 	public STTimedAction() {
@@ -21,8 +19,8 @@ public class STTimedAction extends STInstanceAction{
 	}
 	
 	public STTimedAction(ActionDTO actionDto, STBaseAction baseAction) {
-		super(baseAction);
-		speed=actionDto.getSpeed();
+		super(actionDto,baseAction);
+		System.out.println(actionDto);
 		time=actionDto.getTime();
 	}
 	public float getSpeed() {

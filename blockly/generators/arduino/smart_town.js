@@ -182,7 +182,7 @@ Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_COMMAND] = function (block) {
   let restrictions = [];
   let conditions = [];
   let blockList = Blockly.Arduino.statementToList(block, 'COMMANDS');
-  let childBlocks = block.getChildren();
+  let childBlocks = block.getDescendants();
   for (let i in childBlocks) {
     
     if (childBlocks[i].hasConditions) {

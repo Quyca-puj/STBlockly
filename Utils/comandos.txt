@@ -1,5 +1,5 @@
 comandos
-morado connect 192.168.213.33 7897 0
+morado connect 192.168.186.33 7897 0
 morado calibration 1
 morado t_forward 50 10 2
 morado emotions happy -1
