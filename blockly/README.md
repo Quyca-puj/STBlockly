@@ -59,3 +59,13 @@ blocks together to build programs.  All code is free and open source.
 **The project page is https://developers.google.com/blockly/**
 
 ![](https://developers.google.com/blockly/sample.png)
+
+
+## Project Requirements
+* Arduino IDE
+* Python 3.10.7
+* requirements.txt instalation.
+* Node
+* SpringBoot
+* Java 8
+* Java in path

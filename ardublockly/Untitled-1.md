@@ -49,6 +49,8 @@ Pasar Lib actualizada.OK
 Arreglar secuencia de asincronas. OK
 Solo mandar info de personajes activos. OK
 
+Bug con comandos emocionales.
+
 Nodos diferentes sincorno y asincrono. Si se logra esta se puede cambiar a la anterior.
 ver electron
 
