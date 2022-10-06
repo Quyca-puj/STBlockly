@@ -12,10 +12,7 @@ class Robot
 {
 
   int speeds;
-<<<<<<< HEAD
   int receivedMsg;
-=======
->>>>>>> cc9f90ab6a5132db73f3e25cef8a4c73bd0210ae
   int currentArgs;
   bool movementCurrentState;
   String command;
@@ -26,11 +23,6 @@ class Robot
   String arguments[MAX_ARGS];
   String emotion;
   bool shouldAnswer;
-<<<<<<< HEAD
-=======
-  bool isTimedAction;
-  int macroStep;
->>>>>>> cc9f90ab6a5132db73f3e25cef8a4c73bd0210ae
   String emoSwitch;
   bool motorInactive;
   bool screenInactive;
@@ -43,15 +35,8 @@ class Robot
   WiFiClient returnSock;
   int returnPort;
   String returnIP;
-<<<<<<< HEAD
   TaskQueue taskQueue;
 private:
-=======
-  // cppQueue taskQueue = cppQueue(sizeof(Task), QUEUE_SIZE, FIFO, false);
-  TaskQueue taskQueue;
-private:
-  bool getMotorsStatus();
->>>>>>> cc9f90ab6a5132db73f3e25cef8a4c73bd0210ae
   bool robotForward();
   bool robotTurn(int dir);
   bool robotTimedMove(int dir);

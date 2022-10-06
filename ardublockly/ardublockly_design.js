@@ -138,7 +138,6 @@ Ardublockly.bindDesignEventListeners = function () {
     let buttonDelNode = document.getElementById('button_ide_del_node');
     let buttonLeft = document.getElementById('button_ide_left');
     let buttonMiddle = document.getElementById('button_ide_middle');
-    let iconMiddle = document.getElementById('button_ide_middle_icon');
     let buttonLarge = document.getElementById('button_ide_large');
     let code_display = document.getElementById('code_display');
     let content_blocks = document.getElementById('content_blocks');

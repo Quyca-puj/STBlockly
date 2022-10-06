@@ -145,6 +145,7 @@ STServer.sendCommand = function(json) {
   STServer.postJson('http://127.0.0.1:8080/command/new', json);
 };
 
+
 STServer.sendActionList = async function(json) {
   return await STServer.postJson('http://127.0.0.1:8080/actionList/new', json);
 };

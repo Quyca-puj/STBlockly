@@ -214,36 +214,3 @@ if (*timeElapsed == 0)
   }
   return millis() - *timeElapsed >= time;
 }
-
-bool timedTurn(int direction, int speed, int time,  long *timeElapsed) {
-  STprint("timeElapsed");
-  STprint(*timeElapsed);
-  STprint("time");
-  STprint(time);
-  STprint("speed");
-  STprint(speed);
-  if (*timeElapsed == 0) {
-    *timeElapsed = millis();
-    setSpeedsMotor(direction * speed, -direction * speed);
-  }
-  boolean toRet = millis() - *timeElapsed >= time;
-  if (toRet) {
-    *timeElapsed = 0;
-    setSpeedsMotor(0, 0);
-  }
-  return toRet;
-}
-
-
-void foreverForward(int speed){
-  setSpeedsMotor(speed, speed);
-}
-
-
-bool STDelay(long time, long *timeElapsed){
-if (*timeElapsed == 0)
-  {
-    *timeElapsed = millis();
-  }
-  return millis() - *timeElapsed >= time;
-}

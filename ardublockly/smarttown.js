@@ -25,11 +25,13 @@ SmartTown.getActiveCharacters = () => {
   });
 
   let charSet = new Set([...chars]);
+  console.log(charSet);
 
   charSet.forEach(char =>{
     activeCharDir[char]  = SmartTown.characters[char];
   })
 
+  console.log(activeCharDir);
   
   return activeCharDir;
 };

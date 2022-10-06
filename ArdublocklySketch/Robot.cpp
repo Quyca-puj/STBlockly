@@ -350,26 +350,6 @@ void Robot::checkEmotionCommands(String msg, bool checkStatus, WiFiClient client
     runningEmotions.removeTask(EMOTION_OFF);
   }
 
-  if ((msg.equals(MVT_ROLL)))
-  {
-    forwardActive = true;
-    isTimedAction = false;
-    isMvtExpropiative = true;
-    STprint("forever_forward entered");
-    robotForeverMove(1);
-    runningMvt.removeTask(MVT_ROLL);
-  }
-  else if ((msg.equals(MVT_REVERSEROLL)))
-  {
-    reverseActive = true;
-    isTimedAction = false;
-    isMvtExpropiative = true;
-    STprint("forever_reverse entered");
-    robotForeverMove(-1);
-    runningMvt.removeTask(MVT_REVERSEROLL);
-  }
-
-  motorInactive = getMotorsStatus();
 }
 
 void Robot::checkMotorCommands(String msg, bool checkStatus, WiFiClient client)
@@ -1006,12 +986,6 @@ bool Robot::switchFaces(String emo1, String emo2, long time, long period)
   return toRet;
 }
 
-void Robot::answerPendingByType(TaskList *list, WiFiClient client)
-{
-  ActiveTask *aux;
-  for (int i = 0; i < list->pendingTasks; i++)
-  {
-    aux = list->runningTasks[i];
 
 void Robot::switchFacesAsync(String emo1, String emo2, long period)
 {
