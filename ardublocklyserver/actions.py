@@ -148,6 +148,9 @@ def load_arduino_cli(sketch_path):
             std_out, err_out = process.communicate()
             std_out = six.u(std_out)
             err_out = six.u(err_out)
+            std_out = str(std_out, 'UTF-8')
+            err_out = str(err_out, 'UTF-8')
+
             exit_code = process.returncode
             print('Arduino output:\n%s' % std_out)
             print('Arduino Error output:\n%s' % err_out)

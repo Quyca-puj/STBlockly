@@ -61,7 +61,6 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].getCommandDef) {
       var tuple = blocks[i].getCommandDef();
-      console.log(tuple);
       if (tuple) {
           STCommandsNoReturn.push("void "+tuple+"(WiFiClient client);");
           STCommandsNoReturn.push("int "+tuple+"Step;");
@@ -82,7 +81,6 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
     variables.push(Blockly.Arduino.variables_[name]);
   }
   STCommandsNoReturn.push(...variables);
-  console.log(STCommandsNoReturn);
   return STCommandsNoReturn;
 };
 
@@ -103,9 +101,7 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
       var name = blocks[i].getSTALDef();
       let stmts = Blockly.SmartMiddle.statementToCode(blocks[i], 'COMMANDS');
       let acts = [], aux = stmts.split("\n ");
-      console.log(aux);
       for(let a in aux){
-      console.log(aux[a]);
         acts.push(JSON.parse(aux[a]));
       }
       let actionList ={

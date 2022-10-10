@@ -9,7 +9,7 @@ public class ActionDTO {
 	private Float time;
 	private Float speed;
 	private boolean shouldAnswer;
-	
+	private boolean emotionOriented;
 
 	public String getAction() {
 		return action;

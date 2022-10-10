@@ -59,7 +59,7 @@ Ardublockly.bindDesignEventListeners = function () {
     if (Ardublockly.activeNet) {
       Ardublockly.stopNetExecution();
     }
-    if(SmartTown.GUIsocket){
+    if (SmartTown.GUIsocket) {
       SmartTown.GUIsocket.close();
       SmartTown.GUIsocket = null;
     }
@@ -77,8 +77,6 @@ Ardublockly.bindDesignEventListeners = function () {
   $("#action_options").on("change", function () {
     var actionValue = document.getElementById('action_options');
 
-    console.log('actionValue');
-    console.log(actionValue.value);
     switch (actionValue.value) {
       case "actions":
         SmartTown.resetAndFillActionDropDown(SmartTown.actions);
@@ -102,26 +100,33 @@ Ardublockly.bindDesignEventListeners = function () {
         newParams[param.id] = param.value;
       });
 
-      console.log(nodeAtrr);
       if (!nodeAtrr['charac'] || !nodeAtrr['action'] || nodeAtrr['charac'].charac_name !== SmartTown.characters[select_charac.value].charac_name || nodeAtrr['action'].name !== SmartTown.activeActionDropdown[select_acttype.value].name) {
         nodeAtrr['charac'] = select_charac.selectedIndex >= 0 ? SmartTown.characters[select_charac.value] : nodeAtrr['charac'] ? nodeAtrr['charac'] : undefined;
         if (SmartTown.activeActionDropdown) {
           nodeAtrr['action'] = select_acttype.selectedIndex >= 0 ? SmartTown.activeActionDropdown[select_acttype.value] : nodeAtrr['action'] ? nodeAtrr['action'] : undefined;
-          //           if(nodeAtrr['action'] ==""){
-          // //TODOL
-          //           }else{
 
-          //           }
         }
+
         SmartTown.deleteAllOutEdges(SmartTown.doubleClickedNode);
       }
 
+      
       nodeAtrr['params'] = newParams;
       nodeAtrr['color'] = nodeAtrr['charac'] ? nodeAtrr['charac'].charac_color : "";
       nodeAtrr['defaultColor'] = nodeAtrr['charac'] ? nodeAtrr['charac'].charac_color : "";
       let char_text = select_charac.selectedIndex >= 0 ? select_charac.options[select_charac.selectedIndex].outerText : nodeAtrr['charac'] ? nodeAtrr['charac'].name : "";
       let act_text = select_acttype.selectedIndex >= 0 ? select_acttype.options[select_acttype.selectedIndex].outerText : nodeAtrr['action'] ? nodeAtrr['action'].translatedName : "";
       nodeAtrr['label'] = char_text + "-" + act_text;
+      if (nodeAtrr['action'] && nodeAtrr['action']["emotionOriented"] && nodeAtrr["params"] && nodeAtrr["params"]["Emocion"]) {
+        let speed = SmartTown.getSpeedFromEmotion(nodeAtrr["params"]["Emocion"]);
+        nodeAtrr['related'] = [{msg:"emotions " + nodeAtrr["params"]["Emocion"], shouldAnswer:false}, {msg:nodeAtrr["action"]["name"] + " " + speed, shouldAnswer:true}];
+      } else {
+        if (nodeAtrr['related']) {
+          delete nodeAtrr['related'];
+        }
+      }
+      console.log(nodeAtrr)
+
       SmartTown.graph.replaceNodeAttributes(SmartTown.doubleClickedNode, nodeAtrr);
     }
 
@@ -278,7 +283,6 @@ Ardublockly.changeActType = (actParams) => {
   var actType = document.getElementById('act_type');
   Ardublockly.clearActType();
 
-  console.log(actType.value);
 
   let selectedAction = null;
   if (SmartTown.activeActionDropdown) {
@@ -291,7 +295,10 @@ Ardublockly.changeActType = (actParams) => {
       switch (param.type) {
         case "Emotions":
           $newOpt = $('<select class="browser-default param_child collectable" name="' + param.translatedName + '" id="' + param.translatedName + '"></select>');
+          let $emptyOpt = $("<option>").attr("value", "").text("");
+          $newOpt.append($emptyOpt);
           SmartTown.emotions.forEach(emotion => {
+            
             var val = actParams && actParams[param] ? actParams[param] : "";
             let $newOption;
             if (val === emotion.name) {

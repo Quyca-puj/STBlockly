@@ -385,8 +385,6 @@ Blockly.STExecution.blockToSTActions = function (command, alias, id) {
   let msg = [];
   let emoMsg = [];
   retAction.id = id;
-  console.log("processing");
-  console.log(command);
   if (stmt.action) {
     retAction.type = SmartTownUtils.BASE_COMMAND;
     msg.push(alias);
@@ -436,7 +434,6 @@ Blockly.STExecution.blockToSTActions = function (command, alias, id) {
     }
     retAction.actions = commandList;
   }
-  console.log(retAction);
 
   return retAction;
 };
@@ -485,7 +482,6 @@ Blockly.STExecution.blockToOutput = function (block, alias) {
 //esta cambia los params necesarios.
 Blockly.STExecution.setEmotionalParams = function (actions, emotion) {
   let retStr = [];
-  console.log()
   let intensity = Blockly.STExecution.getEmoConfig(emotion);
   for (let i in actions) {
     let act = Blockly.STExecution.getActConfig(actions[i]);

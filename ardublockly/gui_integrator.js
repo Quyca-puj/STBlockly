@@ -10,9 +10,7 @@ var SmartTown = SmartTown || {};
 SmartTown.GUIsocket = new WebSocket("ws://127.0.0.1:7002");
 
 SmartTown.GUIsocket.onmessage = function (event) {
-    console.log(event.data);
     let guiEvent = JSON.parse(event.data);
-    console.log(`[message] Data received from server: ${event.data}`);
     if(guiEvent.event){
         SmartTown.resetNodeStatus();
         Ardublockly.largeIdeButtonSpinner(false,Ardublockly.inExec);

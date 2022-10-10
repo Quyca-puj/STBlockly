@@ -54,6 +54,7 @@ public class STBaseActionService implements ISTBaseActionService {
 		command.setCustom(true);
 		command.setUsesArgs(true);
 		command.setShouldAnswer(true);
+		command.setEmotionOriented(false);
 		return repository.save(command);
 	}
 

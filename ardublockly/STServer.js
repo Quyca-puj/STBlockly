@@ -129,13 +129,16 @@ STServer.requestEmotions = async function() {
   return await STServer.getJson('http://127.0.0.1:8080/emotions/all');
 };
 
+STServer.requestEmotionConf = async function() {
+  return await STServer.getJson('http://127.0.0.1:8080/emotions/emoConfig/default');
+};
+
 
 STServer.sendCommands = function(workspace) {
   let STCommandList = Blockly.SmartTown.allSTCommands(workspace)[0];
   for (let i = 0; i < STCommandList.length; i++) {
     let comName = STCommandList[i][0];
     let jsonObj = {id:-1, name:comName, conditions:Blockly.Arduino.STFunctionConditions_[comName]};
-    console.log(jsonObj);
     STServer.sendCommand(jsonObj);
   }
 

@@ -10,6 +10,7 @@ public class STBaseActionDTO {
 	private Set<String> conditions;
 	private List<STActionParameterDTO> parameters;
 	private boolean shouldAnswer;
+	private boolean emotionOriented;
 	
 	public String getName() {
 		return name;
@@ -45,6 +46,12 @@ public class STBaseActionDTO {
 	}
 	public void setShouldAnswer(boolean shouldAnswer) {
 		this.shouldAnswer = shouldAnswer;
+	}
+	public boolean isEmotionOriented() {
+		return emotionOriented;
+	}
+	public void setEmotionOriented(boolean emotionOriented) {
+		this.emotionOriented = emotionOriented;
 	}
 	
 	

@@ -30,6 +30,8 @@ public class STBaseAction {
 	@Basic
 	private boolean shouldAnswer;
 	@Basic
+	private boolean emotionOriented;
+	@Basic
 	private String translatedName;
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<String> conditions;
@@ -108,4 +110,14 @@ public class STBaseAction {
 		this.shouldAnswer = shouldAnswer;
 	}
 
+	public boolean isEmotionOriented() {
+		return emotionOriented;
+	}
+
+	public void setEmotionOriented(boolean emotionOriented) {
+		this.emotionOriented = emotionOriented;
+	}
+
+	
+	
 }

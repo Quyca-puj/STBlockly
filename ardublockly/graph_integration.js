@@ -8,7 +8,7 @@
 'use strict';
 
 var SmartTown = SmartTown || {};
-SmartTown.statusColors = {"EXECUTING":"#008000","DONE":"#000000"};
+SmartTown.statusColors = { "EXECUTING": "#008000", "DONE": "#000000" };
 SmartTown.characters = { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.94.244", charac_color: "#ab00aa" }, "azul": { charac_name: "Pedrito", charac_alias: "azul", charac_ip: "192.168.94.167", charac_color: "#1E90FF" }, "amarillo": { charac_name: "Fulanito", charac_alias: "amarillo", charac_ip: "192.168.94.143", charac_color: "#e5e619" }, "rojo": { charac_name: "Pepito", charac_alias: "rojo", charac_ip: "192.168.94.193", charac_color: "#e02929" } };
 SmartTown.actions = {};
 SmartTown.selectNodeForEdge = null;
@@ -40,14 +40,12 @@ SmartTown.startSigma = function (graph) {
     SmartTown.modalCharacOnSubmit();
   });
   if (graph) {
-    console.log("in new graph");
     SmartTown.graph = graph;
   } else {
     SmartTown.graph = new graphology.Graph({ allowSelfLoops: false, type: 'directed' });
 
   }
   if (SmartTown.sigmaRenderer) {
-    console.log("in new graph 2");
     SmartTown.sigmaRenderer.graph = SmartTown.graph;
     SmartTown.sigmaRenderer.refresh();
   } else {
@@ -87,26 +85,21 @@ SmartTown.startSigma = function (graph) {
       SmartTown.graph.setNodeAttribute(SmartTown.doubleClickedNode, "highlighted", true);
       node_dialog.style.display = 'block';
       let nodeAtrr = SmartTown.graph.getNodeAttributes(SmartTown.doubleClickedNode);
-      console.log(nodeAtrr);
       select_charac.value = nodeAtrr['charac'] ? nodeAtrr['charac'].charac_alias : "empty";
       $('#charac').material_select();
       if (nodeAtrr['action']) {
         if (nodeAtrr['action'].actions) {
-          console.log('actionlists');
           action_options.value = 'actionlists';
         } else {
-          console.log('actions');
           action_options.value = 'actions';
         }
         $('#action_options').trigger('change');
         select_acttype.value = nodeAtrr['action'] ? nodeAtrr['action'].name : "empty";
-        console.log(select_acttype.value);
 
         const params = nodeAtrr['params'];
         Ardublockly.changeActType(params);
         if (params) {
           for (const [key, value] of Object.entries(params)) {
-            console.log(key)
             const aux_field = document.getElementById(key);
             aux_field.value = value;
           }
@@ -203,7 +196,6 @@ SmartTown.startSigma = function (graph) {
 SmartTown.resetNodeForm = () => {
   SmartTown.isFormUsed = false;
   $('#action_options').val("empty");
-  console.log('Resetting');
   Ardublockly.clearActType();
 }
 
@@ -325,10 +317,6 @@ SmartTown.addEdge = (origin, destination) => {
 
 SmartTown.compareActionResources = (origin, orCharac, otherOrigin, orEdgeCharac) => {
   let shouldAdd = false;
-  console.log(origin);
-  console.log(otherOrigin);
-  console.log(orCharac);
-  console.log(orEdgeCharac);
   if (orCharac !== undefined && orEdgeCharac !== undefined) {
     shouldAdd = (orCharac.charac_alias !== orEdgeCharac.charac_alias);
     if (!shouldAdd) {
@@ -406,11 +394,12 @@ SmartTown.resetAndFillActionDropDown = (actionsToShow) => {
   while (actSelect.firstChild) {
     actSelect.removeChild(actSelect.lastChild);
   }
+  let $emptyOpt = $("<option>").attr("value", "").text("");
+  $("#act_type").append($emptyOpt);
   for (const [key, value] of Object.entries(actionsToShow)) {
     var $newOpt = $("<option>").attr("value", key).text(value.translatedName);
     $("#act_type").append($newOpt);
   }
-
   // $("#act_type").trigger('contentChanged');
 };
 

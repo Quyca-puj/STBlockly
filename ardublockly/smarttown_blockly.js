@@ -11,7 +11,7 @@ var SmartTown = SmartTown || {};
 SmartTown.emotions = {};
 SmartTown.CommandList = [];
 SmartTown.emotionsUtil = [];
-
+SmartTown.emoConf = {};
 SmartTown.generateRobotSketch = function (root) {
   return Blockly.SmartTown.generateCommandRobotSketch(root);
 };
@@ -28,12 +28,27 @@ SmartTown.setALList = function (list) {
 
 SmartTown.setEmotions = function (list) {
   SmartTown.emotions = list;
-  SmartTown.emotions.forEach(emo=>{
+  SmartTown.emotions.forEach(emo => {
     SmartTown.emotionsUtil.push([emo.translatedName, emo.name]);
   });
 };
 
+SmartTown.setEmotionConf = function (list) {
+  let emoAux = list["config"];
+  emoAux.forEach(emo => {
+    SmartTown.emoConf[emo["emotion"]["name"]] = emo;
+  });
+};
 
+
+SmartTown.getSpeedFromEmotion = (emotion) => {
+  let intensity = SmartTown.emoConf[emotion]["intensity"];
+  let min = parseFloat(10);
+  let max = parseFloat(100);
+  let aux = ((intensity + 1) / 2);
+  let mid = max - min;
+  return (aux * mid) + min;
+}
 SmartTown.convertToSendable = function (alList) {
   SmartTown.ALDict = {};
   for (let i in alList) {
@@ -42,13 +57,13 @@ SmartTown.convertToSendable = function (alList) {
     for (let j in actionsAr) {
       let act = actionsAr[j];
       let action = { action: act.action };
-      if (act.speed !== null && act.speed >0) {
-        action.params = ""+act.speed;
+      if (act.speed !== null && act.speed > 0) {
+        action.params = "" + act.speed;
       }
       if (act.time !== null) {
-        if(action.params){
-          action.params+= " ";
-        }else{
+        if (action.params) {
+          action.params += " ";
+        } else {
           action.params = "";
         }
         action.params += act.time;
@@ -61,7 +76,7 @@ SmartTown.convertToSendable = function (alList) {
       }
       al.push(action);
     }
-    SmartTown.ALDict[alList[i].name] = {name:alList[i].name, translatedName:alList[i].name,actions:al, conditions:alList[i].conditions};
+    SmartTown.ALDict[alList[i].name] = { name: alList[i].name, translatedName: alList[i].name, actions: al, conditions: alList[i].conditions };
   }
 };
 
@@ -80,18 +95,18 @@ SmartTown.openCharacModal = function () {
   });
 };
 
-SmartTown.modalCharacOnSubmit = () => { 
+SmartTown.modalCharacOnSubmit = () => {
   const form = document.getElementById('new_char_form');
-  let charac_name = form.elements["charac_name" ];
+  let charac_name = form.elements["charac_name"];
   let charac_alias = form.elements["charac_alias"];
   let charac_ip = form.elements["charac_ip"];
   let charac_color = form.elements["charac_color"];
-  let charac = {"charac_name":charac_name.value,"charac_alias":charac_alias.value,"charac_ip":charac_ip.value,"charac_color":charac_color.value};
+  let charac = { "charac_name": charac_name.value, "charac_alias": charac_alias.value, "charac_ip": charac_ip.value, "charac_color": charac_color.value };
   let valid = SmartTown.addCharacter(charac);
-  if(!valid){
+  if (!valid) {
     Ardublockly.materialAlert(Ardublockly.getLocalStr('characErrorTitle'), Ardublockly.getLocalStr('characErrorBody'), false);
-  }else{
-    var $newOpt = $("<option>").attr("value",charac.charac_alias).text(charac.charac_name)
+  } else {
+    var $newOpt = $("<option>").attr("value", charac.charac_alias).text(charac.charac_name)
     $("#charac").append($newOpt);
     $("#charac").trigger('contentChanged');
   }

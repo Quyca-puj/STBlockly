@@ -6,11 +6,15 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartown.server.model.Emotion;
+import com.smartown.server.model.EmotionalConfig;
 import com.smartown.server.model.dto.EmotionDTO;
+import com.smartown.server.model.dto.EmotionalConfigBundleDTO;
+import com.smartown.server.model.dto.EmotionalConfigDTO;
 import com.smartown.server.services.IEmotionService;
 
 @RestController
@@ -37,5 +41,23 @@ public class EmotionController {
 		return retList;
 	}
 
+	
+	@GetMapping("/emoConfig/{name}")
+	EmotionalConfigDTO getEmotionalConfig(@PathVariable(value="name") String name ){
+		ModelMapper mapper=new ModelMapper();
+		EmotionalConfig emoConf = emotionService.getEmotionalConfig(name);
+		EmotionalConfigDTO emoConfDTO = mapper.map(emoConf, EmotionalConfigDTO.class);
+		List<EmotionalConfigBundleDTO> dtosList = new ArrayList<>();
+		emoConf.getConfig().forEach(conf->{
+			EmotionalConfigBundleDTO bundleDTO = mapper.map(conf, EmotionalConfigBundleDTO.class);
+			EmotionDTO aux =  mapper.map(conf.getEmotion(), EmotionDTO.class);	
+			bundleDTO.setEmotion(aux);
+			dtosList.add(bundleDTO);
+		});
+		emoConfDTO.setConfig(dtosList);
+
+		return emoConfDTO;
+	}
+	
 	
 }

@@ -13,10 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import com.smartown.server.model.Emotion;
+import com.smartown.server.model.EmotionalConfig;
+import com.smartown.server.model.EmotionalConfigBundle;
 import com.smartown.server.model.STActionParameter;
 import com.smartown.server.model.STActionParameterBundle;
 import com.smartown.server.model.STBaseAction;
 import com.smartown.server.model.repository.EmotionRepository;
+import com.smartown.server.model.repository.EmotionalConfigBundleRepository;
+import com.smartown.server.model.repository.EmotionalConfigRepository;
 import com.smartown.server.model.repository.STActionParameterBundleRepository;
 import com.smartown.server.model.repository.STActionParametersRepository;
 import com.smartown.server.model.repository.STBaseActionRepository;
@@ -27,7 +31,10 @@ public class STConfig {
 	Environment env;
 	@Bean
 	CommandLineRunner initCommands(STBaseActionRepository baRepository, EmotionRepository emoRepository,
-			STActionParametersRepository paramRepository, STActionParameterBundleRepository bundleRepository) {
+			STActionParametersRepository paramRepository, STActionParameterBundleRepository bundleRepository,
+			EmotionalConfigRepository emoConfRepository, EmotionalConfigBundleRepository emoBundleRepository
+			
+			) {
 		return args->{
 			
 			List<String> actions = Arrays.asList(env.getProperty("st.allowed.actions").split(";"));
@@ -49,6 +56,7 @@ public class STConfig {
 				baseAction.setCustom(Boolean.parseBoolean(aux[1]));
 				baseAction.setUsesArgs(Boolean.parseBoolean(aux[2]));
 				baseAction.setShouldAnswer(Boolean.parseBoolean(aux[6]));
+				baseAction.setEmotionOriented(Boolean.parseBoolean(aux[7]));
 				baseAction.setTranslatedName(aux[5]);
 				Set<String> set = new HashSet<>(Arrays.asList(aux[3].trim().split("\\|")));
 				List<String> param = Arrays.asList(aux[4].trim().split("\\|"));
@@ -72,14 +80,30 @@ public class STConfig {
 				baRepository.save(baseAction);
 			});
 			
+			
+			
+			EmotionalConfig emoconf = new EmotionalConfig();
+			List<EmotionalConfigBundle> bundle = new ArrayList<>();
+			emoconf.setId(1);
+			emoconf.setName("default");
+			emoconf = emoConfRepository.save(emoconf);
+			
+			
+			
 			emotions.forEach(string->{
 				String [] aux = string.split(":");
 				Emotion emotion = new Emotion();
 				emotion.setName(aux[1]);
 				emotion.setTranslatedName(aux[0]);
-				emoRepository.save(emotion);
+				emotion = emoRepository.save(emotion);
+				EmotionalConfigBundle emoBundle = new EmotionalConfigBundle();
+				emoBundle.setEmotion(emotion);
+				emoBundle.setIntensity(Float.parseFloat(aux[2]));
+				emoBundle=emoBundleRepository.save(emoBundle);
+				bundle.add(emoBundle);
 			});
-			
+			emoconf.setConfig(bundle);
+			emoConfRepository.save(emoconf);
 		};
 	}
 

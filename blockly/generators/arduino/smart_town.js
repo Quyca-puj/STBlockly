@@ -90,7 +90,7 @@ Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_SETUP] = function (block) {
   if (STchecks.length > 0) {
     isCustAction += STchecks.join(' || ');
   } else {
-    isCustAction += "return false"
+    isCustAction += "false"
   }
   isCustAction += ";\n}"
 
@@ -143,9 +143,9 @@ Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_SETUP] = function (block) {
   }
 
   Blockly.Arduino.addInclude('custom', includeCode);
-  Blockly.Arduino.setRobotDef(robotDef);
+  Blockly.Arduino.setRobotDef(robotDef); 
 
-  let setupRobotCode = 'robot.setupRobot(' + serial + ',"' + alias + '","' + text_wifiname + '","' + text_pass + '");';
+  let setupRobotCode = 'robot.setupRobot(115200,"' + alias + '","' + text_wifiname + '","' + text_pass + '");';
   Blockly.Arduino.addSetup("robotSetup", setupRobotCode, true);
   let code = ' WiFiClient client = wifiServer.available();\n String messages = "";\n' +
     ' if(client) {\n' +
