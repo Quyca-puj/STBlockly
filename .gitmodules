@@ -4,3 +4,6 @@
 [submodule "package/ardublocklydocs/ardublockly.wiki"]
 	path = package/ardublocklydocs/ardublockly.wiki
 	url = https://github.com/carlosperate/ardublockly.wiki.git
+[submodule "PetriNetLib"]
+	path = PetriNetLib
+	url = https://github.com/juanseleon1/PetriNetLib.git
