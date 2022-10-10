@@ -41,7 +41,7 @@ def launch_server(ip='localhost', port=8000, document_root_=''):
     document_root = document_root_
     
     sys.stdout.flush()
-    subprocess.Popen(['java', '-jar', '../share/dist/STRobotIntegrator.jar'])
+    subprocess.Popen(['java', '-jar', 'PetriNetLib/STRobotIntegrator/dist/STRobotIntegrator.jar'])
     global gateway
     gateway = JavaGateway(gateway_parameters=GatewayParameters(auto_convert=True))
     print('Gateway')
