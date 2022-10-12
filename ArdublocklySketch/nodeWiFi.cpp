@@ -2,6 +2,11 @@
 
 // WiFiClient client;
 extern WiFiServer wifiServer(PORT);
+
+
+/*
+ * IT sets up the connection of the robot.
+ */
 void WifiConnection(String ssid, String password){
  // const char* host = "192.168.1.105";
 //  const uint16_t port = 6000;

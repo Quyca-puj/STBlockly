@@ -12,6 +12,9 @@ void setupmotor(){
   leftServo.write(SPEED_DEGREE_CERO_LM);
   rightServo.write(SPEED_DEGREE_CERO_RM);
 }
+/*
+ * Microcontroller to set servo degree rotation. 
+ */
 void setSpeedsMotor(int leftSp,int rigthSp){
   //***********************************************************************************
       // Define the result varible for left speed.

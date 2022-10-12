@@ -1,5 +1,8 @@
 #include "Robot.h"
 
+/*
+ * Robot constructor.
+ */
 Robot::Robot()
 {
   // Inicializacion de las variables de control
@@ -22,7 +25,9 @@ Robot::Robot()
   customExpro = NULL;
   basicExpro = NULL;
 }
-
+/*
+ * It creates a new socket for returning ack logic.
+ */
 void Robot::connectClient()
 {
   if (!returnSock || !returnSock.connected())
@@ -38,6 +43,11 @@ void Robot::connectClient()
     }
   }
 }
+
+
+/*
+ * It sets up the robot by calling all the related library functions.
+ */
 void Robot::setupRobot(int serial, String givenAlias, String ssid, String password)
 {
   // Inicio del Serial, conexion a wifi e inicializacion de motores.
@@ -58,6 +68,9 @@ void Robot::setupRobot(int serial, String givenAlias, String ssid, String passwo
   JointSetup();
 }
 
+/*
+ * It checks if a task is feasible given its nature. If its feasible it adds the task to the respective queue and returns true. Otherwise it returns false.
+ */
 bool Robot::isFeasible(Task *msg)
 {
   bool toRet = false;
@@ -107,15 +120,23 @@ bool Robot::isFeasible(Task *msg)
   return toRet;
 }
 
+/*
+ * Checks if a movement task is feasible by determining if there's another movement task running and if its expropiable or not.
+ */
 bool Robot::isFeasibleMvt(Task *msg)
 {
   return isMvtExpropiative || (!isMvtExpropiative && motorInactive);
 }
+/*
+ * Checks if an emotion task is feasible by determining if there's another emotion task running and if its expropiable or not.
+ */
 bool Robot::isFeasibleEmotion(Task *msg)
 {
   return isEmoExpropiative || (!isEmoExpropiative && screenInactive);
 }
-
+/*
+ * Process an incoming message and depending of its feasibility and pending tasks it runs a message or stores it.
+ */
 void Robot::processMsg(String msg, bool checkStatus, WiFiClient client)
 {
   bool answer = false;
@@ -173,6 +194,9 @@ void Robot::processMsg(String msg, bool checkStatus, WiFiClient client)
   // determinar si hay acciones en ejecucion.
 }
 
+/*
+ * Ir unwraps an active task for execution.
+ */
 void Robot::unwrapTask(Task *task)
 {
   command = String(task->command);
@@ -240,6 +264,9 @@ void Robot::unwrapTask(Task *task)
   }
   delete (task);
 }
+/*
+ * It answers a command given a task list and a task id.
+ */
 void Robot::answerCommand(TaskList *list, String task, WiFiClient client)
 {
   STprint("list size");
@@ -255,7 +282,7 @@ void Robot::answerCommand(TaskList *list, String task, WiFiClient client)
     STprint("list size");
     STprint(list->pendingTasks);
 
-    // si hay ack pendiente de los motores principales y hay respuesta, responder con ese ack.
+    // si hay ack pendiente, responder con ese ack segun el socket activo.
     if (returnSock && returnSock.connected())
     {
       returnSock.println(ack);
@@ -267,7 +294,9 @@ void Robot::answerCommand(TaskList *list, String task, WiFiClient client)
     STprint("Answered");
   }
 }
-
+/*
+ * It answers a command given a task list thats related to sensor information.
+ */
 void Robot::answerCommandWithInfo(TaskList *list, String task, WiFiClient client, String answer)
 {
   STprint("list size");
@@ -295,7 +324,9 @@ void Robot::answerCommandWithInfo(TaskList *list, String task, WiFiClient client
     STprint("Answered");
   }
 }
-
+/*
+ * It calibrates the robot.
+ */
 void Robot::calibration()
 {
   for (uint16_t i = 0; i < 390; i++)
@@ -316,7 +347,9 @@ void Robot::calibration()
   setSpeedsMotor(0, 0); // Finalizacion de la calibración
   STprint("calibration end");
 }
-
+/*
+ * It checks or starts an emotional task.
+ */
 void Robot::checkEmotionCommands(String msg, bool checkStatus, WiFiClient client)
 {
   bool toRet = false;
@@ -351,7 +384,9 @@ void Robot::checkEmotionCommands(String msg, bool checkStatus, WiFiClient client
   }
 
 }
-
+/*
+ * It checks or starts an movement task.
+ */
 void Robot::checkMotorCommands(String msg, bool checkStatus, WiFiClient client)
 {
   bool toRet = false;
@@ -433,7 +468,9 @@ void Robot::checkMotorCommands(String msg, bool checkStatus, WiFiClient client)
     runningMvt.removeTask(MVT_REVERSEROLL);
   }
 }
-
+/*
+ * It checks or starts a basic task.
+ */
 void Robot::robotBasicCommands(String msg, bool checkStatus, WiFiClient client)
 {
   String messageint = "";
@@ -491,14 +528,18 @@ void Robot::robotBasicCommands(String msg, bool checkStatus, WiFiClient client)
   }
 
 }
-
+/*
+ * It moves the robot permannetly given a direction.
+ */
 void Robot::robotForeverMove(int dir)
 {
   isMvtExpropiative = true;
   STprint("robotFor Command");
   foreverForward(speeds * dir);
 }
-
+/*
+ * It moves the robot until the next cross.
+ */
 bool Robot::robotForward()
 {
   isMvtExpropiative = false;
@@ -506,6 +547,9 @@ bool Robot::robotForward()
   motorInactive = followLine(speeds);
   return motorInactive;
 }
+/*
+ * It turns the robot until the next cross.
+ */
 bool Robot::robotTurn(int dir)
 {
   isMvtExpropiative = false;
@@ -513,6 +557,10 @@ bool Robot::robotTurn(int dir)
   motorInactive = turn(dir, speeds);
   return motorInactive;
 }
+
+/*
+ * It turns the robot until the tim ends.
+ */
 bool Robot::robotTimedMove(int dir)
 {
   isMvtExpropiative = false;
@@ -520,13 +568,19 @@ bool Robot::robotTimedMove(int dir)
   motorInactive = timedMove(dir * speeds, mvtTimer * 1000, &mvtTimeElapsed);
   return motorInactive;
 }
+
+/*
+ * It moves the robot until the time ends given a direction.
+ */
 bool Robot::robotTimedTurn(int dir)
 {
   isMvtExpropiative = false;
   STprint("robotTimedTurn Command");
   return timedTurn(dir, speeds, mvtTimer * 1000, &mvtTimeElapsed);
 }
-
+/*
+ * It stops the robot.
+ */
 bool Robot::robotStopMovement()
 {
   STprint("robotStopMovement Command");
@@ -560,7 +614,9 @@ void Robot::JointServoMsg(String msg, WiFiClient client)
     }
   }
 }
-
+/*
+ * It changes the robot led matrix
+ */
 bool Robot::readFaces(String msg)
 {
   STprint("readFaces entered");
@@ -745,7 +801,9 @@ bool Robot::readFaces(String msg)
   }
   return true;
 }
-
+/*
+ * It checks the active tasks or starts a new task
+ */
 void Robot::processCommands(String command, bool checkStatus, WiFiClient client)
 {
   STprint("command");
@@ -791,7 +849,7 @@ void Robot::processCommands(String command, bool checkStatus, WiFiClient client)
 }
 
 /*
-   Logica para conversion de comandos a tareas nativas. Incluye identificación de tipo de tarea - Va afuera
+   Logica para conversion de comandos a tareas nativas. Incluye identificación de tipo de tarea
 */
 Task *Robot::msgToTask(String msg)
 {
@@ -911,27 +969,41 @@ Task *Robot::msgToTask(String msg)
   command = "";
   return task;
 }
-
+/*
+ * Checks if a given command is a movement action
+ */
 bool Robot::isMvtAction(String command)
 {
   return command.equals(MVT_FORWARD) || command.equals(MVT_LEFT) || command.equals(MVT_RIGHT) || command.equals(MVT_ROLL) || command.equals(MVT_REVERSEROLL) || isMvtTimedAction(command);
 }
 
+/*
+ * Checks if a given command is a timed action
+ */
+ 
 bool Robot::isMvtTimedAction(String command)
 {
   return command.equals(MVT_TIMEDFORWARD) || command.equals(MVT_TIMEDREVERSE) || command.equals(MVT_TIMEDLEFT) || command.equals(MVT_TIMEDRIGHT);
 }
-
+/*
+ * Checks if a given command is an emotion action
+ */
+ 
 bool Robot::isEmoAction(String command)
 {
   return command.equals(EMOTION_STR) || command.equals(EMOTION_SWITCH) || command.equals(EMOTION_SWITCH_ASYNC) || command.equals(EMOTION_OFF);
 }
-
+/*
+ * Checks if a given command is a basic action
+ */
+ 
 bool Robot::isBasicAction(String command)
 {
   return command.equals(BASIC_STOP_ALL) || command.equals(BASIC_CALIB) || command.equals(BASIC_STOP_MVT) || command.equals(BASIC_CONNECT) || command.equals(BASIC_SENSOR_FL) || command.equals(BASIC_SENSOR_FR) || command.equals(BASIC_SENSOR_BL) || command.equals(BASIC_SENSOR_BR);
 }
-
+/*
+ * switches faces given a period of time.
+ */
 bool Robot::switchFaces(String emo1, String emo2, long time, long period)
 {
   isEmoExpropiative = false;
@@ -986,7 +1058,9 @@ bool Robot::switchFaces(String emo1, String emo2, long time, long period)
   return toRet;
 }
 
-
+/*
+ * switches faces permanently.
+ */
 void Robot::switchFacesAsync(String emo1, String emo2, long period)
 {
   isEmoExpropiative = true;
@@ -1023,12 +1097,16 @@ void Robot::switchFacesAsync(String emo1, String emo2, long period)
   STprint(activeEmo);
 }
 
-
+/*
+ * Robot timer implementation.
+ */
 bool Robot::robotDelay(long time, long *timeElapsed)
 {
   return STDelay(time, timeElapsed);
 }
-
+/*
+ * Answers all the peding tasks
+ */
 void Robot::answerAllPending(WiFiClient client)
 {
   ActiveTask *aux;
@@ -1070,7 +1148,9 @@ void Robot::answerAllPending(WiFiClient client)
     answerCommand(&runningCustoms, String(aux->command), client);
   }
 }
-
+/*
+ * Answers all the pending tasks of given task type
+ */
 void Robot::answerPendingByType(TaskList *list, WiFiClient client)
 {
   ActiveTask *aux;
@@ -1081,11 +1161,16 @@ void Robot::answerPendingByType(TaskList *list, WiFiClient client)
     answerCommand(list, String(aux->command), client);
   }
 }
+/*
+ * True if the robot has one or more actions active.
+ */
 bool Robot::isInAction()
 {
   return runningBasics.pendingTasks > 0 || runningMvt.pendingTasks > 0 || runningEmotions.pendingTasks > 0 || runningCustoms.pendingTasks > 0 || taskQueue.pendingTasks > 0;
 }
-
+/*
+ * Processes multiple messages separated by token |
+ */
 void Robot::processMultipleMsgs(String *msg) {
   String newMsg;
   int index = 0;

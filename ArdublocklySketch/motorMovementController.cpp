@@ -20,10 +20,12 @@ extern bool checkControl = false;
   Movement Controller
 */
 bool finds = false;
+
+/*
+ * True if the robot is over an intersection, false otherwise. The robot moves until it reaches a true value.
+ */
 bool followLine(int speed) {
   int rightMotorSpeed, leftMotorSpeed, motorSpeed;
-  // definición de las constantes del control:*****************************************************************************mejora mandar de parametros los ks
-
   ReadValues();
   //Detect Black Color by the Front Sensor
   if (overIntersection == true) {
@@ -97,21 +99,15 @@ bool followLine(int speed) {
     if (leftMotorSpeed < 0) {
       leftMotorSpeed = 0;
     }
-    /*     if(sensorValues[2] < 1500 && sensorValues[3] >1500 &&(sensorValues[0] < 1500 || sensorValues[1]<1500)){
-            setSpeedsMotor(leftMotorSpeed*(1+0.5),rightMotorSpeed*0.1);
-          }else{
-            if(sensorValues[2] > 1500 && sensorValues[3] <1500 &&(sensorValues[0] < 1500 || sensorValues[1]<1500)){
-              setSpeedsMotor(leftMotorSpeed*0.1,rightMotorSpeed*(1+0.5));
-            }else{
 
-            }
-          }*/
     setSpeedsMotor(leftMotorSpeed, rightMotorSpeed);
     delay(50);
     return false;
   }
 }
-
+/*
+ * True if the robot is over an intersection, false otherwis. The robot moves until it reaches atrue value.
+ */
 bool turn(int direction, int speed) {
   ReadValues();
   if (overIntersection == true) {
@@ -158,7 +154,9 @@ bool turn(int direction, int speed) {
     return false;
   }
 }
-
+/*
+ * True if the time is over, if it sets the timer the first time it initializes the motor speed to make the robot move.
+ */
 bool timedMove(int speed,  int time, long *timeElapsed) {
   STprint("timeElapsed");
   STprint(*timeElapsed);
@@ -180,6 +178,9 @@ bool timedMove(int speed,  int time, long *timeElapsed) {
   return toRet;
 }
 
+/*
+ * True if the time is over, if it sets the timer the first time it initializes the motor speed to make the robot turn
+ */
 bool timedTurn(int direction, int speed, int time,  long *timeElapsed) {
   STprint("timeElapsed");
   STprint(*timeElapsed);
@@ -201,13 +202,13 @@ bool timedTurn(int direction, int speed, int time,  long *timeElapsed) {
 
 
 void foreverForward(int speed){
-  Serial.println("foreverForward");
   setSpeedsMotor(speed, speed);
 }
 
-
+/*
+ * True if the times is over
+ */
 bool STDelay(long time, long *timeElapsed){
-  Serial.println("STDelay");
 if (*timeElapsed == 0)
   {
     *timeElapsed = millis();
