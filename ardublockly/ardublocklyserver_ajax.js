@@ -90,6 +90,14 @@ ArdublocklyServer.sendRequest = async function(
 };
 
 
+/**
+ * Sends a request to the Ardubloockly Server that returns a JSON response implementig a promise.
+ * @param {!string} url Requestor URL.
+ * @param {!string} method HTTP method.
+ * @param {!string} contentType HTTP content type.
+ * @param {string} jsonObjSend JavaScript object to be parsed into JSON to send.
+ *     parsed JSON object.
+ */
 ArdublocklyServer.sendRequestCustom = async function(
   url, method, contentType, jsonObjSend) {
     return new Promise(function (resolve, reject){
@@ -216,7 +224,12 @@ ArdublocklyServer.jsonToIdeModal = function(jsonObj) {
   element.appendChild(elErrOp);
   return element;
 };
-
+/**
+ * Creates an HTML element that contains an input based on the JSON data received from the server.
+ * @param {!string} jsonObj A string containing the JSON data to be parsed.
+ * @return {!element} An HTML element, which type depends on the JSON 'element'
+ *                    key (currently only text input or drop down).
+ */
 ArdublocklyServer.jsonToHtmlTextInput = function(jsonObj) {
   var element = null;
   if (jsonObj) {
@@ -234,7 +247,12 @@ ArdublocklyServer.jsonToHtmlTextInput = function(jsonObj) {
   }
   return element;
 };
-
+/**
+ * Creates an HTML dropdown based on the JSON data received from the server.
+ * @param {!string} jsonObj A string containing the JSON data to be parsed.
+ * @return {!element} An HTML element, which type depends on the JSON 'element'
+ *                    key (currently only text input or drop down).
+ */
 ArdublocklyServer.jsonToHtmlDropdown = function(jsonObj) {
   var element = null;
   if (!jsonObj) {
@@ -404,6 +422,15 @@ ArdublocklyServer.sendSketchToServer = function(code, callback) {
       '/code', 'POST', 'application/json', {"sketch_code": code,"robot_spec":robotSpec}, callback);
 };
 
+
+/**
+ * Sends a calibration request for a single robot.
+ * @param {!string} ip A string containing the robot ip.
+ * @param {!string} alias A string containing the robot alias.
+ * @param {!function} successHandler A success callback
+ * @param {!function} errorHandler An error callback
+ * @param {!Ardublockly.workspace} workspace Ardublockly's workspace.
+ */
 ArdublocklyServer.calibrate = function(ip, alias ,successHandler, errorHandler, workspace){
   ArdublocklyServer.ack =0 ;
   let json = {ip:ip,msg:alias+" calibration "+ ArdublocklyServer.ack, ack:ArdublocklyServer.ack};
@@ -418,6 +445,13 @@ ArdublocklyServer.calibrate = function(ip, alias ,successHandler, errorHandler, 
   });
 }
 
+/**
+ * Sends a calibration request for multiple robots.
+ * @param {!Object} characObj Dictionary with the characters information (ip, alias, etc)
+ * @param {!function} successHandler A success callback
+ * @param {!function} errorHandler An error callback
+ */
+
 ArdublocklyServer.calibrateMultiple = function(characObj ,successHandler, errorHandler){
   ArdublocklyServer.ack =0 ;
   ArdublocklyServer.calibrateRobots(characObj).then(function handle(response) {  
@@ -431,7 +465,12 @@ ArdublocklyServer.calibrateMultiple = function(characObj ,successHandler, errorH
   });
 }
 
-
+/**
+ * Starts command execution for a single character
+ * @param {!Object} characObj Dictionary with characters information (ip, alias, etc)
+ * @param {!Ardublockly.workspace} workspace Ardublockly's workspace object
+ * @param {!function} errorHandler An error callback
+ */
 ArdublocklyServer.startExecution = function (commandObj, workspace ,errorHandler){
   ArdublocklyServer.ack =0 ;
   ArdublocklyServer.actionPos =0 ;
@@ -443,6 +482,12 @@ ArdublocklyServer.startExecution = function (commandObj, workspace ,errorHandler
   ArdublocklyServer.sendCommand(workspace, ip, errorHandler);
 }
 
+/**
+ * Sends commands recursively for a single character.
+ * @param {!string} ip Characters ip.
+ * @param {!Ardublockly.workspace} workspace Ardublockly's workspace object
+ * @param {!function} errorHandler An error callback
+ */
 ArdublocklyServer.sendCommand = function(workspace, ip, errorHandler){
   if(!ArdublocklyServer.pause){
     if(ArdublocklyServer.commandList.length>ArdublocklyServer.actionPos){
@@ -462,6 +507,11 @@ ArdublocklyServer.sendCommand = function(workspace, ip, errorHandler){
   } 
 
 }
+
+/**
+ * Gets a single command from an action list..
+ * @param {!boolean} isList check if the command is an action list.
+ */
 ArdublocklyServer.getCommand = function(isList){
   let command;
   if(isList){
@@ -478,6 +528,11 @@ ArdublocklyServer.getCommand = function(isList){
   return command;
 };
 
+/**
+ * Sends a command to the robot.
+ * @param {!string} ip Robot's ip
+ * @param {!boolean} isList check if the command is an action list.
+ */
 ArdublocklyServer.sendCommandToRobot= function (ip, isList){
   let json;
   let command= ArdublocklyServer.getCommand(isList);
@@ -509,29 +564,57 @@ ArdublocklyServer.sendCommandToRobot= function (ip, isList){
   return json;
 }
 
+/**
+ * Sends a command to the backend.
+ * @param {!Object} json json object with command info.
+ * @param {!string} id Block id
+ * @param {!Ardublockly.workspace} workspace Ardublockly's workspace.
+ * @returns {!Object} Response object in JSON format
+ */
 ArdublocklyServer.sendToRobot = async function(json, id, workspace) {
   ArdublocklyUtils.highlightBlock(id, workspace);
   return await ArdublocklyServer.postJson('/robot/send', {action:json});
 };
-
+/**
+ * Sends a multiple calibration request to the backend.
+ * @param {!Object} json json object with command info.
+ */
 ArdublocklyServer.calibrateRobots = async function(json) {
   return await ArdublocklyServer.postJson('/robot/calibrateAll', {characs:json});
 };
 
-
+/**
+ * Sends a petrinet info and the characters info to the backend.
+ * @param {!Object} characInfo json object with character's info.
+ * @param {!Object} net json object with net's info.
+ * @returns {!Object} Response object in JSON format
+ */
 ArdublocklyServer.sendPetriNet = async function(characInfo,net) {
   return await ArdublocklyServer.postJson('/play/executeNet', {characters:characInfo,net:net});
 };
 
+
+/**
+ * Sends a request to pause petri net execution.
+ * @returns {!Object} Response object in JSON format
+ */
 ArdublocklyServer.pausePetriNet = async function() {
   return await ArdublocklyServer.postJson('/play/pauseNet', null);
 };
 
+
+/**
+ * Sends a request to stop petri net execution.
+ * @returns {!Object} Response object in JSON format
+ */
 ArdublocklyServer.stopPetriNet = async function() {
   return await ArdublocklyServer.postJson('/play/stopNet', null);
 };
 
-
+/**
+ * Sends a request to resume petri net execution.
+ * @returns {!Object} Response object in JSON format
+ */
 ArdublocklyServer.resumePetriNet = async function() {
   return await ArdublocklyServer.postJson('/play/resumeNet', null);
 };

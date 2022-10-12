@@ -8,13 +8,16 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
+/*
+ * @author IQBots
+ */
 public class EmotionalConfigBundle {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	@ManyToOne
 	private Emotion emotion;
-	
+
 	@Basic
 	private float intensity;
 
@@ -42,6 +45,4 @@ public class EmotionalConfigBundle {
 		this.intensity = intensity;
 	}
 
-
-	
 }

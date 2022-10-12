@@ -1,7 +1,9 @@
 package com.smartown.server.model.dto;
 
 import java.util.Set;
-
+/*
+ * @author IQBots
+ */
 public class EmotionDTO {
 
 	private String name;
@@ -10,17 +12,17 @@ public class EmotionDTO {
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getTranslatedName() {
 		return translatedName;
 	}
+
 	public void setTranslatedName(String translatedName) {
 		this.translatedName = translatedName;
 	}
-
-	
 
 }

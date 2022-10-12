@@ -4,6 +4,10 @@ goog.require('Blockly.Blocks');
 goog.require('Blockly.Types');
 
 Blockly.Blocks['mvt_avanzar_exec'] = {
+    /**
+   * Block for creating a 'mvt_avanzar_exec'.
+   * @this Blockly.Block
+   */
   init: function () {
     this.jsonInit(
       {
@@ -31,6 +35,10 @@ Blockly.Blocks['mvt_avanzar_exec'] = {
 
 
 Blockly.Blocks['mvt_girar_exec'] = {
+    /**
+   * Block for creating a 'mvt_girar_exec'.
+   * @this Blockly.Block
+   */
   init: function () {
     this.jsonInit(
       {
@@ -71,6 +79,10 @@ Blockly.Blocks['mvt_girar_exec'] = {
 };
 
 Blockly.Blocks['mvt_avanzar_tiempo_exec'] = {
+    /**
+   * Block for creating a 'mvt_avanzar_tiempo_exec'.
+   * @this Blockly.Block
+   */
   init: function () {
     this.jsonInit(
       {
@@ -121,6 +133,11 @@ Blockly.Blocks['mvt_avanzar_tiempo_exec'] = {
 };
 
 Blockly.Blocks['mvt_girar_tiempo_exec'] = {
+
+    /**
+   * Block for creating a 'mvt_girar_tiempo_exec'.
+   * @this Blockly.Block
+   */
   init: function () {
     this.jsonInit(
       {
@@ -171,6 +188,10 @@ Blockly.Blocks['mvt_girar_tiempo_exec'] = {
 };
 
 Blockly.Blocks['setupsmarttown_exec'] = {
+  /**
+ * Block for creating a 'setupsmarttown_exec'.
+ * @this Blockly.Block
+ */
   init: function () {
     this.appendDummyInput()
       .appendField("Setup Robot");
@@ -198,6 +219,10 @@ Blockly.Blocks['setupsmarttown_exec'] = {
 };
 
 Blockly.Blocks['mvt_stop_exec'] = {
+  /**
+ * Block for creating a 'mvt_stop_exec'.
+ * @this Blockly.Block
+ */
   init: function () {
     this.jsonInit(
       {
@@ -226,6 +251,10 @@ Blockly.Blocks['mvt_stop_exec'] = {
 
 
 Blockly.Blocks['change_emotion_exec'] = {
+  /**
+ * Block for creating a 'change_emotion_exec'.
+ * @this Blockly.Block
+ */
   init: function () {
     this.jsonInit(
       {
@@ -254,6 +283,10 @@ Blockly.Blocks['change_emotion_exec'] = {
 
 
 Blockly.Blocks['config_emotions'] = {
+  /**
+ * Block for creating a 'config_emotions'.
+ * @this Blockly.Block
+ */
   init: function () {
     this.jsonInit(
       {
@@ -341,6 +374,10 @@ Blockly.Blocks['config_emotions'] = {
 
 
 Blockly.Blocks['config_actions'] = {
+  /**
+ * Block for creating a 'config_actions'.
+ * @this Blockly.Block
+ */
   init: function () {
     this.jsonInit(
       {

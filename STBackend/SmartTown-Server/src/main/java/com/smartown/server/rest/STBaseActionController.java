@@ -19,26 +19,31 @@ import com.smartown.server.services.ISTBaseActionService;
 
 @RestController
 @RequestMapping("command")
+/*
+ * Emotion Rest Controller
+ * @author IQBots
+ */
 public class STBaseActionController {
 
-	
 	@Autowired
 	private ISTBaseActionService commandService;
-	
-	
+	/*
+	 * Get Method to get all the action in the database.
+	 * @return list with all the actions.
+	 */
 	@GetMapping("/all")
-	List<STBaseActionDTO> getAllCommands(){
+	List<STBaseActionDTO> getAllCommands() {
 		List<STBaseActionDTO> retList = new ArrayList<>();
 		List<STBaseAction> commands = commandService.getAllBaseActions();
-		ModelMapper mapper=new ModelMapper();
-		if(commands!=null) {
-			commands.forEach(command->{
+		ModelMapper mapper = new ModelMapper();
+		if (commands != null) {
+			commands.forEach(command -> {
 				STBaseActionDTO dto = mapper.map(command, STBaseActionDTO.class);
 				List<STActionParameterDTO> params = new ArrayList<>();
 				for (STActionParameterBundle bundle : command.getParams()) {
 					System.out.println(bundle);
-					if(bundle !=null && bundle.getParameter()!=null) {
-						STActionParameterDTO paramDTO = new STActionParameterDTO ();
+					if (bundle != null && bundle.getParameter() != null) {
+						STActionParameterDTO paramDTO = new STActionParameterDTO();
 						paramDTO.setName(bundle.getParameter().getName());
 						paramDTO.setType(bundle.getParameter().getType());
 						paramDTO.setTranslatedName(bundle.getTranslatedName());
@@ -47,35 +52,41 @@ public class STBaseActionController {
 					}
 				}
 				dto.setParameters(params);
-				
+
 				retList.add(dto);
 			});
 		}
 
 		return retList;
 	}
-	
+	/*
+	 * Get Method to get all the custom actions in the database.
+	 * @return list with all the custom actions.
+	 */
 	@GetMapping("/custom")
-	List<STBaseActionDTO> getCustomCommands(){
+	List<STBaseActionDTO> getCustomCommands() {
 		List<STBaseActionDTO> retList = new ArrayList<>();
 		List<STBaseAction> commands = commandService.getAllCustomBaseActions();
-		ModelMapper mapper=new ModelMapper();
-		if(commands!=null) {
-			commands.forEach(command->{
+		ModelMapper mapper = new ModelMapper();
+		if (commands != null) {
+			commands.forEach(command -> {
 				retList.add(mapper.map(command, STBaseActionDTO.class));
 			});
 		}
 
 		return retList;
 	}
-	
-	
+	/*
+	 * Post Method to create a new action.
+	 * @param command STBaseActionDTO object in the request body.
+	 * @return STBaseActionDTO representing the new Action.
+	 */
 	@PostMapping("/new")
-	STBaseActionDTO createNewCommand(@RequestBody STBaseAction command){
+	STBaseActionDTO createNewCommand(@RequestBody STBaseAction command) {
 		STBaseAction savedCommand = commandService.createBaseAction(command);
-		ModelMapper mapper=new ModelMapper();
+		ModelMapper mapper = new ModelMapper();
 		STBaseActionDTO sendCommand = mapper.map(savedCommand, STBaseActionDTO.class);
 		return sendCommand;
 	}
-	
+
 }

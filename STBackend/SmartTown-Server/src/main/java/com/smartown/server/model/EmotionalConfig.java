@@ -13,6 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 
 @Entity
+/*
+ * @author IQBots
+ */
 public class EmotionalConfig {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,27 +23,31 @@ public class EmotionalConfig {
 	@Basic
 	private String name;
 	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name="config_emotions")
+	@CollectionTable(name = "config_emotions")
 	private List<EmotionalConfigBundle> config;
+
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
+
 	public List<EmotionalConfigBundle> getConfig() {
 		return config;
 	}
+
 	public void setConfig(List<EmotionalConfigBundle> config) {
 		this.config = config;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
-	
+
 }

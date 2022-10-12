@@ -184,6 +184,10 @@ Ardublockly.saveSessionStorageBlocks = function() {
   }
 };
 
+/**
+ * Save blocks into session storage according to the level used in ST app. Note that MSIE 11 does not support
+ * sessionStorage on file:// URLs.
+ */
 Ardublockly.saveSessionStorageBlocksbyLanguage = function(lang) {
   if (window.sessionStorage && lang) {
     var xml = Blockly.Xml.workspaceToDom(Ardublockly.workspace);
@@ -380,7 +384,10 @@ Ardublockly.ajaxRequest = function() {
   return request;
 };
 
-
+/**
+ * Gets object dictionary that relates commands to be send to the specific character.
+ * @return {Object} 
+ */
 Ardublockly.execCommandsToList = function(){
   let commandList = Blockly.STExecution.getCommandDict();
   return commandList;

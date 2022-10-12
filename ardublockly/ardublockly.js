@@ -47,7 +47,6 @@ Ardublockly.bindActionFunctions = function () {
   // Navigation buttons
   Ardublockly.bindClick_('button_load', Ardublockly.loadUserXmlFile);
   Ardublockly.bindClick_('button_save', Ardublockly.saveXmlFile);
-  // Ardublockly.bindClick_('button_delete', Ardublockly.discardAllBlocks);
 
   // Side menu buttons, they also close the side menu
   Ardublockly.bindClick_('menu_load', function () {
@@ -98,16 +97,18 @@ Ardublockly.bindActionFunctions = function () {
     Ardublockly.ideButtonLeftAction();
   });
 
-
+  //Node modals
+  //Opens the new character modal
   Ardublockly.bindClick_('button_ide_char', function () {
     SmartTown.openCharacModal();
   });
 
+  //Adds a new node to the workspace.
 
   Ardublockly.bindClick_('button_ide_node', function () {
     SmartTown.addNewNode();
   });
-
+  //Deletes the selected node from the workspace.
   Ardublockly.bindClick_('button_ide_del_node', function () {
     SmartTown.deleteSelectedNode();
   });
@@ -179,14 +180,17 @@ Ardublockly.ideSendUpload = function () {
   }
 
 };
+
+/** Success Handler for the creation of an action list*/
 Ardublockly.successALHandler = function (name) {
   Ardublockly.MaterialToast(name + Ardublockly.getLocalStr('sucALToast'));
 }
-
+/** Error Handler for the creation of an action list*/
 Ardublockly.errorAlHandler = function (name) {
   Ardublockly.MaterialToast(Ardublockly.getLocalStr('errALToast') + name);
 }
 
+/** Error Handler for arduino related actions*/
 Ardublockly.errorHandler = function (response) {
   Ardublockly.calibrated = false;
   Ardublockly.largeIdeButtonSpinner(false);
@@ -195,19 +199,20 @@ Ardublockly.errorHandler = function (response) {
   Ardublockly.arduinoIdeOutput(response);
 };
 
+/** It sends a calibration request to a single character*/
 Ardublockly.calibrate = function () {
   Ardublockly.generateExec(Ardublockly.workspace);
   let commandObj = Ardublockly.execCommandsToList();
   ArdublocklyServer.calibrate(commandObj.ip, commandObj.alias, Ardublockly.successCalibration, Ardublockly.errorHandler, Ardublockly.workspace);
 }
 
-
+/** It sends a calibration request to multiple character*/
 Ardublockly.calibrateMultiple = function () {
   let characObj = SmartTown.getActiveCharacters();
   ArdublocklyServer.calibrateMultiple(characObj, Ardublockly.successCalibration, Ardublockly.errorHandler);
 }
 
-
+/** It starts the command execution for a single character*/
 Ardublockly.startExecution = function () {
 
   ArdublocklyServer.setPause(false);
@@ -227,14 +232,20 @@ Ardublockly.startExecution = function () {
 
 };
 
-
+/** It starts the command execution for multiple characters*/
 Ardublockly.startNetExecution = function () {
+  //if not in execution start execution, else pause execution.
   if (!Ardublockly.inExec) {
     ArdublocklyServer.setPause(false);
+    //If net is not active, start execution. Else resume net.
     if (!Ardublockly.activeNet) {
+      //check for robot calibration.
       if (!Ardublockly.calibrated) {
         Ardublockly.materialAlert(Ardublockly.getLocalStr('noNetCalibrationTitle'), Ardublockly.getLocalStr('noNetCalibrationBody'), false);
       } else {
+
+        // If there are nodes created, send the graph and the active characters to the backend.
+        //else show alert.
         if(SmartTown.graph.order>0){
           let commandObj = SmartTown.exportGraph();
           let characObj = SmartTown.getActiveCharacters();
@@ -258,6 +269,9 @@ Ardublockly.startNetExecution = function () {
   }
 };
 
+/**
+ * It resumes the net execution.
+ */
 Ardublockly.resumeNetExecution = function () {
   ArdublocklyServer.resumePetriNet().then(function handle(response) {
     Ardublockly.inExec = true;
@@ -270,7 +284,9 @@ Ardublockly.resumeNetExecution = function () {
 }
 
 
-
+/**
+ * It pauses the net execution.
+ */
 Ardublockly.pauseNetExecution = function () {
   ArdublocklyServer.pausePetriNet().then(function handle(response) {
     Ardublockly.largeIdeButtonSpinner(false, Ardublockly.inExec);
@@ -282,6 +298,10 @@ Ardublockly.pauseNetExecution = function () {
   });
 }
 
+
+/**
+ * It stops the net execution.
+ */
 Ardublockly.stopNetExecution = function () {
   ArdublocklyServer.stopPetriNet().then(function handle(response) {
     Ardublockly.inExec = false;
@@ -351,7 +371,9 @@ Ardublockly.ideSendOpen = function () {
   }
 
 };
-
+/**
+ * Calibration success callback.
+ */
 Ardublockly.successCalibration = function () {
   Ardublockly.calibrated = true;
   Ardublockly.MaterialToast(Ardublockly.getLocalStr('sucCalibrateToast'));
@@ -845,8 +867,6 @@ Ardublockly.XmlTextareaToBlocks = function () {
  * @private
  */
 Ardublockly.PREV_ARDUINO_CODE_ = 'void setup() {\n\n}\n\n\nvoid loop() {\n\n}';
-Ardublockly.PREV_JAVA_CODE_ = 'public class MacroManager implements Runnable {\n@Override\n public void run() {\n }\n}';
-Ardublockly.PREV_PY_CODE_ = '';
 Ardublockly.PREV_MIDDLE_CODE_ = '';
 
 /**

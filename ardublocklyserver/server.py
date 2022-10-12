@@ -489,6 +489,8 @@ def handler_petri_net():
     Error codes:
     0  - No error
     201 - Unable to start play.
+    :return: JSON string with the formed response.
+
     """
     std_out, err_out = '', ''
     exit_code = 52
@@ -535,6 +537,8 @@ def handler_pause_petri_net():
     Error codes:
     0  - No error
     202 - Unable to pause play.
+    :return: JSON string with the formed response.
+
     """
 
     std_out, err_out = '', ''
@@ -577,6 +581,8 @@ def handler_stop_petri_net():
     Error codes:
     0  - No error
     204 - Unable to pause play.
+    :return: JSON string with the formed response.
+
     """
 
     std_out, err_out = '', ''
@@ -618,6 +624,7 @@ def handler_resume_petri_net():
     Error codes:
     0  - No error
     204 - Unable to pause play.
+    :return: JSON string with the formed response.
     """
 
     std_out, err_out = '', ''
@@ -657,20 +664,9 @@ def handler_robot_calibrate_all():
 
     Error codes:
     0  - No error
-    1  - Build or Upload failed.
-    2  - Sketch not found.
-    3  - Invalid command line argument
-    4  - Preference passed to 'get-pref' flag does not exist
-    5  - Not Clear, but Arduino IDE sometimes errors with this.
-    50 - Unexpected error code from Arduino IDE
-    51 - Could not create sketch file
     52 - Invalid path to internally created sketch file
-    53 - Compiler directory not configured in the Settings
-    54 - Launch IDE option not configured in the Settings
-    55 - Serial Port configured in Settings not accessible.
-    56 - Arduino Board not configured in the Settings.
-    52 - Unexpected server error.
     64 - Unable to parse sent JSON.
+    :return: JSON string with the formed response.
     """
     success = False
     ide_mode = 'unknown'

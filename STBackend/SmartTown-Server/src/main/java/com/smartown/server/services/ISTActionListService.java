@@ -4,11 +4,14 @@ import java.util.List;
 
 import com.smartown.server.model.STActionList;
 import com.smartown.server.model.dto.STActionListDTO;
-
+/*
+ * Emotion Service
+ * @author IQBots
+ */
 public interface ISTActionListService {
-	
+
 	List<STActionList> getAllActionLists();
-	
+
 	STActionList createActionList(STActionList aList);
 
 	STActionList createFromDTO(STActionListDTO in);

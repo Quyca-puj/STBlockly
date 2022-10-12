@@ -9,14 +9,18 @@
 /** Create a namespace for the application. */
 var SmartTown = SmartTown || {};
 
+ /** Sets the middle level generator */
 SmartTown.setMiddleGenerator = function (generator) {
   Blockly.SmartTown.middleGenerator = generator;
 };
-
+ /** Generates robot arduino sketch from the workspace*/
 SmartTown.getSTRobotSketch = function () {
   return SmartTown.generateRobotSketch(Ardublockly.workspace).join("\n");
 };
-
+ /**
+  *  Gets a dictionary with the active characters from the high level graph play.
+  *  @returns {Object} active character dictionary.
+ */
 SmartTown.getActiveCharacters = () => {
   let activeCharDir = {};
 

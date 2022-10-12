@@ -53,7 +53,11 @@ Blockly.SmartTown.allSTCommands = function(root) {
   STCommandsNoReturn.sort(Blockly.SmartTown.procTupleComparator_);
   return [STCommandsNoReturn];
 };
-
+/**
+ * Generates complementray sketch information used in robot.h.template.
+ * @param {!Blockly.Workspace} root Root workspace.
+ * @return {!string} robot.h complementary information 
+ */
 Blockly.SmartTown.generateCommandRobotSketch = function(root) {
   let blocks = root.getAllBlocks();
   let STCommandsNoReturn = [];
@@ -86,12 +90,9 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
 
 
 /**
- * Find all user-created STCommand definitions in a workspace.
+ * Find all user-created ST Action List definitions in a workspace.
  * @param {!Blockly.Workspace} root Root workspace.
- * @return {!Array.<!Array.<!Array>>} Pair of arrays, the
- *     first contains STCommands without return variables, the second with.
- *     Each STCommand is defined by a three-element list of name, parameter
- *     list, and return value boolean.
+ * @return {!Array.<!Array.<!Array>>} Array containing action lists.
  */
  Blockly.SmartTown.allSTAL = function(root) {
   let blocks = root.getAllBlocks();

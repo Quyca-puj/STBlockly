@@ -24,59 +24,68 @@ import com.smartown.server.services.ISTInstanceActionService;
 
 @RestController
 @RequestMapping("actionList")
+/*
+ * ActionList Rest Controller
+ * @author IQBots
+ */
 public class STActionListController {
 
-	
 	@Autowired
 	private ISTActionListService aListService;
 	@Autowired
 	private ISTInstanceActionService instanceService;
 	@Autowired
 	private ISTBaseActionService baseService;
-	
-	
+	/*
+	 * Get Method to get all the action lists in the database.
+	 * @return list with all the actions lists.
+	 */
 	@GetMapping("/all")
-	List<STActionListDTO> getActionLists(){
+	List<STActionListDTO> getActionLists() {
 		List<STActionListDTO> retList = new ArrayList<>();
 		List<STActionList> aLists = aListService.getAllActionLists();
-		ModelMapper mapper=new ModelMapper();
-		if(aLists!=null) {
-			aLists.forEach(command->{
-				
+		ModelMapper mapper = new ModelMapper();
+		if (aLists != null) {
+			aLists.forEach(command -> {
+
 				STActionListDTO aux = mapper.map(command, STActionListDTO.class);
-				
+
 				aux.setActions(new ArrayList<>());
-				command.getActionList().forEach(action->{
+				command.getActionList().forEach(action -> {
 					ActionDTO act = instanceService.createActionfromInstance(action);
 					aux.getActions().add(act);
 				});
 				retList.add(aux);
 			});
-			
+
 		}
 
 		return retList;
 	}
+
 	
-	
-	
+	/*
+	 * Post Method to create a new action list.
+	 * @param aList STActionListDTO object in the request body.
+	 * @return STActionListDTO representing the new Action List.
+	 */
 	@PostMapping("/new")
-	STActionListDTO createNewActionList(@RequestBody STActionListDTO aList){
-		STActionList savedAList =  aListService.createFromDTO(aList);
-		final STActionList newAList= aListService.createActionList(savedAList);
+	STActionListDTO createNewActionList(@RequestBody STActionListDTO aList) {
+		STActionList savedAList = aListService.createFromDTO(aList);
+		final STActionList newAList = aListService.createActionList(savedAList);
 		final Set<String> listConditions = new HashSet<>();
-		aList.getActions().forEach(action->{
+		aList.getActions().forEach(action -> {
 			STBaseAction baseAction = baseService.getBaseActionFromName(action.getAction());
 			listConditions.addAll(baseAction.getConditions());
-			STInstanceAction newInstance = instanceService.createInstanceAction(action, baseAction);			
+			STInstanceAction newInstance = instanceService.createInstanceAction(action, baseAction);
 			newAList.getActionList().add(newInstance);
 		});
 		newAList.setConditions(listConditions);
 		STActionList retList = aListService.updateActionList(newAList);
-		
-		ModelMapper mapper=new ModelMapper();
+
+		ModelMapper mapper = new ModelMapper();
 		STActionListDTO sendAList = mapper.map(retList, STActionListDTO.class);
 		return sendAList;
 	}
-	
+
 }

@@ -8,24 +8,54 @@
 
 /** Create a namespace for the application. */
 var SmartTown = SmartTown || {};
+/**
+ * Emotion List
+ */
 SmartTown.emotions = {};
+/**
+ * Command List
+ */
 SmartTown.CommandList = [];
+/**
+ * Emotion dict
+ */
 SmartTown.emotionsUtil = [];
+
+/**
+ * Emotional configuration.
+ */
 SmartTown.emoConf = {};
+
+/**
+ * Generates a robot command sketch
+ *  @param {Ardublockly.workspace} root workspace
+ */
 SmartTown.generateRobotSketch = function (root) {
   return Blockly.SmartTown.generateCommandRobotSketch(root);
 };
 
-
+/**
+ * Sets the command list
+ *  @param {Array} list 
+ */
 SmartTown.setCommandList = function (list) {
   SmartTown.CommandList = list;
 };
 
+/**
+ * Sets the Action List's list
+ *  @param {Array} list 
+ */
 SmartTown.setALList = function (list) {
   SmartTown.ALList = list;
   SmartTown.convertToSendable(list);
 };
 
+
+/**
+ * Sets the Emotion list
+ *  @param {Array} list 
+ */
 SmartTown.setEmotions = function (list) {
   SmartTown.emotions = list;
   SmartTown.emotions.forEach(emo => {
@@ -33,6 +63,10 @@ SmartTown.setEmotions = function (list) {
   });
 };
 
+/**
+ * Sets the Emotional config
+ *  @param {Array} list 
+ */
 SmartTown.setEmotionConf = function (list) {
   let emoAux = list["config"];
   emoAux.forEach(emo => {
@@ -40,7 +74,11 @@ SmartTown.setEmotionConf = function (list) {
   });
 };
 
-
+/**
+ * Calculates the speed for a given emotion.
+ *  @param {String} emotion 
+ * @return speed.
+ */
 SmartTown.getSpeedFromEmotion = (emotion) => {
   let intensity = SmartTown.emoConf[emotion]["intensity"];
   let min = parseFloat(10);
@@ -49,6 +87,11 @@ SmartTown.getSpeedFromEmotion = (emotion) => {
   let mid = max - min;
   return (aux * mid) + min;
 }
+
+/**
+ * Converts the action list into an object to be sent.
+ *  @param {Array} alList 
+ */
 SmartTown.convertToSendable = function (alList) {
   SmartTown.ALDict = {};
   for (let i in alList) {
@@ -80,12 +123,16 @@ SmartTown.convertToSendable = function (alList) {
   }
 };
 
+/**
+ * Gets the actions form a gicen action list
+ *  @param {String} alName 
+ */
 SmartTown.getActionsFromList = function (alName) {
   return SmartTown.ALDict[alName];
 };
 
 
-/** Opens the modal that displays the "not connected to server" message. */
+/** Opens the modal that displays the character dialog message. */
 SmartTown.openCharacModal = function () {
   $('#new_charac_dialog').openModal({
     dismissible: false,
@@ -95,6 +142,7 @@ SmartTown.openCharacModal = function () {
   });
 };
 
+/** Interprets and creates the character form the character form */
 SmartTown.modalCharacOnSubmit = () => {
   const form = document.getElementById('new_char_form');
   let charac_name = form.elements["charac_name"];

@@ -87,7 +87,7 @@ Ardublockly.bindDesignEventListeners = function () {
     }
   });
 
-
+  //Change listener to update the form related to node parameters.
   $(document).on("change", "#node_form .collectable", function () {
     if (SmartTown.doubleClickedNode) {
       let nodeAtrr = SmartTown.graph.getNodeAttributes(SmartTown.doubleClickedNode);
@@ -131,7 +131,7 @@ Ardublockly.bindDesignEventListeners = function () {
     }
 
   });
-
+  //Change listener related to changes in the select dropdown for ST levels.
   $("#lang").on("change", function () {
     let displayArduino = document.getElementById("arduino_area");
     let displayMid = document.getElementById("mid_area");
@@ -250,7 +250,7 @@ Ardublockly.bindDesignEventListeners = function () {
         });
         break;
     }
-
+    //Change listener to fill the params sectio naccording to the type of node.
     $("#act_type").on("change", function () {
       Ardublockly.changeActType(null);
     });
@@ -271,23 +271,25 @@ Ardublockly.bindDesignEventListeners = function () {
   });
 };
 
-
+/** Clears Parameters related to node action type*/
 Ardublockly.clearActType = () => {
   var divParams = document.getElementById('params_menu');
   while (divParams.firstChild) {
     divParams.removeChild(divParams.lastChild);
   }
 }
-
+/** Fills Parameters related to node action type*/
 Ardublockly.changeActType = (actParams) => {
   var actType = document.getElementById('act_type');
   Ardublockly.clearActType();
 
 
   let selectedAction = null;
+  //Get selected Action
   if (SmartTown.activeActionDropdown) {
     selectedAction = SmartTown.activeActionDropdown[actType.value];
   }
+  //If actions has parameters fill inputs.
   if (selectedAction && selectedAction.parameters) {
     selectedAction.parameters.forEach(param => {
       let $newOpt;
@@ -322,8 +324,9 @@ Ardublockly.changeActType = (actParams) => {
       $("#params_menu").append($newOpt);
     });
   }
-
 };
+
+
 /**
  * Displays or hides the 'load textarea xml' button based on the state of the
  * collapsible 'xml_collapsible_body'.

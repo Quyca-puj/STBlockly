@@ -8,11 +8,14 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class })
 @ComponentScan("com.smartown.server")
 @EntityScan("com.smartown.server")
 @EnableJpaRepositories("com.smartown.server")
 @SpringBootApplication
+/*
+ * @author IQBots
+ * */
 public class SmartTownServerApplication {
 
 	public static void main(String[] args) {

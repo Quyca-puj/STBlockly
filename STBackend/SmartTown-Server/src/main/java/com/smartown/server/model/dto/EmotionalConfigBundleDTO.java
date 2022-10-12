@@ -1,18 +1,13 @@
 package com.smartown.server.model.dto;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
+/*
+ * @author IQBots
+ */
 public class EmotionalConfigBundleDTO {
 
 	private EmotionDTO emotion;
-	
-	private float intensity;
 
+	private float intensity;
 
 	public EmotionDTO getEmotion() {
 		return emotion;
@@ -30,6 +25,4 @@ public class EmotionalConfigBundleDTO {
 		this.intensity = intensity;
 	}
 
-
-	
 }

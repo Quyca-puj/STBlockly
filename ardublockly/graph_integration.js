@@ -8,18 +8,23 @@
 'use strict';
 
 var SmartTown = SmartTown || {};
+/** Color mapping to status */
 SmartTown.statusColors = { "EXECUTING": "#008000", "DONE": "#000000" };
+/** Character map */
 SmartTown.characters = { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.94.244", charac_color: "#ab00aa" }, "azul": { charac_name: "Pedrito", charac_alias: "azul", charac_ip: "192.168.94.167", charac_color: "#1E90FF" }, "amarillo": { charac_name: "Fulanito", charac_alias: "amarillo", charac_ip: "192.168.94.143", charac_color: "#e5e619" }, "rojo": { charac_name: "Pepito", charac_alias: "rojo", charac_ip: "192.168.94.193", charac_color: "#e02929" } };
+/** action map */
 SmartTown.actions = {};
 SmartTown.selectNodeForEdge = null;
 SmartTown.activeActionDropdown = null;
-/** Create a namespace for the application. */
+/** Get graph playground */
 SmartTown.graphContainer = document.getElementById("content_graph");
+
+/** Reset playground */
 
 SmartTown.reset = () => {
   SmartTown.startSigma(null);
 }
-
+/** Start sigma playground */
 SmartTown.startSigma = function (graph) {
 
   var $newOpt = $("<option>").attr("value", "morado").text("Mirabel");
@@ -33,18 +38,21 @@ SmartTown.startSigma = function (graph) {
   $("#charac").trigger('contentChanged');
 
   window.oncontextmenu = () => { return false; };
+  //get character form.
   const form = document.getElementById('new_char_form');
   form.addEventListener("submit", function (event) {
     // stop form submission
     event.preventDefault();
     SmartTown.modalCharacOnSubmit();
   });
+  //Create a graph
   if (graph) {
     SmartTown.graph = graph;
   } else {
     SmartTown.graph = new graphology.Graph({ allowSelfLoops: false, type: 'directed' });
-
   }
+
+  //Render sigma graph
   if (SmartTown.sigmaRenderer) {
     SmartTown.sigmaRenderer.graph = SmartTown.graph;
     SmartTown.sigmaRenderer.refresh();
@@ -60,13 +68,14 @@ SmartTown.startSigma = function (graph) {
 
   SmartTown.camera = SmartTown.sigmaRenderer.getCamera();
 
+  //Add node selection logic
   SmartTown.sigmaRenderer.on("downNode", (e) => {
     SmartTown.isDragging = true;
     SmartTown.draggedNode = e.node;
     SmartTown.graph.setNodeAttribute(SmartTown.draggedNode, "highlighted", true);
   });
 
-
+  //Add node double click events logic
   SmartTown.sigmaRenderer.on("doubleClickNode", (e) => {
     SmartTown.resetNodeForm();
     SmartTown.isFormUsed = true;
@@ -109,6 +118,7 @@ SmartTown.startSigma = function (graph) {
     e.preventSigmaDefault();
   });
 
+  //Allow playground movement.
   SmartTown.sigmaRenderer.getMouseCaptor().on("mousemovebody", (e) => {
     if (!SmartTown.isDragging || !SmartTown.draggedNode) return;
 
@@ -139,6 +149,8 @@ SmartTown.startSigma = function (graph) {
     SmartTown.isDragging = false;
     SmartTown.draggedNode = null;
   });
+
+  //Add rightclick event for edge addition.
   SmartTown.sigmaRenderer.on("rightClickNode", (e) => {
     const act = SmartTown.graph.getNodeAttribute(e.node, "action");
     if (act) {
@@ -161,6 +173,7 @@ SmartTown.startSigma = function (graph) {
     if (!SmartTown.sigmaRenderer.getCustomBBox()) SmartTown.sigmaRenderer.setCustomBBox(SmartTown.sigmaRenderer.getBBox());
   });
 
+  //Add reset behavior for click stage.
   SmartTown.sigmaRenderer.on('clickStage', () => {
     let node_dialog = document.getElementById('node_dialog');
     node_dialog.style.display = "none";
@@ -173,13 +186,11 @@ SmartTown.startSigma = function (graph) {
         highlighted: false
       };
     }, { attributes: ['highlighted'] });
-    // if (SmartTown.isFormUsed) {
-    //   SmartTown.resetNodeForm();
-    // }
+
     SmartTown.sigmaRenderer.refresh();
   });
 
-
+  //Add clickNode behavior
   SmartTown.sigmaRenderer.on('clickNode', (e) => {
     if (SmartTown.ClickedNode) {
       SmartTown.graph.setNodeAttribute(SmartTown.ClickedNode, "highlighted", false);
@@ -193,12 +204,14 @@ SmartTown.startSigma = function (graph) {
 
 }
 
+/** It resets the form node */
 SmartTown.resetNodeForm = () => {
   SmartTown.isFormUsed = false;
   $('#action_options').val("empty");
   Ardublockly.clearActType();
 }
 
+/** Adds a new node to the playground */
 SmartTown.addNewNode = () => {
   const node = {
     size: 20,
@@ -212,6 +225,8 @@ SmartTown.addNewNode = () => {
   SmartTown.graph.addNode(id, node);
 };
 
+
+/** Deletes a selected node */
 SmartTown.deleteSelectedNode = () => {
   if (SmartTown.ClickedNode) {
     SmartTown.deleteAllOutEdges(SmartTown.ClickedNode);
@@ -221,11 +236,12 @@ SmartTown.deleteSelectedNode = () => {
   }
 };
 
-
+/** Exports graph to a json object*/
 SmartTown.exportGraph = () => {
   return SmartTown.graph.export();
 }
 
+/** Adds an edge between two nodes taking into account resource conflict.*/
 SmartTown.addEdge = (origin, destination) => {
 
   let key = origin > destination ? origin + "" + destination : destination + "" + origin;
@@ -315,6 +331,9 @@ SmartTown.addEdge = (origin, destination) => {
 
 }
 
+/** It compares resources set checking if there's an intersection
+ * @returns {!Boolean} shouldAdd: checks if the edge should be added or not.
+ */
 SmartTown.compareActionResources = (origin, orCharac, otherOrigin, orEdgeCharac) => {
   let shouldAdd = false;
   if (orCharac !== undefined && orEdgeCharac !== undefined) {
@@ -332,6 +351,9 @@ SmartTown.compareActionResources = (origin, orCharac, otherOrigin, orEdgeCharac)
 
 }
 
+/** Adds a new character to the play.
+ * @returns {!Boolean} true, if characters is added, false if not.
+ */
 SmartTown.addCharacter = (charac) => {
 
   if (!SmartTown.characters[charac.charac_alias]) {
@@ -341,12 +363,20 @@ SmartTown.addCharacter = (charac) => {
   return false;
 }
 
+/** sets available actions.
+ * @param {!Boolean} list, action list.
+ */
 SmartTown.setActions = (list) => {
   list.forEach(action => {
     SmartTown.actions[action['name']] = action;
   });
 }
 
+
+/** 
+ * Deletes all edges that have the node as an origin.
+ * @param {!Boolean} node specified node.
+ */
 SmartTown.deleteAllOutEdges = (node) => {
   const orOut = SmartTown.graph.getNodeAttribute(node, 'outArcs');
   if (orOut) {
@@ -367,7 +397,10 @@ SmartTown.deleteAllOutEdges = (node) => {
   }
 }
 
-
+/** 
+ * Deletes all edges that have the node as an destination.
+ * @param {!Boolean} node specified node.
+ */
 SmartTown.deleteAllInEdges = (node) => {
   const orIn = SmartTown.graph.getNodeAttribute(node, 'inArcs');
   if (orIn) {
@@ -388,6 +421,10 @@ SmartTown.deleteAllInEdges = (node) => {
   }
 }
 
+/** 
+ * Resets and fills action dropdown.
+ * @param {!Boolean} actionsToShow actionlist.
+ */
 SmartTown.resetAndFillActionDropDown = (actionsToShow) => {
   SmartTown.activeActionDropdown = actionsToShow;
   const actSelect = document.getElementById("act_type");
@@ -400,15 +437,19 @@ SmartTown.resetAndFillActionDropDown = (actionsToShow) => {
     var $newOpt = $("<option>").attr("value", key).text(value.translatedName);
     $("#act_type").append($newOpt);
   }
-  // $("#act_type").trigger('contentChanged');
 };
-
+/** 
+ * Updates node graphic status.
+ * @param {!Boolean} node node to update.
+ */
 SmartTown.updateNodeStatus = (node) => {
   let status = node.status;
   SmartTown.graph.updateNodeAttribute(node.id, 'color', newColor => newColor = SmartTown.statusColors[status]);
 };
 
-
+/** 
+ * Updates all nodes graphic status.
+ */
 SmartTown.resetNodeStatus = () => {
   SmartTown.graph.updateEachNodeAttributes((node, attr) => {
     return {

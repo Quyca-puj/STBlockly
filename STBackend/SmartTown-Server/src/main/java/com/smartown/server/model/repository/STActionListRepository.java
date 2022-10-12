@@ -9,6 +9,9 @@ import com.smartown.server.model.STActionList;
 import com.smartown.server.model.STBaseAction;
 
 @Repository
-public interface STActionListRepository extends CrudRepository<STActionList, Long>{
+/*
+ * @author IQBots
+ */
+public interface STActionListRepository extends CrudRepository<STActionList, Long> {
 	Optional<STActionList> findByName(String name);
 }

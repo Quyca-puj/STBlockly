@@ -15,6 +15,10 @@ import com.smartown.server.model.repository.STActionParametersRepository;
 import com.smartown.server.model.repository.STBaseActionRepository;
 
 @Service
+/*
+ * BaseAction Service
+ * @author IQBots
+ */
 public class STBaseActionService implements ISTBaseActionService {
 
 	@Autowired
@@ -23,7 +27,10 @@ public class STBaseActionService implements ISTBaseActionService {
 	private STActionParameterBundleRepository bundleRepository;
 	@Autowired
 	private STActionParametersRepository paramsRepository;
-
+	/*
+	 * Method to get all the action in the database.
+	 * @return list with all the actions.
+	 */
 	@Override
 	public List<STBaseAction> getAllBaseActions() {
 		List<STBaseAction> list = (List<STBaseAction>) repository.findAll();
@@ -32,7 +39,11 @@ public class STBaseActionService implements ISTBaseActionService {
 		}
 		return null;
 	}
-
+	/*
+	 * Method to create a new action.
+	 * @param command STBaseAction object
+	 * @return STBaseAction representing the new Action.
+	 */
 	@Override
 	public STBaseAction createBaseAction(STBaseAction command) {
 		Optional<STBaseAction> possibleCommand = repository.findByName(command.getName());
@@ -57,7 +68,10 @@ public class STBaseActionService implements ISTBaseActionService {
 		command.setEmotionOriented(false);
 		return repository.save(command);
 	}
-
+	/*
+	 * Method to get all the custom actions in the database.
+	 * @return list with all the custom actions.
+	 */
 	@Override
 	public List<STBaseAction> getAllCustomBaseActions() {
 		List<STBaseAction> list = (List<STBaseAction>) repository.findAllByCustom(true);
@@ -66,7 +80,10 @@ public class STBaseActionService implements ISTBaseActionService {
 		}
 		return null;
 	}
-
+	/*
+	 * Method to get all the base actions in the database.
+	 * @return list with all the base actions.
+	 */
 	@Override
 	public List<STBaseAction> getAllFixedBaseActions() {
 		List<STBaseAction> list = (List<STBaseAction>) repository.findAllByCustom(false);
@@ -75,10 +92,12 @@ public class STBaseActionService implements ISTBaseActionService {
 		}
 		return null;
 	}
-
+	/*
+	 * Method to get the base action given a name.
+	 * @return found Action.
+	 */
 	@Override
 	public STBaseAction getBaseActionFromName(String name) {
-		System.out.println("BASEACTION: " + name);
 		STBaseAction action = repository.findByName(name).get();
 		return action;
 	}
