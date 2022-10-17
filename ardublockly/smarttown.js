@@ -8,7 +8,6 @@
 
 /** Create a namespace for the application. */
 var SmartTown = SmartTown || {};
-
  /** Sets the middle level generator */
 SmartTown.setMiddleGenerator = function (generator) {
   Blockly.SmartTown.middleGenerator = generator;
@@ -37,3 +36,15 @@ SmartTown.getActiveCharacters = () => {
   
   return activeCharDir;
 };
+
+
+SmartTown.hasSetupBlock = (workspace) =>{
+  let blocks = workspace.getAllBlocks();
+  let hasSetup =false;
+  for (var i = 0; i < blocks.length; i++) {
+    if (blocks[i].type === "setupsmarttown") {
+        hasSetup = true;
+    }
+  }
+  return hasSetup;
+}

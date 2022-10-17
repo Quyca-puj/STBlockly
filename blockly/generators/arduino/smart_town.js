@@ -65,9 +65,7 @@ Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_STOP] = function (block) {
 Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_SETUP] = function (block) {
   let text_wifiname = block.getFieldValue('wifiName');
   let text_pass = block.getFieldValue('pass');
-  let serial = block.getFieldValue('serialNumber');
   let alias = block.getFieldValue('alias');
-  let conf = block.getFieldValue('CONF_TYPE');
   let commands = Blockly.Arduino.statementToCode(block, 'COMMANDS');
   let STcommands = [];
   let STFunctionsDict = {};
@@ -76,7 +74,6 @@ Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_SETUP] = function (block) {
   let isCustAction = "bool Robot::isCustomAction(String command)\n{\n  return ";
   let isFeasAction = "bool Robot::isFeasibleCustom(Task *msg)\n{\n  bool toRet = false;\n";
   let checkCustomCommands = "void Robot::checkCustomCommands(String msg, bool checkStatus, WiFiClient client)\n{\n";
-
 
   for (let name in Blockly.Arduino.STFunctions_) {
     let code = Blockly.Arduino.STFunctions_[name].code;
@@ -90,9 +87,9 @@ Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_SETUP] = function (block) {
   if (STchecks.length > 0) {
     isCustAction += STchecks.join(' || ');
   } else {
-    isCustAction += "false"
+    isCustAction += "false";
   }
-  isCustAction += ";\n}"
+  isCustAction += ";\n}";
 
   if (STfeas.length > 0) {
     isFeasAction += STfeas.join('\n else ');
@@ -107,32 +104,6 @@ Blockly.Arduino[Blockly.SmartTown.BLOCK_ST_SETUP] = function (block) {
   Blockly.Arduino.addFunction("isCustomAction", isCustAction);
   Blockly.Arduino.addFunction("isFeasibleCustom", isFeasAction);
   Blockly.Arduino.addFunction("checkCustomCommands", checkCustomCommands);
-
-  let setupCode = '//' + conf + ' config\n';
-
-  switch (conf) {
-    case 'Quyca':
-      setupCode +=
-        '   Serial.begin(115200);\n' +
-        '   delay(1000);\n' +
-        '   WifiConnection();\n' +
-        '   setupMotor();\n' +
-        '   setupSensors();\n' +
-        '   setupFaces();\n' +
-        '   JointSetup();\n';
-      break;
-    case 'Smarttown':
-      setupCode +=
-        '   Serial.begin(115200);\n' +
-        '   delay(1000);\n' +
-        '   WifiConnection();\n' +
-        '   setupMotor();\n' +
-        '   setupSensors();\n' +
-        '   setupFaces();\n' +
-        '   JointSetup();\n';
-      break;
-
-  }
 
   let includeCode = '#include "Robot.h"\n';
   let robotDef = 'Robot robot;\nbool rec_flag = false;\n'

@@ -235,6 +235,11 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    <block type="spi_transfer_return"></block>' +
 '  </category>' +
 '<category name="SmartTown" colour="#a55b80">'+
+'<block type="setupsmarttown">'+
+'  <field name="alias"></field>'+
+'  <field name="wifiName"></field>'+
+'  <field name="pass"></field>'+
+'</block>'+
 '<block type="mvt_avanzar">'+
 '</block>'+
 '<block type="mvt_girar">'+

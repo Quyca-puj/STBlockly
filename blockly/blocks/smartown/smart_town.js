@@ -17,7 +17,7 @@ Blockly.Blocks[Blockly.SmartTown.BLOCK_ST_AVANZAR] = {
       }
     );
   },
-  hasConditions:true
+  hasConditions: true
 };
 
 
@@ -51,7 +51,7 @@ Blockly.Blocks[Blockly.SmartTown.BLOCK_ST_GIRAR] = {
       }
     );
   },
-  hasConditions:true
+  hasConditions: true
 };
 
 Blockly.Blocks[Blockly.SmartTown.BLOCK_ST_AVANZAR_T] = {
@@ -93,7 +93,7 @@ Blockly.Blocks[Blockly.SmartTown.BLOCK_ST_AVANZAR_T] = {
       }
     );
   },
-  hasConditions:true
+  hasConditions: true
 };
 
 
@@ -137,7 +137,7 @@ Blockly.Blocks[Blockly.SmartTown.BLOCK_ST_GIRAR_T] = {
       }
     );
   },
-  hasConditions:true
+  hasConditions: true
 };
 
 Blockly.Blocks[Blockly.SmartTown.BLOCK_ST_STOP] = {
@@ -170,7 +170,7 @@ Blockly.Blocks[Blockly.SmartTown.BLOCK_ST_HABLAR] = {
     this.setTooltip("Dile al robot que decir");
     this.setHelpUrl("");
   },
-  hasConditions:true
+  hasConditions: true
 };
 
 
@@ -179,20 +179,14 @@ Blockly.Blocks[Blockly.SmartTown.BLOCK_ST_SETUP] = {
     this.appendDummyInput()
       .appendField("Setup SmartTown");
     this.appendDummyInput()
-      .appendField("Serial Number")
-      .appendField(new Blockly.FieldNumber(115200), "serialNumber");
-    this.appendDummyInput()
-      .appendField("Wifi Name")
-      .appendField(new Blockly.FieldTextInput("ciscosb1"), "wifiName");
-    this.appendDummyInput()
       .appendField("Alias")
       .appendField(new Blockly.FieldTextInput(""), "alias");
     this.appendDummyInput()
+      .appendField("Wifi Name")
+      .appendField(new Blockly.FieldTextInput(""), "wifiName");
+    this.appendDummyInput()
       .appendField("Password")
       .appendField(new Blockly.FieldTextInput(""), "pass");
-    this.appendDummyInput()
-      .appendField("Configuration")
-      .appendField(new Blockly.FieldDropdown([["Quyca", "Quyca"], ["SmartTown", "Smarttown"]]), "CONF_TYPE");
     this.appendStatementInput("COMMANDS")
       .setCheck("Command")
       .appendField("Comandos");

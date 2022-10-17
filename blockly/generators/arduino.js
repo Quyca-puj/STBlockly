@@ -194,7 +194,9 @@ Blockly.Arduino.finish = function(code) {
   delete Blockly.Arduino.pins_;
   Blockly.Arduino.variableDB_.reset();
 
-  var allDefs = includes.join('\n') + definitions.join('\n') + functions.join('\n\n');
+  let vars = SmartTown.hasSetupBlock(Ardublockly.workspace)?'':variables.join('\n');
+
+  var allDefs = includes.join('\n') + vars +definitions.join('\n') + functions.join('\n\n');
 
 
   let robotDef = Blockly.Arduino.robotDef_;
