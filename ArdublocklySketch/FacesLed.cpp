@@ -2,7 +2,10 @@
 
 extern Adafruit_NeoPixel FacesInterface(NUMPIXELS,PINFACES,NEO_GRB + NEO_KHZ800);
 
-  
+
+/*
+ * It draws a face in the led matrix according to the values set in 1 inside the ledsArray, 
+ */
 void facesDraw(int ledsArray[NUMPIXELS],int color[3],int intensity){
   for(int i=0;i<NUMPIXELS;i++){
     if(ledsArray[i]==1){
@@ -15,6 +18,9 @@ void facesDraw(int ledsArray[NUMPIXELS],int color[3],int intensity){
   }
 }
 
+/*
+ * Method to setup face related logic.
+ */
 void setupFaces(){
   FacesInterface.begin();
   FacesInterface.clear();

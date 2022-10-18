@@ -1,7 +1,11 @@
 'use strict';
 
 goog.require('Blockly.STExecution');
-
+/**
+ * Generator for a forward ST message with emotional modulation
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {object} ST message object
+ */
 Blockly.STExecution['mvt_avanzar_exec'] = function(block) {
   let dropdown_emotion = block.getFieldValue('Emotion');
   let code={action:"forward", emotion:dropdown_emotion};
@@ -9,7 +13,11 @@ Blockly.STExecution['mvt_avanzar_exec'] = function(block) {
   code.params=paramStr
   return code;
 };
-
+/**
+ * Generator for a right/left ST message  with emotional modulation
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {object} ST message object
+ */
 Blockly.STExecution['mvt_girar_exec'] = function(block) {
   let dropdown_movement = block.getFieldValue('Movement');
   let dropdown_emotion = block.getFieldValue('Emotion');
@@ -18,7 +26,11 @@ Blockly.STExecution['mvt_girar_exec'] = function(block) {
   code.params=paramStr;
   return code;
 };
-
+/**
+ * Generator for a timed forward ST message
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {object} ST message object
+ */
 Blockly.STExecution['mvt_avanzar_tiempo_exec'] = function(block) {
   let dropdown_movement = block.getFieldValue('Movement');
   let time = block.getFieldValue('TIME');
@@ -26,7 +38,11 @@ Blockly.STExecution['mvt_avanzar_tiempo_exec'] = function(block) {
   let code={action:dropdown_movement, params:speed + " "+time  };
   return code;
 };
-
+/**
+ * Generator for a timed right/left ST message
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {object} ST message object
+ */
 Blockly.STExecution['mvt_girar_tiempo_exec'] = function(block) {
   let dropdown_movement = block.getFieldValue('Movement');
   let time = block.getFieldValue('TIME');
@@ -34,19 +50,31 @@ Blockly.STExecution['mvt_girar_tiempo_exec'] = function(block) {
   let code={action:dropdown_movement, params:speed + " "+time  };
   return code;
 };
-
+/**
+ * Generator for a stop movement ST message
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {object} ST message object
+ */
 Blockly.STExecution['mvt_stop_exec'] = function(block) {
   let dropdown_emotion = block.getFieldValue('Emotion');
-  let code={action:'stop', emotion:dropdown_emotion};
+  let code={action:'stop_mvt', emotion:dropdown_emotion};
   return code;
 };
-
+/**
+ * Generator for a change emotion ST message
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {object} ST message object
+ */
 Blockly.STExecution['change_emotion_exec'] = function(block) {
   let dropdown_emotion = block.getFieldValue('Emotion');
   let code={emotion:dropdown_emotion};
   return code;
 };
-
+/**
+ * Generator for a custom command ST message
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {object} ST message object
+ */
  Blockly.STExecution['st_command_call'] = function(block) {
   let funcName = Blockly.STExecution.variableDB_.getName(
       block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
@@ -55,7 +83,11 @@ Blockly.STExecution['change_emotion_exec'] = function(block) {
   let code={action:funcName, params:speed};
   return code;
 };
-
+/**
+ * Generator for an action list call ST message
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {object} ST message object
+ */
 Blockly.STExecution['st_actionList_call'] = function(block) {
   let funcName = Blockly.STExecution.variableDB_.getName(
       block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
@@ -63,7 +95,11 @@ Blockly.STExecution['st_actionList_call'] = function(block) {
   return code;
 };
 
-
+/**
+ * Generator for the ST framework setup
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {object} ST framework setup
+ */
 Blockly.STExecution['setupsmarttown_exec'] = function(block) {
   let alias = block.getFieldValue('ALIAS');
   let ip = block.getFieldValue('ip');
@@ -73,7 +109,11 @@ Blockly.STExecution['setupsmarttown_exec'] = function(block) {
   Blockly.STExecution.addCommandToDict(alias,{alias:alias,ip:ip,list:blockList});
   return '';
 };
-
+/**
+ * Generator for a emotional modulation configuration
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {null} 
+ */
 Blockly.STExecution['config_emotions'] = function(block) {
   let MF = block.getFieldValue('MF');
   let F = block.getFieldValue('F');
@@ -87,7 +127,11 @@ Blockly.STExecution['config_emotions'] = function(block) {
   Blockly.STExecution.setEmoConfig(code);
   return null;
 };
-
+/**
+ * Generator for parameter modulation configuration
+ * @param {!Blockly.Block} block Block to generate the code from.
+ * @return {null} 
+ */
 Blockly.STExecution['config_actions'] = function(block) {
   let speed_min = block.getFieldValue('SPEED_MIN');
   let speed_max = block.getFieldValue('SPEED_MAX');

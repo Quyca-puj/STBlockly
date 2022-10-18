@@ -11,6 +11,8 @@ def send_code_to_robot(robot_action, socket_mgmt):
     Handles Robot Connection and message lifecycle.
     - robot_action: robot information and action description.
     - socket_mgmt: Socket manager interface.
+    :return: Tuple with (success, ide_mode, std_out, err_out, exit_code)
+
     """
     success = True
     ide_mode = 'unknown'
@@ -34,9 +36,11 @@ def send_code_to_robot(robot_action, socket_mgmt):
 
 def send_calibration_to_all(characs, socket_mgmt):
     """
-    Handles Robot Connection and maessage lifecycle.
-    - robot_action: robot information and action description.
+    Handles Robot Connection and message lifecycle.
+    - characs: Multiple robot information and action description.
     - socket_mgmt: Socket manager interface.
+    :return: Tuple with (success, ide_mode, std_out, err_out, exit_code)
+
     """
     success = True
     ide_mode = 'unknown'

@@ -9,6 +9,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "action_parameters")
+/*
+ * @author IQBots
+ */
 public class STActionParameter {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,30 +21,34 @@ public class STActionParameter {
 
 	@Basic
 	private String type;
-	
+
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getType() {
 		return type;
 	}
+
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "STActionParameter [id=" + id + ", name=" + name + ", type=" + type + "]";
 	}
-	
-	 
+
 }

@@ -51,7 +51,6 @@ Blockly.STExecution['controls_repeat_ext'] = function(block) {
       for (let index = 0; index < repeats; index++) {
         commandList.push(...list);
       }
-      console.log(commandList);
   return {array:commandList};
 };
 

@@ -60,7 +60,8 @@ Blockly.Arduino['procedures_defreturn'] = function(block) {
   }
   returnType = Blockly.Arduino.getArduinoType_(returnType);
   // Construct code
-  var code = returnType + ' Robot::' + funcName + '(' + args.join(', ') + ') {\n' +
+  let extra = SmartTown.hasSetupBlock(Ardublockly.workspace)?' Robot::':' ' ;
+  var code = returnType + extra + funcName + '(' + args.join(', ') + ') {\n' +
       branch + returnValue + '}';
   code = Blockly.Arduino.scrub_(block, code);
   Blockly.Arduino.userFunctions_[funcName] = code;

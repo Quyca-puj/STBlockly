@@ -9,6 +9,9 @@
 /** Create a namespace for the application. */
 var Ardublockly = Ardublockly || {};
 
+/**
+ * Toolbox for arduino level.
+ */
 Ardublockly.TOOLBOX_ARDUINO_XML =
 '<xml>' +
 '  <sep></sep>' +
@@ -232,6 +235,11 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '    <block type="spi_transfer_return"></block>' +
 '  </category>' +
 '<category name="SmartTown" colour="#a55b80">'+
+'<block type="setupsmarttown">'+
+'  <field name="alias"></field>'+
+'  <field name="wifiName"></field>'+
+'  <field name="pass"></field>'+
+'</block>'+
 '<block type="mvt_avanzar">'+
 '</block>'+
 '<block type="mvt_girar">'+
@@ -250,286 +258,9 @@ Ardublockly.TOOLBOX_ARDUINO_XML =
 '</category>'+
 '</xml>';
 
-
-Ardublockly.TOOLBOX_JAVA_XML =
-'<xml>' +
-'  <sep></sep>' +
-'  <category id="catLogic" name="Lógica">' +
-'    <block type="controls_if"></block>' +
-'    <block type="logic_compare"></block>' +
-'    <block type="logic_operation"></block>' +
-'    <block type="logic_negate"></block>' +
-'    <block type="logic_boolean"></block>' +
-'    <block type="logic_null"></block>' +
-'    <block type="logic_ternary"></block>' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catLoops" name="Secuencias">' +
-'    <block type="controls_repeat_ext">' +
-'      <value name="TIMES">' +
-'        <block type="math_number">' +
-'          <field name="NUM">10</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="controls_whileUntil"></block>' +
-'    <block type="controls_for">' +
-'      <value name="FROM">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'      <value name="TO">' +
-'        <block type="math_number">' +
-'          <field name="NUM">10</field>' +
-'        </block>' +
-'      </value>' +
-'      <value name="BY">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="controls_flow_statements"></block>' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catMath" name="Matemáticas">' +
-'    <block type="math_number"></block>' +
-'    <block type="math_arithmetic"></block>' +
-'    <block type="math_single"></block>' +
-'    <block type="math_trig"></block>' +
-'    <block type="math_constant"></block>' +
-'    <block type="math_number_property"></block>' +
-'    <block type="math_change">' +
-'      <value name="DELTA">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="math_round"></block>' +
-'    <block type="math_modulo"></block>' +
-'    <block type="math_constrain">' +
-'      <value name="LOW">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'      <value name="HIGH">' +
-'        <block type="math_number">' +
-'          <field name="NUM">100</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="math_random_int">' +
-'      <value name="FROM">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'      <value name="TO">' +
-'        <block type="math_number">' +
-'          <field name="NUM">100</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="math_random_float"></block>' +
-'    <block type="base_map"></block>' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catText" name="Texto">' +
-'    <block type="text"></block>' +
-'    <block type="text_join"></block>' +
-'    <block type="text_append">' +
-'      <value name="TEXT">' +
-'        <block type="text"></block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="text_length"></block>' +
-'    <block type="text_isEmpty"></block>' +
-//'    <!--block type="text_trim"></block Need to update block -->' +
-//'    <!--block type="text_print"></block Part of the serial comms -->' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catVariables" name="Variables">' +
-'    <block type="variables_get"></block>' +
-'    <block type="variables_set"></block>' +
-'    <block type="variables_set">' +
-'      <value name="VALUE">' +
-'        <block type="variables_set_type"></block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="variables_set_type"></block>' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catFunctions" name="Funciones" custom="PROCEDURE"></category>' +
-'  <sep></sep>' +
-'<category name="SmartTown" colour="#a55b80">'+
-'<block type="setupsmarttown_middle"></block>'+
-'<block type="mvt_avanzar_middle">'+
-'  <field name="Movement">forward</field>'+
-'  <field name="Emotion">very_happy</field>'+
-'</block>'+
-'<block type="mvt_girar_middle">'+
-'  <field name="Movement">left</field>'+
-'  <field name="Emotion">very_happy</field>'+
-'</block>'+
-'<block type="mvt_avanzar_tiempo_middle">'+
-'  <field name="Movement">forward</field>'+
-'  <field name="TIME">1</field>'+
-'</block>'+
-'<block type="mvt_girar_tiempo_middle">'+
-'  <field name="Movement">left</field>'+
-'  <field name="TIME">1</field>'+
-'</block>'+
-'<block type="mvt_stop"></block>' +
-'<block type="new_smarttown_action_list"></block>' +
-'</category>'+
-'  <sep></sep>' +
-'  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +
-'  <sep></sep>' +
-'</xml>';
-
-Ardublockly.TOOLBOX_PY_XML =
-'<xml>' +
-'  <sep></sep>' +
-'  <category id="catLogic" name="Lógica">' +
-'    <block type="controls_if"></block>' +
-'    <block type="logic_compare"></block>' +
-'    <block type="logic_operation"></block>' +
-'    <block type="logic_negate"></block>' +
-'    <block type="logic_boolean"></block>' +
-'    <block type="logic_null"></block>' +
-'    <block type="logic_ternary"></block>' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catLoops" name="Secuencias">' +
-'    <block type="controls_repeat_ext">' +
-'      <value name="TIMES">' +
-'        <block type="math_number">' +
-'          <field name="NUM">10</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="controls_whileUntil"></block>' +
-'    <block type="controls_for">' +
-'      <value name="FROM">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'      <value name="TO">' +
-'        <block type="math_number">' +
-'          <field name="NUM">10</field>' +
-'        </block>' +
-'      </value>' +
-'      <value name="BY">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="controls_flow_statements"></block>' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catMath" name="Matemáticas">' +
-'    <block type="math_number"></block>' +
-'    <block type="math_arithmetic"></block>' +
-'    <block type="math_single"></block>' +
-'    <block type="math_trig"></block>' +
-'    <block type="math_constant"></block>' +
-'    <block type="math_number_property"></block>' +
-'    <block type="math_change">' +
-'      <value name="DELTA">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="math_round"></block>' +
-'    <block type="math_modulo"></block>' +
-'    <block type="math_constrain">' +
-'      <value name="LOW">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'      <value name="HIGH">' +
-'        <block type="math_number">' +
-'          <field name="NUM">100</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="math_random_int">' +
-'      <value name="FROM">' +
-'        <block type="math_number">' +
-'          <field name="NUM">1</field>' +
-'        </block>' +
-'      </value>' +
-'      <value name="TO">' +
-'        <block type="math_number">' +
-'          <field name="NUM">100</field>' +
-'        </block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="math_random_float"></block>' +
-'    <block type="base_map"></block>' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catText" name="Texto">' +
-'    <block type="text"></block>' +
-'    <block type="text_join"></block>' +
-'    <block type="text_append">' +
-'      <value name="TEXT">' +
-'        <block type="text"></block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="text_length"></block>' +
-'    <block type="text_isEmpty"></block>' +
-//'    <!--block type="text_trim"></block Need to update block -->' +
-//'    <!--block type="text_print"></block Part of the serial comms -->' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catVariables" name="Variables">' +
-'    <block type="variables_get"></block>' +
-'    <block type="variables_set"></block>' +
-'    <block type="variables_set">' +
-'      <value name="VALUE">' +
-'        <block type="variables_set_type"></block>' +
-'      </value>' +
-'    </block>' +
-'    <block type="variables_set_type"></block>' +
-'  </category>' +
-'  <sep></sep>' +
-'  <category id="catFunctions" name="Funciones" custom="PROCEDURE"></category>' +
-'  <sep></sep>' +
-'<category name="SmartTown" colour="#a55b80">'+
-'<block type="setupsmarttown_middle"></block>'+
-'<block type="mvt_avanzar_middle">'+
-'  <field name="Movement">forward</field>'+
-'  <field name="Emotion">very_happy</field>'+
-'</block>'+
-'<block type="mvt_girar_middle">'+
-'  <field name="Movement">left</field>'+
-'  <field name="Emotion">very_happy</field>'+
-'</block>'+
-'<block type="mvt_avanzar_tiempo_middle">'+
-'  <field name="Movement">forward</field>'+
-'  <field name="TIME">1</field>'+
-'</block>'+
-'<block type="mvt_girar_tiempo_middle">'+
-'  <field name="Movement">left</field>'+
-'  <field name="TIME">1</field>'+
-'</block>'+
-'<block type="mvt_stop"></block>' +
-'<block type="hablar"></block>'+
-'</category>'+
-'  <sep></sep>' +
-'  <category id="STCommands" name="Comandos SmartTown " custom="STCOMMANDS"></category>' +
-'  <sep></sep>' +
-'</xml>';
-
-
+/**
+ * Toolbox for sequence list level.
+ */
 Ardublockly.TOOLBOX_MID_XML =
 '<xml>' +
 '  <sep></sep>' +
@@ -576,7 +307,9 @@ Ardublockly.TOOLBOX_MID_XML =
 '</xml>';
 
 
-
+/**
+ * Toolbox for execution level.
+ */
 Ardublockly.TOOLBOX_EXEC_XML =
 '<xml>' +
 '  <sep></sep>' +

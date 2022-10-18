@@ -53,7 +53,11 @@ Blockly.SmartTown.allSTCommands = function(root) {
   STCommandsNoReturn.sort(Blockly.SmartTown.procTupleComparator_);
   return [STCommandsNoReturn];
 };
-
+/**
+ * Generates complementray sketch information used in robot.h.template.
+ * @param {!Blockly.Workspace} root Root workspace.
+ * @return {!string} robot.h complementary information 
+ */
 Blockly.SmartTown.generateCommandRobotSketch = function(root) {
   let blocks = root.getAllBlocks();
   let STCommandsNoReturn = [];
@@ -61,7 +65,6 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].getCommandDef) {
       var tuple = blocks[i].getCommandDef();
-      console.log(tuple);
       if (tuple) {
           STCommandsNoReturn.push("void "+tuple+"(WiFiClient client);");
           STCommandsNoReturn.push("int "+tuple+"Step;");
@@ -82,18 +85,14 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
     variables.push(Blockly.Arduino.variables_[name]);
   }
   STCommandsNoReturn.push(...variables);
-  console.log(STCommandsNoReturn);
   return STCommandsNoReturn;
 };
 
 
 /**
- * Find all user-created STCommand definitions in a workspace.
+ * Find all user-created ST Action List definitions in a workspace.
  * @param {!Blockly.Workspace} root Root workspace.
- * @return {!Array.<!Array.<!Array>>} Pair of arrays, the
- *     first contains STCommands without return variables, the second with.
- *     Each STCommand is defined by a three-element list of name, parameter
- *     list, and return value boolean.
+ * @return {!Array.<!Array.<!Array>>} Array containing action lists.
  */
  Blockly.SmartTown.allSTAL = function(root) {
   let blocks = root.getAllBlocks();
@@ -103,9 +102,7 @@ Blockly.SmartTown.generateCommandRobotSketch = function(root) {
       var name = blocks[i].getSTALDef();
       let stmts = Blockly.SmartMiddle.statementToCode(blocks[i], 'COMMANDS');
       let acts = [], aux = stmts.split("\n ");
-      console.log(aux);
       for(let a in aux){
-      console.log(aux[a]);
         acts.push(JSON.parse(aux[a]));
       }
       let actionList ={

@@ -49,10 +49,22 @@ Pasar Lib actualizada.OK
 Arreglar secuencia de asincronas. OK
 Solo mandar info de personajes activos. OK
 
+Bug con comandos emocionales. Velocidad y modulacion emocional. OK
+
 Nodos diferentes sincorno y asincrono. Si se logra esta se puede cambiar a la anterior.
 ver electron
 
 Que pasa con comandos asinconors en el fin? Se quedan activos. 
+
+
+Pendiente:
+- prueba con sensor extra.
+- Prueba general App y ST.
+- Docuemntacion PetriNetLib Codigo y doc.
+- Docuemntacion App Codigo y doc.
+- Docuemntacion ST Codigo y doc.
+- Documentacion Codigo Robot y doc.
+
 
 
 {

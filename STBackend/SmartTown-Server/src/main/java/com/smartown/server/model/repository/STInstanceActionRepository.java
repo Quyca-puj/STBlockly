@@ -9,5 +9,8 @@ import com.smartown.server.model.STBaseAction;
 import com.smartown.server.model.STInstanceAction;
 
 @Repository
-public interface STInstanceActionRepository extends CrudRepository<STInstanceAction, Long>{
+/*
+ * @author IQBots
+ */
+public interface STInstanceActionRepository extends CrudRepository<STInstanceAction, Long> {
 }

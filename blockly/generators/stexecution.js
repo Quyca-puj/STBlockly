@@ -342,18 +342,34 @@ Blockly.STExecution.noGeneratorCodeInline = function () {
 /** Used for not-yet-implemented block code generators */
 Blockly.STExecution.noGeneratorCodeLine = function () { return ''; };
 
+/**
+ * Generates a list of ST messages from a loop block.
+ * @param {!Blockly.block} block The Block to check.
+ * @param {!string} name param name
+ * @return {Array} List with ST commands
+ */
 Blockly.STExecution.LoopToList = function (block, name) {
   var targetBlock = block.getInputTargetBlock(name);
   var code = this.LoopToList(targetBlock);
   return code;
 };
-
+/**
+ * Generates a list of ST messages from a stament.
+ * @param {!Blockly.block} block The Block to check.
+ * @param {!string} name param name
+ * @param {!string} alias robot name
+ * @return {Array} List with ST commands
+ */
 Blockly.STExecution.statementToList = function (block, name, alias) {
   var targetBlock = block.getInputTargetBlock(name);
   var code = this.blockToList(targetBlock, alias);
   return code;
 };
-
+/**
+ * Generates a list of ST messages from a loop block.
+ * @param {!Blockly.block} block The Block to check.
+ * @return {Array} List with ST commands
+ */
 Blockly.STExecution.LoopToList = function (block) {
   let auxBlock = block;
   let blockList = [];
@@ -366,7 +382,12 @@ Blockly.STExecution.LoopToList = function (block) {
   }
   return blockList;
 };
-
+/**
+ * Generates a list of ST messages from a stament.
+ * @param {!Blockly.block} block The Block to check.
+ * @param {!string} alias robot name
+ * @return {Array} List with ST commands
+ */
 Blockly.STExecution.blockToList = function (block, alias) {
   let auxBlock = block;
   let blockList = [];
@@ -379,18 +400,26 @@ Blockly.STExecution.blockToList = function (block, alias) {
   }
   return blockList;
 };
+
+/**
+ * Generates a list of ST messages from a block output.
+ * @param {Object} command command object.
+ * @param {!string} alias robot name
+ * @param {!string} id block id
+ * @return {Array} List with ST commands
+ */
 Blockly.STExecution.blockToSTActions = function (command, alias, id) {
   let retAction = {};
   let stmt = command;
   let msg = [];
   let emoMsg = [];
   retAction.id = id;
-  console.log("processing");
-  console.log(command);
+  //check if command is an action.
   if (stmt.action) {
     retAction.type = SmartTownUtils.BASE_COMMAND;
     msg.push(alias);
     msg.push(stmt.action);
+  //check if the action has an emotion.
 
     if (stmt.emotion) {
       emoMsg.push(alias);
@@ -407,6 +436,8 @@ Blockly.STExecution.blockToSTActions = function (command, alias, id) {
     retAction.command = msg.join(" ");
 
   } else {
+  //create message thats not an action but an emotion change.
+
     if (stmt.emotion) {
       emoMsg.push(alias);
       emoMsg.push("emotions");
@@ -416,6 +447,7 @@ Blockly.STExecution.blockToSTActions = function (command, alias, id) {
     }
   }
 
+  //check if command is a list, as it could be a action list
   if (stmt.list) {
     retAction.type = SmartTownUtils.ACTIONLIST_COMMAND;
     let commands = SmartTown.getActionsFromList(stmt.list);
@@ -426,7 +458,7 @@ Blockly.STExecution.blockToSTActions = function (command, alias, id) {
     }
     retAction.actions = commandList;
   }
-
+  //check if command is a array, as it could be a action list
   if (stmt.array) {
     retAction.type = SmartTownUtils.ACTIONLIST_COMMAND;
     let commands = stmt.array;
@@ -436,11 +468,14 @@ Blockly.STExecution.blockToSTActions = function (command, alias, id) {
     }
     retAction.actions = commandList;
   }
-  console.log(retAction);
 
   return retAction;
 };
-
+/**
+ * Override code generation to make output an st message.
+ * @param {Blockly.block} block command object.
+ * @param {!string} alias robot name
+ */
 Blockly.STExecution.blockToOutput = function (block, alias) {
   if (!block) {
     return '';
@@ -482,10 +517,13 @@ Blockly.STExecution.blockToOutput = function (block, alias) {
   }
 };
 
-//esta cambia los params necesarios.
+/**
+ * Given an emotion, it calculates the parameters.
+ * @param {Object} actions command object.
+ * @param {!string} emotion emotion name
+ */
 Blockly.STExecution.setEmotionalParams = function (actions, emotion) {
   let retStr = [];
-  console.log()
   let intensity = Blockly.STExecution.getEmoConfig(emotion);
   for (let i in actions) {
     let act = Blockly.STExecution.getActConfig(actions[i]);
@@ -498,29 +536,33 @@ Blockly.STExecution.setEmotionalParams = function (actions, emotion) {
   return retStr.join(" ");
 };
 
-
+/** Set action configuration */
 Blockly.STExecution.setActConfig = function (dict) {
   Blockly.STExecution.actDict = dict;
 };
-
+/** Set emotion configuration */
 Blockly.STExecution.setEmoConfig = function (dict) {
   Blockly.STExecution.emoDict = dict;
 
 };
+
+/** given an action, get its configuration */
 Blockly.STExecution.getActConfig = function (action) {
   return Blockly.STExecution.actDict[action];
 };
 
+/** given an emotion, get its configuration */
 Blockly.STExecution.getEmoConfig = function (emotion) {
   return parseFloat(Blockly.STExecution.emoDict[emotion]);
 };
 
+/** get command information, related to the first robot */
 Blockly.STExecution.getCommandDict = function () {
   let key = Object.keys(Blockly.STExecution.commandDict)[0];
   return Blockly.STExecution.commandDict[key];
 };
 
-
+/** add command information to a gicen alias */
 Blockly.STExecution.addCommandToDict = function (alias, commandList) {
   Blockly.STExecution.commandDict[alias] = commandList;
 };

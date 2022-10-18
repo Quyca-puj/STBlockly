@@ -7,12 +7,17 @@
 `use strict`;
 
 var SmartTown = SmartTown || {};
+/**
+ * Creates a websocket for gui integration.
+ */
 SmartTown.GUIsocket = new WebSocket("ws://127.0.0.1:7002");
 
+
+/**
+ * On Message callback, called when a message is sent to this websocket.
+ */
 SmartTown.GUIsocket.onmessage = function (event) {
-    console.log(event.data);
     let guiEvent = JSON.parse(event.data);
-    console.log(`[message] Data received from server: ${event.data}`);
     if(guiEvent.event){
         SmartTown.resetNodeStatus();
         Ardublockly.largeIdeButtonSpinner(false,Ardublockly.inExec);
@@ -24,6 +29,9 @@ SmartTown.GUIsocket.onmessage = function (event) {
     }
 };
 
+/**
+ * On Close callback, called when a communication is closed.
+ */
 SmartTown.GUIsocket.onclose = function (event) {
     if (event.wasClean) {
         console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
@@ -32,7 +40,9 @@ SmartTown.GUIsocket.onclose = function (event) {
     }
 };
 
-
+/**
+ * On Error callback, called when a communication has an error.
+ */
 SmartTown.GUIsocket.onerror = function(error) {
     console.log(`[error] ${error.message}`);
 };

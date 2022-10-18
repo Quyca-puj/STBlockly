@@ -12,7 +12,6 @@ var STServer = {};
 /**
  * Reads JSON data from the server and forwards formatted JavaScript object.
  * @param {!string} url Location for the JSON data.
- * @param {!function} jsonDataCb Callback with JSON object or null for error.
  */
 STServer.getJson = function(url) {
   return STServer.sendRequest(url, 'GET', 'application/json', null);
@@ -23,7 +22,6 @@ STServer.getJson = function(url) {
  * Sends JSON data to the STServer.
  * @param {!string} url Requestor URL.
  * @param {!string} json JSON string.
- * @param {!function} callback Request callback function.
  */
  STServer.postJson = function(url, json ) {
   return STServer.sendRequest(url, 'POST', 'application/json', json);
@@ -35,8 +33,6 @@ STServer.getJson = function(url) {
  * @param {!string} method HTTP method.
  * @param {!string} contentType HTTP content type.
  * @param {string} jsonObjSend JavaScript object to be parsed into JSON to send.
- * @param {!function} cb Request callback function, takes a single input for a
- *     parsed JSON object.
  */
 STServer.sendRequest = function(
     url, method, contentType, jsonObjSend) {
@@ -101,56 +97,77 @@ STServer.createRequest = function() {
   return request;
 };
 /**
- * Gets the current IDE setting from the Ardublockly Server settings. The new
- * settings menu for the IDE options is then processed into an HTML element
- * and sent to the callback function as an argument.
- * @param {!function} callback Callback function for the server request, must
- *     have one argument to receive the JSON response.
+ * Requests the custom commands available in the ST Backend
+ * @return {!string} JSON list with the given commands
  */
  STServer.requestCommands = async function() {
   return await STServer.getJson('http://127.0.0.1:8080/command/custom');
 };
 
-
+/**
+ * Requests the Action Lists available in the ST Backend
+ * @return {!string} JSON list with the given action lists
+ */
 STServer.requestActionLists = async function() {
   return await STServer.getJson('http://127.0.0.1:8080/actionList/all');
 };
 
-
-STServer.requestActionLists = async function() {
-  return await STServer.getJson('http://127.0.0.1:8080/actionList/all');
-};
-
+/**
+ * Requests all the commands available in the ST Backend
+ * @return {!string} JSON list with the given commands
+ */
 STServer.requestActions = async function() {
   return await STServer.getJson('http://127.0.0.1:8080/command/all');
 };
-
+/**
+ * Requests the emotions available in the ST Backend
+ * @return {!string} JSON list with the given emotions
+ */
 STServer.requestEmotions = async function() {
   return await STServer.getJson('http://127.0.0.1:8080/emotions/all');
 };
+/**
+ * Requests the emotional config available in the ST Backend
+ * @return {!string} JSON list with the given emotional config
+ */
+STServer.requestEmotionConf = async function() {
+  return await STServer.getJson('http://127.0.0.1:8080/emotions/emoConfig/default');
+};
 
-
+/**
+ * Sends the commands created in the low level to the ST Backend
+ * @param {!Ardublockly.workspace} workspace Ardublockly workspace
+ */
 STServer.sendCommands = function(workspace) {
   let STCommandList = Blockly.SmartTown.allSTCommands(workspace)[0];
   for (let i = 0; i < STCommandList.length; i++) {
     let comName = STCommandList[i][0];
     let jsonObj = {id:-1, name:comName, conditions:Blockly.Arduino.STFunctionConditions_[comName]};
-    console.log(jsonObj);
     STServer.sendCommand(jsonObj);
   }
 
 };
-
+/**
+ * Sends a command created in the low level to the ST Backend
+ */
 STServer.sendCommand = function(json) {
   STServer.postJson('http://127.0.0.1:8080/command/new', json);
 };
 
-
+/**
+ * Sends a new action list created in the middle level to the ST Backend
+ * @return {!function} JSON list with the new command
+ */
 STServer.sendActionList = async function(json) {
   return await STServer.postJson('http://127.0.0.1:8080/actionList/new', json);
 };
 
-
+/**
+ * Sends a new action list created in the middle level to the ST Backend. It handles error and success.
+ * @param {!Ardublockly.workspace} workspace Ardublockly workspace
+ * @param {!function} successHandler Success Handler
+ * @param {!function} errorHandler Error Handler
+ */
  STServer.sendActionLists = function(workspace, successHandler, errorHandler) {
   let STActionLists = Blockly.SmartTown.allSTAL(workspace);
   for (let i = 0; i < STActionLists.length; i++) {

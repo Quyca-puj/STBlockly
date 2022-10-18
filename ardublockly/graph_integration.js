@@ -2,48 +2,52 @@
  * @license Licensed under the Apache License, Version 2.0 (the "License"):
  *          http://www.apache.org/licenses/LICENSE-2.0
  *
- * "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.94.244", charac_color: "#e02929" }, 
  * @fileoverview General javaScript for Arduino app with material design.
+ * { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.73.167", charac_color: "#ab00aa" } };
  */
 'use strict';
 
 var SmartTown = SmartTown || {};
-SmartTown.statusColors = {"EXECUTING":"#008000","DONE":"#000000"};
-SmartTown.characters = { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.94.244", charac_color: "#e02929" }, "azul": { charac_name: "Pedrito", charac_alias: "azul", charac_ip: "192.168.94.167", charac_color: "#1E90FF" } };
+/** Color mapping to status */
+SmartTown.statusColors = { "EXECUTING": "#008000", "DONE": "#000000" };
+/** Character map */
+SmartTown.characters = {};
+/** action map */
 SmartTown.actions = {};
 SmartTown.selectNodeForEdge = null;
 SmartTown.activeActionDropdown = null;
-/** Create a namespace for the application. */
+/** Get graph playground */
 SmartTown.graphContainer = document.getElementById("content_graph");
+
+/** Reset playground */
 
 SmartTown.reset = () => {
   SmartTown.startSigma(null);
 }
-
+/** Start sigma playground */
 SmartTown.startSigma = function (graph) {
 
   var $newOpt = $("<option>").attr("value", "morado").text("Mirabel");
-  var $newOpt2 = $("<option>").attr("value", "azul").text("Pedrito");
   $("#charac").append($newOpt);
-  $("#charac").append($newOpt2);
   $("#charac").trigger('contentChanged');
 
   window.oncontextmenu = () => { return false; };
+  //get character form.
   const form = document.getElementById('new_char_form');
   form.addEventListener("submit", function (event) {
     // stop form submission
     event.preventDefault();
     SmartTown.modalCharacOnSubmit();
   });
+  //Create a graph
   if (graph) {
-    console.log("in new graph");
     SmartTown.graph = graph;
   } else {
     SmartTown.graph = new graphology.Graph({ allowSelfLoops: false, type: 'directed' });
-
   }
+
+  //Render sigma graph
   if (SmartTown.sigmaRenderer) {
-    console.log("in new graph 2");
     SmartTown.sigmaRenderer.graph = SmartTown.graph;
     SmartTown.sigmaRenderer.refresh();
   } else {
@@ -58,13 +62,14 @@ SmartTown.startSigma = function (graph) {
 
   SmartTown.camera = SmartTown.sigmaRenderer.getCamera();
 
+  //Add node selection logic
   SmartTown.sigmaRenderer.on("downNode", (e) => {
     SmartTown.isDragging = true;
     SmartTown.draggedNode = e.node;
     SmartTown.graph.setNodeAttribute(SmartTown.draggedNode, "highlighted", true);
   });
 
-
+  //Add node double click events logic
   SmartTown.sigmaRenderer.on("doubleClickNode", (e) => {
     SmartTown.resetNodeForm();
     SmartTown.isFormUsed = true;
@@ -83,26 +88,21 @@ SmartTown.startSigma = function (graph) {
       SmartTown.graph.setNodeAttribute(SmartTown.doubleClickedNode, "highlighted", true);
       node_dialog.style.display = 'block';
       let nodeAtrr = SmartTown.graph.getNodeAttributes(SmartTown.doubleClickedNode);
-      console.log(nodeAtrr);
       select_charac.value = nodeAtrr['charac'] ? nodeAtrr['charac'].charac_alias : "empty";
       $('#charac').material_select();
       if (nodeAtrr['action']) {
         if (nodeAtrr['action'].actions) {
-          console.log('actionlists');
           action_options.value = 'actionlists';
         } else {
-          console.log('actions');
           action_options.value = 'actions';
         }
         $('#action_options').trigger('change');
         select_acttype.value = nodeAtrr['action'] ? nodeAtrr['action'].name : "empty";
-        console.log(select_acttype.value);
 
         const params = nodeAtrr['params'];
         Ardublockly.changeActType(params);
         if (params) {
           for (const [key, value] of Object.entries(params)) {
-            console.log(key)
             const aux_field = document.getElementById(key);
             aux_field.value = value;
           }
@@ -112,6 +112,7 @@ SmartTown.startSigma = function (graph) {
     e.preventSigmaDefault();
   });
 
+  //Allow playground movement.
   SmartTown.sigmaRenderer.getMouseCaptor().on("mousemovebody", (e) => {
     if (!SmartTown.isDragging || !SmartTown.draggedNode) return;
 
@@ -142,6 +143,8 @@ SmartTown.startSigma = function (graph) {
     SmartTown.isDragging = false;
     SmartTown.draggedNode = null;
   });
+
+  //Add rightclick event for edge addition.
   SmartTown.sigmaRenderer.on("rightClickNode", (e) => {
     const act = SmartTown.graph.getNodeAttribute(e.node, "action");
     if (act) {
@@ -164,6 +167,7 @@ SmartTown.startSigma = function (graph) {
     if (!SmartTown.sigmaRenderer.getCustomBBox()) SmartTown.sigmaRenderer.setCustomBBox(SmartTown.sigmaRenderer.getBBox());
   });
 
+  //Add reset behavior for click stage.
   SmartTown.sigmaRenderer.on('clickStage', () => {
     let node_dialog = document.getElementById('node_dialog');
     node_dialog.style.display = "none";
@@ -176,13 +180,11 @@ SmartTown.startSigma = function (graph) {
         highlighted: false
       };
     }, { attributes: ['highlighted'] });
-    // if (SmartTown.isFormUsed) {
-    //   SmartTown.resetNodeForm();
-    // }
+
     SmartTown.sigmaRenderer.refresh();
   });
 
-
+  //Add clickNode behavior
   SmartTown.sigmaRenderer.on('clickNode', (e) => {
     if (SmartTown.ClickedNode) {
       SmartTown.graph.setNodeAttribute(SmartTown.ClickedNode, "highlighted", false);
@@ -196,13 +198,14 @@ SmartTown.startSigma = function (graph) {
 
 }
 
+/** It resets the form node */
 SmartTown.resetNodeForm = () => {
   SmartTown.isFormUsed = false;
   $('#action_options').val("empty");
-  console.log('Resetting');
   Ardublockly.clearActType();
 }
 
+/** Adds a new node to the playground */
 SmartTown.addNewNode = () => {
   const node = {
     size: 20,
@@ -216,6 +219,8 @@ SmartTown.addNewNode = () => {
   SmartTown.graph.addNode(id, node);
 };
 
+
+/** Deletes a selected node */
 SmartTown.deleteSelectedNode = () => {
   if (SmartTown.ClickedNode) {
     SmartTown.deleteAllOutEdges(SmartTown.ClickedNode);
@@ -225,11 +230,12 @@ SmartTown.deleteSelectedNode = () => {
   }
 };
 
-
+/** Exports graph to a json object*/
 SmartTown.exportGraph = () => {
   return SmartTown.graph.export();
 }
 
+/** Adds an edge between two nodes taking into account resource conflict.*/
 SmartTown.addEdge = (origin, destination) => {
 
   let key = origin > destination ? origin + "" + destination : destination + "" + origin;
@@ -319,12 +325,11 @@ SmartTown.addEdge = (origin, destination) => {
 
 }
 
+/** It compares resources set checking if there's an intersection
+ * @returns {!Boolean} shouldAdd: checks if the edge should be added or not.
+ */
 SmartTown.compareActionResources = (origin, orCharac, otherOrigin, orEdgeCharac) => {
   let shouldAdd = false;
-  console.log(origin);
-  console.log(otherOrigin);
-  console.log(orCharac);
-  console.log(orEdgeCharac);
   if (orCharac !== undefined && orEdgeCharac !== undefined) {
     shouldAdd = (orCharac.charac_alias !== orEdgeCharac.charac_alias);
     if (!shouldAdd) {
@@ -340,6 +345,9 @@ SmartTown.compareActionResources = (origin, orCharac, otherOrigin, orEdgeCharac)
 
 }
 
+/** Adds a new character to the play.
+ * @returns {!Boolean} true, if characters is added, false if not.
+ */
 SmartTown.addCharacter = (charac) => {
 
   if (!SmartTown.characters[charac.charac_alias]) {
@@ -349,12 +357,20 @@ SmartTown.addCharacter = (charac) => {
   return false;
 }
 
+/** sets available actions.
+ * @param {!Boolean} list, action list.
+ */
 SmartTown.setActions = (list) => {
   list.forEach(action => {
     SmartTown.actions[action['name']] = action;
   });
 }
 
+
+/** 
+ * Deletes all edges that have the node as an origin.
+ * @param {!Boolean} node specified node.
+ */
 SmartTown.deleteAllOutEdges = (node) => {
   const orOut = SmartTown.graph.getNodeAttribute(node, 'outArcs');
   if (orOut) {
@@ -375,7 +391,10 @@ SmartTown.deleteAllOutEdges = (node) => {
   }
 }
 
-
+/** 
+ * Deletes all edges that have the node as an destination.
+ * @param {!Boolean} node specified node.
+ */
 SmartTown.deleteAllInEdges = (node) => {
   const orIn = SmartTown.graph.getNodeAttribute(node, 'inArcs');
   if (orIn) {
@@ -396,26 +415,35 @@ SmartTown.deleteAllInEdges = (node) => {
   }
 }
 
+/** 
+ * Resets and fills action dropdown.
+ * @param {!Boolean} actionsToShow actionlist.
+ */
 SmartTown.resetAndFillActionDropDown = (actionsToShow) => {
   SmartTown.activeActionDropdown = actionsToShow;
   const actSelect = document.getElementById("act_type");
   while (actSelect.firstChild) {
     actSelect.removeChild(actSelect.lastChild);
   }
+  let $emptyOpt = $("<option>").attr("value", "").text("");
+  $("#act_type").append($emptyOpt);
   for (const [key, value] of Object.entries(actionsToShow)) {
     var $newOpt = $("<option>").attr("value", key).text(value.translatedName);
     $("#act_type").append($newOpt);
   }
-
-  // $("#act_type").trigger('contentChanged');
 };
-
+/** 
+ * Updates node graphic status.
+ * @param {!Boolean} node node to update.
+ */
 SmartTown.updateNodeStatus = (node) => {
   let status = node.status;
   SmartTown.graph.updateNodeAttribute(node.id, 'color', newColor => newColor = SmartTown.statusColors[status]);
 };
 
-
+/** 
+ * Updates all nodes graphic status.
+ */
 SmartTown.resetNodeStatus = () => {
   SmartTown.graph.updateEachNodeAttributes((node, attr) => {
     return {

@@ -4,6 +4,10 @@ goog.require('Blockly.Blocks');
 goog.require('Blockly.Types');
 
 Blockly.Blocks['mvt_avanzar_middle'] = {
+  /**
+* Block for calling a mvt_avanzar_middle. 
+* @this Blockly.Block
+*/
   init: function () {
     this.jsonInit(
       {
@@ -31,6 +35,10 @@ Blockly.Blocks['mvt_avanzar_middle'] = {
 
 
 Blockly.Blocks['mvt_girar_middle'] = {
+  /**
+* Block for calling a mvt_girar_middle. 
+* @this Blockly.Block
+*/
   init: function () {
     this.jsonInit(
       {
@@ -71,6 +79,10 @@ Blockly.Blocks['mvt_girar_middle'] = {
 };
 
 Blockly.Blocks['mvt_avanzar_tiempo_middle'] = {
+  /**
+* Block for calling a mvt_avanzar_tiempo_middle. 
+* @this Blockly.Block
+*/
   init: function () {
     this.jsonInit(
       {
@@ -121,6 +133,10 @@ Blockly.Blocks['mvt_avanzar_tiempo_middle'] = {
 };
 
 Blockly.Blocks['mvt_girar_tiempo_middle'] = {
+  /**
+* Block for calling a mvt_girar_tiempo_middle. 
+* @this Blockly.Block
+*/
   init: function () {
     this.jsonInit(
       {
@@ -171,6 +187,10 @@ Blockly.Blocks['mvt_girar_tiempo_middle'] = {
 };
 
 Blockly.Blocks['setupsmarttown_middle'] = {
+  /**
+* Block for calling a setupsmarttown_middle. 
+* @this Blockly.Block
+*/
   init: function () {
     this.appendDummyInput()
       .appendField("Setup SmartTown");
@@ -186,6 +206,10 @@ Blockly.Blocks['setupsmarttown_middle'] = {
 
 
 Blockly.Blocks['new_smarttown_action_list'] = {
+  /**
+ * Block for calling a new_smarttown_action_list. It creates a new action list
+ * @this Blockly.Block
+ */
   init: function () {
     this.jsonInit(
       {
@@ -259,7 +283,7 @@ Blockly.Blocks['new_smarttown_action_list'] = {
 
 Blockly.Blocks['st_actionList_call'] = {
   /**
-   * Block for calling a procedure with no return value.
+   * Block for calling a st_actionList_call.
    * @this Blockly.Block
    */
   init: function () {
@@ -413,6 +437,10 @@ Blockly.Blocks['st_actionList_call'] = {
 }
 
 Blockly.Blocks['mvt_stop_mvt_middle'] = {
+  /**
+* Block for creating a 'mvt_stop_mvt_middle'.
+* @this Blockly.Block
+*/
   init: function () {
     this.jsonInit(
       {
@@ -429,6 +457,10 @@ Blockly.Blocks['mvt_stop_mvt_middle'] = {
   }
 };
 Blockly.Blocks['mvt_stop_all_middle'] = {
+  /**
+* Block for creating a 'mvt_stop_all_middle'.
+* @this Blockly.Block
+*/
   init: function () {
     this.jsonInit(
       {
@@ -447,6 +479,10 @@ Blockly.Blocks['mvt_stop_all_middle'] = {
 
 
 Blockly.Blocks['change_emo_middle'] = {
+  /**
+* Block for creating a 'change_emo_middle'.
+* @this Blockly.Block
+*/
   init: function () {
     this.jsonInit(
       {

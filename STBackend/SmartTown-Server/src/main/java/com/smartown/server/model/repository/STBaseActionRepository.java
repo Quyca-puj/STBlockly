@@ -9,8 +9,12 @@ import org.springframework.stereotype.Repository;
 import com.smartown.server.model.STBaseAction;
 
 @Repository
-public interface STBaseActionRepository extends CrudRepository<STBaseAction, Long>{
+/*
+ * @author IQBots
+ */
+public interface STBaseActionRepository extends CrudRepository<STBaseAction, Long> {
 
 	List<STBaseAction> findAllByCustom(boolean custom);
+
 	Optional<STBaseAction> findByName(String name);
 }

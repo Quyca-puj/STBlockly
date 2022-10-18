@@ -1,7 +1,15 @@
 from py4j.java_collections import MapConverter
 
-def send_petri_net(charac_info,petriNet, gateway):
-    """Sends petrinet object and character information through Py4J getaway"""
+
+def send_petri_net(charac_info, petriNet, gateway):
+    """Sends petrinet object and character information through Py4J getaway
+
+    :param charac_info: Character information
+    :param petriNet: Petri net represented in a dictionary
+    :param gateway: Py4J gateway
+
+    :return: Tuple with (success, ide_mode, std_out, err_out, exit_code)
+    """
     success = True
     ide_mode = 'unknown'
     std_out, err_out = '', ''
@@ -9,17 +17,22 @@ def send_petri_net(charac_info,petriNet, gateway):
     try:
 
         print("Entra send_petri_net")
-        print("charac_info",charac_info)
-        print("petriNet",petriNet)
-        success = gateway.entry_point.runPetriNetFromStrings(str(charac_info), str(petriNet))
+        print("charac_info", charac_info)
+        print("petriNet", petriNet)
+        success = gateway.entry_point.runPetriNetFromStrings(
+            str(charac_info), str(petriNet))
     except Exception:
         success = False
         exit_code = 201
         err_out = 'No fue posible iniciar la obra.'
     return success, ide_mode, std_out, err_out, exit_code
 
+
 def pause_petri_net(gateway):
-    """Sends petrinet pause request through Py4J getaway"""
+    """Sends petrinet pause request through Py4J getaway
+    :param gateway: Py4J gateway
+    :return: Tuple with (success, ide_mode, std_out, err_out, exit_code)
+    """
     success = True
     ide_mode = 'unknown'
     std_out, err_out = '', ''
@@ -34,7 +47,10 @@ def pause_petri_net(gateway):
 
 
 def stop_petri_net(gateway):
-    """Sends petrinet stop request through Py4J getaway"""
+    """Sends petrinet stop request through Py4J getaway
+    :param gateway: Py4J gateway
+    :return: Tuple with (success, ide_mode, std_out, err_out, exit_code)
+    """
     success = True
     ide_mode = 'unknown'
     std_out, err_out = '', ''
@@ -47,8 +63,12 @@ def stop_petri_net(gateway):
         err_out = 'No fue posible detener la obra.'
     return success, ide_mode, std_out, err_out, exit_code
 
+
 def resume_petri_net(gateway):
-    """Sends petrinet resume request through Py4J getaway"""
+    """Sends petrinet resume request through Py4J getaway
+    :param gateway: Py4J gateway
+    :return: Tuple with (success, ide_mode, std_out, err_out, exit_code)
+    """
     success = True
     ide_mode = 'unknown'
     std_out, err_out = '', ''
