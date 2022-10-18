@@ -11,7 +11,7 @@ var SmartTown = SmartTown || {};
 /** Color mapping to status */
 SmartTown.statusColors = { "EXECUTING": "#008000", "DONE": "#000000" };
 /** Character map */
-SmartTown.characters = { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.94.244", charac_color: "#ab00aa" }, "azul": { charac_name: "Pedrito", charac_alias: "azul", charac_ip: "192.168.94.167", charac_color: "#1E90FF" }, "amarillo": { charac_name: "Fulanito", charac_alias: "amarillo", charac_ip: "192.168.94.143", charac_color: "#e5e619" }, "rojo": { charac_name: "Pepito", charac_alias: "rojo", charac_ip: "192.168.94.193", charac_color: "#e02929" } };
+SmartTown.characters = { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.73.167", charac_color: "#ab00aa" }, "azul": { charac_name: "Pedrito", charac_alias: "azul", charac_ip: "192.168.94.167", charac_color: "#1E90FF" }, "amarillo": { charac_name: "Fulanito", charac_alias: "amarillo", charac_ip: "192.168.94.143", charac_color: "#e5e619" }, "rojo": { charac_name: "Pepito", charac_alias: "rojo", charac_ip: "192.168.94.193", charac_color: "#e02929" } };
 /** action map */
 SmartTown.actions = {};
 SmartTown.selectNodeForEdge = null;

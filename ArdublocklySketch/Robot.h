@@ -94,7 +94,14 @@ public:
   bool isInAction();
   Robot();
   void setupRobot(int serial, String givenAlias, String ssid, String password);
-  void processMsg(String msg, bool checkStatus, WiFiClient client);void haceralgo();
-int angulo;
+  void processMsg(String msg, bool checkStatus, WiFiClient client);void adelante_atras(WiFiClient client);
+int adelante_atrasStep;
+void tuntun(WiFiClient client);
+int tuntunStep;
+void cuadrado(WiFiClient client);
+int cuadradoStep;
+void popurri(WiFiClient client);
+int popurriStep;
+boolean action;
 };
 #endif

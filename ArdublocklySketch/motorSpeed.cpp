@@ -2,7 +2,7 @@
 
 //zero value motors
 const int SPEED_DEGREE_CERO_LM=90;
-const int SPEED_DEGREE_CERO_RM=90;
+const int SPEED_DEGREE_CERO_RM=85;
 /* Define again Servo*/
 Servo rightServo;
 Servo leftServo;
