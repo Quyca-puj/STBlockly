@@ -2,7 +2,6 @@
  * @license Licensed under the Apache License, Version 2.0 (the "License"):
  *          http://www.apache.org/licenses/LICENSE-2.0
  *
- * "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.94.244", charac_color: "#e02929" }, 
  * @fileoverview General javaScript for Arduino app with material design.
  */
 'use strict';
@@ -11,7 +10,7 @@ var SmartTown = SmartTown || {};
 /** Color mapping to status */
 SmartTown.statusColors = { "EXECUTING": "#008000", "DONE": "#000000" };
 /** Character map */
-SmartTown.characters = { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.73.167", charac_color: "#ab00aa" }, "azul": { charac_name: "Pedrito", charac_alias: "azul", charac_ip: "192.168.94.167", charac_color: "#1E90FF" }, "amarillo": { charac_name: "Fulanito", charac_alias: "amarillo", charac_ip: "192.168.94.143", charac_color: "#e5e619" }, "rojo": { charac_name: "Pepito", charac_alias: "rojo", charac_ip: "192.168.94.193", charac_color: "#e02929" } };
+SmartTown.characters = { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.73.167", charac_color: "#ab00aa" } };
 /** action map */
 SmartTown.actions = {};
 SmartTown.selectNodeForEdge = null;
@@ -28,13 +27,7 @@ SmartTown.reset = () => {
 SmartTown.startSigma = function (graph) {
 
   var $newOpt = $("<option>").attr("value", "morado").text("Mirabel");
-  var $newOpt2 = $("<option>").attr("value", "azul").text("Pedrito");
-  var $newOpt3 = $("<option>").attr("value", "amarillo").text("Fulanito");
-  var $newOpt4 = $("<option>").attr("value", "rojo").text("Pepito");
   $("#charac").append($newOpt);
-  $("#charac").append($newOpt2);
-  $("#charac").append($newOpt3);
-  $("#charac").append($newOpt4);
   $("#charac").trigger('contentChanged');
 
   window.oncontextmenu = () => { return false; };

@@ -83,6 +83,7 @@ public class STInstanceActionService implements ISTInstanceActionService {
 		ActionDTO newAction = new ActionDTO();
 		newAction.setAction(action.getBaseAction().getName());
 		newAction.setShouldAnswer(action.getBaseAction().isShouldAnswer());
+		newAction.setEmotionOriented(action.getBaseAction().isEmotionOriented());
 		if (action instanceof STEmotionalAction) {
 			newAction.setEmotion(((STEmotionalAction) action).getEmotion());
 		} else if (action instanceof STTimedAction) {

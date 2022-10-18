@@ -117,7 +117,21 @@ SmartTown.convertToSendable = function (alList) {
       if (act.shouldAnswer !== null) {
         action.shouldAnswer = act.shouldAnswer;
       }
-      al.push(action);
+      if (act.emotionOriented !== null) {
+        action.emotionOriented = act.emotionOriented;
+      }
+
+      if(action.emotionOriented){
+        let speed = SmartTown.getSpeedFromEmotion(action.emotion);
+        let emoAct = {action:"emotions", emotion:action.emotion, shouldAnswer:false, emotionOriented:false};
+        let speedAct = {action:action.action, params:speed, shouldAnswer:true, emotionOriented:false};
+        al.push(emoAct);
+        al.push(speedAct);
+      
+      }else{
+        al.push(action);
+
+      }
     }
     SmartTown.ALDict[alList[i].name] = { name: alList[i].name, translatedName: alList[i].name, actions: al, conditions: alList[i].conditions };
   }

@@ -70,6 +70,14 @@ public class ActionDTO {
 		}
 	}
 
+	public boolean isEmotionOriented() {
+		return emotionOriented;
+	}
+
+	public void setEmotionOriented(boolean emotionOriented) {
+		this.emotionOriented = emotionOriented;
+	}
+
 	public enum ActionDTOType {
 		COMMAND, EMOTIONAL, TIMED;
 	}
