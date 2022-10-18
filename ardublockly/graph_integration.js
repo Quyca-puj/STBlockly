@@ -3,6 +3,7 @@
  *          http://www.apache.org/licenses/LICENSE-2.0
  *
  * @fileoverview General javaScript for Arduino app with material design.
+ * { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.73.167", charac_color: "#ab00aa" } };
  */
 'use strict';
 
@@ -10,7 +11,7 @@ var SmartTown = SmartTown || {};
 /** Color mapping to status */
 SmartTown.statusColors = { "EXECUTING": "#008000", "DONE": "#000000" };
 /** Character map */
-SmartTown.characters = { "morado": { charac_name: "Mirabel", charac_alias: "morado", charac_ip: "192.168.73.167", charac_color: "#ab00aa" } };
+SmartTown.characters = {};
 /** action map */
 SmartTown.actions = {};
 SmartTown.selectNodeForEdge = null;
