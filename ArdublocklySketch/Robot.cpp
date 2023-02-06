@@ -30,7 +30,7 @@ Robot::Robot()
  */
 void Robot::connectClient()
 {
-  if (!returnSock || !returnSock.connected())
+  if (!returnSock || !returnSock.connected()) //Checks if return socket is already connected
   {
     if (!returnSock.connect(returnIP, returnPort))
     {
@@ -81,23 +81,24 @@ bool Robot::isFeasible(Task *msg)
     toRet = isFeasibleMvt(msg);
     if (toRet)
     {
-      if (mvtExpro != NULL) {
+      if (mvtExpro != NULL) { //check if active task is expropiative. Then remove
         delete(mvtExpro);
         mvtExpro = NULL;
       }
-      runningMvt.addNewTask(msg);
+      runningMvt.addNewTask(msg); //add active task
     }
   }
-  else if (strcmp(msg->type, TYPE_EMOTION) == 0)
+  else if (strcmp(msg->type, TYPE_EMOTION) == 0) 
   {
     toRet = isFeasibleEmotion(msg);
     if (toRet)
     {
-      if (emotionalExpro != NULL) {
+      if (emotionalExpro != NULL) { //check if active task is expropiative. Then remove
         delete(emotionalExpro);
         emotionalExpro = NULL;
+        runningEmotions.removeTask(EMOTION_SWITCH_ASYNC);
       }
-      runningEmotions.addNewTask(msg);
+      runningEmotions.addNewTask(msg); //add active task
     }
   }
   else if (strcmp(msg->type, TYPE_CUSTOM) == 0)
@@ -105,14 +106,14 @@ bool Robot::isFeasible(Task *msg)
     toRet = isFeasibleCustom(msg);
     if (toRet)
     {
-      if (customExpro != NULL) {
+      if (customExpro != NULL) { //check if active task is expropiative. Then remove
         delete(customExpro);
         customExpro = NULL;
       }
-      runningCustoms.addNewTask(msg);
+      runningCustoms.addNewTask(msg); //add active task
     }
   }
-  else if (strcmp(msg->type, TYPE_BASIC) == 0)
+  else if (strcmp(msg->type, TYPE_BASIC) == 0) // Basic tasks are always feasible.
   {
     toRet = true;
     runningBasics.addNewTask(msg);
@@ -162,16 +163,16 @@ void Robot::processMsg(String msg, bool checkStatus, WiFiClient client)
   // procesar comandos y revision de comandos en ejecucion
   STprint("taskQueue.pendingTasks 1");
   STprint(taskQueue.pendingTasks);
-  if (!taskQueue.isEmpty())
+  if (!taskQueue.isEmpty()) // If queue has tasks, it should check if this are feasible for execution.
   {
     STprint("After Task Empty");
-    aux = taskQueue.peekPrevious();
-    // taskQueue.peekPrevious(aux);
+    aux = taskQueue.peekPrevious(); // Peek task.
+
     STprint("Task Peeked");
     STprint(aux->command);
     STprint(aux->type);
     STprint("Checking isFeasible");
-    if (isFeasible(aux))
+    if (isFeasible(aux)) // if task is feasible, unwrap it and send it to execution. 
     {
       STprint("Task Feasible");
       aux = taskQueue.pop();
@@ -189,7 +190,7 @@ void Robot::processMsg(String msg, bool checkStatus, WiFiClient client)
       checkStatus = false;
     }
   }
-  processCommands(command, checkStatus, client);
+  processCommands(command, checkStatus, client); //check active tasks.
   command = ""; // vaciar comando
   // determinar si hay acciones en ejecucion.
 }
@@ -200,7 +201,7 @@ void Robot::processMsg(String msg, bool checkStatus, WiFiClient client)
 void Robot::unwrapTask(Task *task)
 {
   command = String(task->command);
-  if (strcmp(task->type, TYPE_MOVEMENT) == 0)
+  if (strcmp(task->type, TYPE_MOVEMENT) == 0) //Check task type for correct unwrapping. 
   {
     if (task->speed > 0)
     {
@@ -359,15 +360,15 @@ void Robot::checkEmotionCommands(String msg, bool checkStatus, WiFiClient client
     readFaces(emotion);
     runningEmotions.removeTask(EMOTION_STR);
   }
-  else if (msg.equals(EMOTION_SWITCH) || runningEmotions.searchAck(EMOTION_SWITCH) != -1)
+  else if (msg.equals(EMOTION_SWITCH) || runningEmotions.searchAck(EMOTION_SWITCH) != -1) // Check if its running or if it should start.
   {
     STprint("switchFaces entered");
     toRet = switchFaces(emotion, emoSwitch, 1000 * emotionTimer, 1000 * emotionPeriod);
-    if (toRet)
+    if (toRet) // if done return ack.
     {
       answerCommand(&runningEmotions, EMOTION_SWITCH, client);
     }
-  } else if (msg.equals(EMOTION_SWITCH_ASYNC) || (emotionalExpro != NULL && strcmp(emotionalExpro->command, EMOTION_SWITCH_ASYNC) == 0))
+  } else if (msg.equals(EMOTION_SWITCH_ASYNC) || (emotionalExpro != NULL && strcmp(emotionalExpro->command, EMOTION_SWITCH_ASYNC) == 0))// Check if its running or if it should start.
   {
     STprint("switchFacesAsync entered");
     switchFacesAsync(emotion, emoSwitch, 1000 * emotionPeriod);
@@ -390,10 +391,9 @@ void Robot::checkEmotionCommands(String msg, bool checkStatus, WiFiClient client
 void Robot::checkMotorCommands(String msg, bool checkStatus, WiFiClient client)
 {
   bool toRet = false;
-  // if else de las funciones relacionadas al motor principal. Se maneja con else if porque solo puede haber una accion en el motor activa.
+
   if ((msg.equals(MVT_FORWARD)) || runningMvt.searchAck(MVT_FORWARD) != -1)
-  { // en general se revisa si llego el comando y el motor esta inactivo
-    // o si el movimiento hacia adelante esta activo, la accion es temporal o no y se esta revisando el estado.
+  { 
     toRet = robotForward();
     if (toRet)
     {
@@ -1114,6 +1114,23 @@ void Robot::answerAllPending(WiFiClient client)
   STprint("answering AllPending");
 
   STprint("runningBasics.pendingTasks");
+
+  if (mvtExpro != NULL) { //check if active task is expropiative. Then remove
+          delete(mvtExpro);
+          mvtExpro = NULL;
+  }
+
+  if (emotionalExpro != NULL) { //check if active task is expropiative. Then remove
+          delete(emotionalExpro);
+          emotionalExpro = NULL;
+          runningEmotions.removeTask(EMOTION_SWITCH_ASYNC);
+  }
+
+
+  if (customExpro != NULL) { //check if active task is expropiative. Then remove
+          delete(customExpro);
+          customExpro = NULL;
+  }
 
   STprint(runningBasics.pendingTasks);
   for (int i = 0; i < runningBasics.pendingTasks; i++)
