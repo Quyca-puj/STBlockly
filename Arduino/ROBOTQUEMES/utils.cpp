@@ -8,13 +8,6 @@ void STprint(String msg)
   }
 }
 
-void STprint(char *msg)
-{
-  if (shouldLog)
-  {
-    Serial.println(msg);
-  }
-}
 void STprint(int msg)
 {
   if (shouldLog)

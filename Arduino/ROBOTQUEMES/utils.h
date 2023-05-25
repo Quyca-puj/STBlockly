@@ -6,7 +6,6 @@
 #define PARALLEL_CUSTOM_SIZE 10
 
 void STprint(String msg);
-void STprint(char * msg);
 void STprint(int msg);
 void STprint(long msg);
 void STprint(unsigned long msg);

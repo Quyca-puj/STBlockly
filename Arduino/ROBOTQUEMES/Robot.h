@@ -1,12 +1,12 @@
 #ifndef ROBOT_H_
 #define ROBOT_H_
-#include "nodeWifi.h"
+#include "nodeWiFi.h"
 #include "RobotConstants.h"
 #include "motorMovementController.h"
 #include "FacesLed.h"
 #include "utils.h"
 #include "JointExtra.h"
-#include <cppQueue.h>
+#include <ArduinoQueue.h>
 
 class Robot
 {

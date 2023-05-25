@@ -1,4 +1,4 @@
-#include "nodeWifi.h"
+#include "nodeWiFi.h"
 
 // WiFiClient client;
 extern WiFiServer wifiServer(PORT);
