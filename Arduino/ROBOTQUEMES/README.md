@@ -10,3 +10,9 @@ instalar controlador 'esp8266'
 - QTRSensors
 - Adafruit NeoPixel
 - ArduinoQueue
+
+
+## Linux 
+En caso de estar usando linux para el desarrollo
+
+https://docs.platformio.org/en/latest/core/installation/udev-rules.html#platformio-udev-rules
