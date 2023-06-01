@@ -10,6 +10,9 @@
     Servo Setup
   */
   //Define servo Joint
+  extern int constrainposition[2];
+  extern bool JointDirection;
+  extern int JointPosition;
   extern Servo JointServo;
   extern int constrainposition[2];
   extern bool JointDirection;

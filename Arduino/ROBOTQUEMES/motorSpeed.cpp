@@ -1,16 +1,13 @@
 #include "motorSpeed.h"
 
-//zero value motors
-const int SPEED_DEGREE_CERO_LM=90;
-const int SPEED_DEGREE_CERO_RM=90;
 /* Define again Servo*/
 Servo rightServo;
 Servo leftServo;
 void setupmotor(){
   leftServo.attach(LEFT_MOTOR);
   rightServo.attach(RIGHT_MOTOR);
-  leftServo.write(SPEED_DEGREE_CERO_LM);
-  rightServo.write(SPEED_DEGREE_CERO_RM);
+  leftServo.write(config.getConfig(ConfigOptions::SPEED_OFFSET_LEFT));
+  rightServo.write(config.getConfig(ConfigOptions::SPEED_OFFSET_RIGHT));
 }
 void setSpeedsMotor(int leftSp,int rigthSp){
   //***********************************************************************************
@@ -24,24 +21,24 @@ void setSpeedsMotor(int leftSp,int rigthSp){
       if (leftSp >= 0)
       {
         // Scale it to use it with the servo (value between 0 and 90 -> 0 to 90).
-        leftS = SPEED_DEGREE_CERO_LM - map(leftSp, 0, 255, 0, 90);
+        leftS = config.getConfig(ConfigOptions::SPEED_OFFSET_LEFT) - map(leftSp, 0, 255, 0, 90);
       }
       else
       {
         // Scale it to use it with the servo (value between 0 and 90 -> 90 to 180).
-        leftS = map( (leftSp * -1) , 0, 255, 0, 90) + SPEED_DEGREE_CERO_LM;
+        leftS = map( (leftSp * -1) , 0, 255, 0, 90) + config.getConfig(ConfigOptions::SPEED_OFFSET_LEFT);
       }
     
       // Check if speed more than 0.
       if (rigthSp >= 0)
       {
         // Scale it to use it with the servo (value between 0 and 90 -> 90 to 180).
-        rigthS =  map(rigthSp, 0, 255, 0, 90) + SPEED_DEGREE_CERO_RM;
+        rigthS =  map(rigthSp, 0, 255, 0, 90) + config.getConfig(ConfigOptions::SPEED_OFFSET_RIGHT);
       }
       else
       {
         // Scale it to use it with the servo (value between 0 and 90 -> 0 to 90).
-        rigthS = SPEED_DEGREE_CERO_RM - map( (rigthSp * -1) , 0, 255, 0, 90);
+        rigthS = config.getConfig(ConfigOptions::SPEED_OFFSET_RIGHT) - map( (rigthSp * -1) , 0, 255, 0, 90);
       }
     
       // Set the results speeds.

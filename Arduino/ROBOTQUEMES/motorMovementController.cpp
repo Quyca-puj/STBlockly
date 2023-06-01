@@ -4,18 +4,18 @@
   Following Line - Controller
 */
 
-extern int error = 0;
-extern float kp = 0.1;
-extern float ki = 0.0001;
-extern float kd = 0.3;
-extern int lastError = 0;
-extern int last_proportional = 0;
-extern long integral = 0;
+int error = 0;
+float kp = 0.1;
+float ki = 0.0001;
+float kd = 0.3;
+int lastError = 0;
+int last_proportional = 0;
+long integral = 0;
 unsigned long Time1;
 int period1 = 70;
 bool overIntersection = true;
 bool isDelayActive = false;
-extern bool checkControl = false;
+bool checkControl = false;
 /*
   Movement Controller
 */

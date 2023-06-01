@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include "config.h"
 
 Robot::Robot()
 {
@@ -7,7 +8,6 @@ Robot::Robot()
   emoAuxTimeElapsed = 0;
   mvtTimeElapsed = 0;
   customTimeElapsed = 0;
-  speeds = 50;
   movementRobot = 0;
   mvtTimer = 0;
   emotionTimer = 0;
@@ -154,7 +154,7 @@ void Robot::processMsg(String msg, bool checkStatus, WiFiClient client)
       // taskQueue.pop(aux);
       unwrapTask(aux);
       STprint("Speed");
-      STprint(speeds);
+      STprint(config.getConfig(ConfigOptions::SPEED));
       STprint("mvtTimer");
       STprint(mvtTimer);
       STprint("emotionTimer");
@@ -178,7 +178,7 @@ void Robot::unwrapTask(Task *task)
   {
     if (task->speed > 0)
     {
-      speeds = task->speed;
+      config.setConfig(ConfigOptions::SPEED, task->speed);
     }
     if (task->time > 0)
     {
@@ -218,7 +218,7 @@ void Robot::unwrapTask(Task *task)
   {
     if (task->speed > 0)
     {
-      speeds = task->speed;
+      config.setConfig(ConfigOptions::SPEED, task->speed);
     }
   }
   delete(task);
@@ -466,28 +466,28 @@ void Robot::robotBasicCommands(String msg, bool checkStatus, WiFiClient client)
 void Robot::robotForeverMove(int dir)
 {
   STprint("robotFor Command");
-  foreverForward(speeds * dir);
+  foreverForward(config.getConfig(ConfigOptions::SPEED) * dir);
 }
 
 bool Robot::robotForward()
 {
   STprint("robotForward Command");
-  return followLine(speeds);
+  return followLine(config.getConfig(ConfigOptions::SPEED));
 }
 bool Robot::robotTurn(int dir)
 {
   STprint("robotTurn Command");
-  return turn(dir, speeds);
+  return turn(dir, config.getConfig(ConfigOptions::SPEED));
 }
 bool Robot::robotTimedMove(int dir)
 {
   STprint("robotTimedMove Command");
-  return timedMove(dir * speeds, mvtTimer * 1000, &mvtTimeElapsed);
+  return timedMove(dir * config.getConfig(ConfigOptions::SPEED), mvtTimer * 1000, &mvtTimeElapsed);
 }
 bool Robot::robotTimedTurn(int dir)
 {
   STprint("robotTimedTurn Command");
-  return timedTurn(dir, speeds, mvtTimer * 1000, &mvtTimeElapsed);
+  return timedTurn(dir, config.getConfig(ConfigOptions::SPEED), mvtTimer * 1000, &mvtTimeElapsed);
 }
 
 bool Robot::robotStopMovement()
@@ -522,8 +522,8 @@ void Robot::readCustomVariablesMotors(String msg, WiFiClient client)
     }
     if (digit = true)
     {
-      speeds = messageint.toInt();
-      client.println(speeds);
+      config.setConfig(ConfigOptions::SPEED, messageint.toInt());
+      client.println(config.getConfig(ConfigOptions::SPEED));
       messageint = "";
     }
   }
@@ -921,7 +921,7 @@ Task* Robot::msgToTask(String msg)
       strcpy(task->type, TYPE_MOVEMENT);
       if (arguments[0].equals(EMPTY_PARAM))
       {
-        task->speed = speeds;
+        task->speed = config.getConfig(ConfigOptions::SPEED);
       }
       else
       {
@@ -954,7 +954,7 @@ Task* Robot::msgToTask(String msg)
       {
         if (arguments[0].equals(EMPTY_PARAM))
         {
-          task->speed = speeds;
+          task->speed = config.getConfig(ConfigOptions::SPEED);
         }
         else
         {
@@ -1045,6 +1045,7 @@ bool Robot::switchFaces(String emo1, String emo2, long time, long period)
   }
   return toRet;
 }
+
 bool Robot::robotDelay(long time, long *timeElapsed)
 {
   return STDelay(time, timeElapsed);
@@ -1085,7 +1086,12 @@ void Robot::answerPendingByType(TaskList *list, WiFiClient client)
     answerCommand(list, String(aux->command), client);
   }
 }
+
 bool Robot::isInAction()
 {
-  return runningBasics.pendingTasks > 0 || runningMvt.pendingTasks > 0 || runningEmotions.pendingTasks > 0 || runningCustoms.pendingTasks > 0 || taskQueue.pendingTasks > 0;
+  return
+    runningBasics.pendingTasks > 0 ||
+    runningMvt.pendingTasks > 0 ||
+    runningEmotions.pendingTasks > 0 ||
+    runningCustoms.pendingTasks > 0 || taskQueue.pendingTasks > 0;
 }

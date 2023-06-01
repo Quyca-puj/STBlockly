@@ -2,7 +2,8 @@
 #define MOTORMOVEMENTCONTROLLER_H_
 
 #include "motorSpeed.h"
-#include "sensorFollow.h" 
+#include "sensorFollow.h"
+#include "config.h"
 
 /*
   Following Line - Controller
@@ -21,6 +22,15 @@ extern bool overIntersection;
 /*
   Movement Controller
 */
+extern int error;
+extern float kp;
+extern float ki;
+extern float kd;
+extern int lastError;
+extern int last_proportional;
+extern long integral;
+extern bool checkControl;
+
 bool followLine(int speed);
 bool control(int speed);
 bool turn(int direction,int speed);

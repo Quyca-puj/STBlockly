@@ -2,9 +2,9 @@
 
 //Define servo Joint
 Servo JointServo;
-extern int constrainposition[2]{70,90};
-extern bool JointDirection=false;
-extern int JointPosition=60;
+int constrainposition[2]{70,90};
+bool JointDirection=false;
+int JointPosition=60;
 unsigned long timetransition;
 
 void JointDynamic(int JointPeriod){
