@@ -34,3 +34,5 @@
 #define BUFFER_SIZE 20
 #define EMPTY_STRING "\0"
 #define EMPTY_PARAM "*"
+
+#define PARALLEL_CUSTOM_SIZE 10

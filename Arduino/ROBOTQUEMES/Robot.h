@@ -8,6 +8,10 @@
 #include "JointExtra.h"
 #include "config.h"
 
+#include "tasks/task.h"
+#include "tasks/task_list.h"
+#include "tasks/task_queue.h"
+
 class Robot
 {
   RobotConfig rc;

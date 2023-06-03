@@ -1,5 +1,4 @@
 #include "Robot.h"
-#include "config.h"
 
 Robot::Robot()
 {
